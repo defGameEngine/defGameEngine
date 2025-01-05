@@ -614,7 +614,7 @@ namespace def
 
 		virtual void SetIcon(Sprite& icon) const override;
 
-		static void MainLoop();
+		static void MainZaloop_a();
 
 	private:
 		static EM_BOOL FocusCallback(int eventType, const EmscriptenFocusEvent* event, void* userData);
@@ -774,7 +774,7 @@ namespace def
 	private:
 		void Destroy();
 		void ScanHardware(KeyState* data, bool* newState, bool* oldState, size_t count);
-		void MainLoop();
+		void MainZaloop_a();
 
 		static void MakeUnitCircle(std::vector<vf2d>& circle, const size_t verts);
 
@@ -2426,9 +2426,9 @@ namespace def
 
 	}
 
-	void Platform_Emscripten::MainLoop()
+	void Platform_Emscripten::MainZaloop_a()
 	{
-		GameEngine::s_Engine->MainLoop();
+		GameEngine::s_Engine->MainZaloop_a();
 	}
 
 	EM_BOOL Platform_Emscripten::FocusCallback(int eventType, const EmscriptenFocusEvent* event, void* userData)
@@ -2606,7 +2606,7 @@ namespace def
 		}
 	}
 
-	void GameEngine::MainLoop()
+	void GameEngine::MainZaloop_a()
 	{
 		if (m_IsAppRunning)
 		{
@@ -2840,13 +2840,13 @@ namespace def
 #ifdef PLATFORM_EMSCRIPTEN
 		m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_AppName);
 
-		emscripten_set_main_loop(&Platform_Emscripten::MainLoop, 0, 1);
+		emscripten_set_main_loop(&Platform_Emscripten::MainZaloop_a, 0, 1);
 #else
 		m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_AppName + " - FPS: 0");
 		m_FramesCount = 0;
 
 		while (m_IsAppRunning)
-			MainLoop();
+			MainZaloop_a();
 #endif
 	}
 
