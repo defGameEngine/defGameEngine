@@ -1,12 +1,12 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
+#include <list>
 #include <random>
 
 struct Object
 {
-	def::vf2d pos;
-	def::vf2d vel;
+	def::Vector2f pos;
+	def::Vector2f vel;
 
 	int health;
 
@@ -15,7 +15,7 @@ struct Object
 
 struct Controllable : Object
 {
-	std::vector<def::vf2d> model;
+	std::vector<def::Vector2f> model;
 };
 
 struct Player : Controllable
@@ -23,9 +23,9 @@ struct Player : Controllable
 	float angle;
 };
 
-bool IsPointInPolygon(const def::vf2d& polygonPos, const std::vector<def::vf2d>& polygon, const def::vf2d& pointPos)
+bool IsPointInPolygon(const def::Vector2f& polygonPos, const std::vector<def::Vector2f>& polygon, const def::Vector2f& pointPos)
 {
-	auto GetAngle = [](const def::vf2d& p1, const def::vf2d& p2)
+	auto GetAngle = [](const def::Vector2f& p1, const def::Vector2f& p2)
 		{
 			float a = atan2(p2.y, p2.x) - atan2(p1.y, p1.x);
 			while (a > 3.14159f) a -= 3.14159f * 2.0f;
@@ -61,7 +61,7 @@ public:
 	int score;
 
 private:
-	void CreateAsteroid(const def::vf2d& pos, const def::vf2d& vel, float radiusMultiplier = 1.0f)
+	void CreateAsteroid(const def::Vector2f& pos, const def::Vector2f& vel, float radiusMultiplier = 1.0f)
 	{
 		Controllable go;
 
@@ -74,7 +74,7 @@ private:
 		for (float angle = 0.0f; angle < 2.0f * 3.14159f; angle += 3.14159f / 6.0f)
 		{
 			float radius = float(dist(randomEngine)) * radiusMultiplier;
-			go.model.push_back(def::vf2d(radius, angle).cart());
+			go.model.push_back(def::Vector2f(radius, angle).Cartesian());
 		}
 
 		go.redundant = false;
@@ -82,7 +82,7 @@ private:
 		controllables.push_back(go);
 	}
 
-	void CreateBullet(const def::vf2d& pos, const def::vf2d& vel)
+	void CreateBullet(const def::Vector2f& pos, const def::Vector2f& vel)
 	{
 		bullets.push_back({ pos, vel });
 	}

@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 class Mode7 : public def::GameEngine
 {
@@ -30,33 +29,33 @@ public:
 		if (GetKey(def::Key::LEFT).held) theta -= deltaTime;
 		if (GetKey(def::Key::RIGHT).held) theta += deltaTime;
 
-		def::vf2d velocity = { 0.0f, 0.0f };
+		def::Vector2f velocity = { 0.0f, 0.0f };
 
-		if (GetKey(def::Key::W).held) velocity += def::vf2d(-sin(theta), cos(theta));
-		if (GetKey(def::Key::A).held) velocity += def::vf2d(cos(theta), sin(theta));
-		if (GetKey(def::Key::S).held) velocity += def::vf2d(sin(theta), -cos(theta));
-		if (GetKey(def::Key::D).held) velocity += def::vf2d(-cos(theta), -sin(theta));
+		if (GetKey(def::Key::W).held) velocity += def::Vector2f(-sin(theta), cos(theta));
+		if (GetKey(def::Key::A).held) velocity += def::Vector2f(cos(theta), sin(theta));
+		if (GetKey(def::Key::S).held) velocity += def::Vector2f(sin(theta), -cos(theta));
+		if (GetKey(def::Key::D).held) velocity += def::Vector2f(-cos(theta), -sin(theta));
 
 		camera += velocity * deltaTime;
 
-		def::vf2d screen;
+		def::Vector2f screen;
 		for (screen.x = 0; screen.x < ScreenWidth(); screen.x++)
 		{
 			for (screen.y = ScreenHeight() / 2; screen.y < ScreenHeight(); screen.y++)
 			{
-				def::vf2d window = def::vf2d(GetScreenSize()) / 2.0f + screen * def::vf2d(-1.0f, 1.0f);
+				def::Vector2f window = def::Vector2f(GetScreenSize()) / 2.0f + screen * def::Vector2f(-1.0f, 1.0f);
 				float windowZ = screen.y - ScreenHeight() / 2;
 
 				float rotatedX = window.x * cos(theta) - window.y * sin(theta);
 				float rotatedY = window.x * sin(theta) + window.y * cos(theta);
 
-				def::vi2d vPixel = (def::vf2d(rotatedX, rotatedY) / windowZ + camera) * scale;
+				def::Vector2i vPixel = (def::Vector2f(rotatedX, rotatedY) / windowZ + camera) * scale;
 
 				def::Pixel kartCol = kart->GetPixel(vPixel.x % kart->size.x, vPixel.y % kart->size.y);
 				def::Pixel skyCol = sky->GetPixel(vPixel.x % sky->size.x, vPixel.y % sky->size.y);
 
 				Draw(screen, kartCol);
-				Draw(def::vf2d(screen.x, ScreenHeight() - screen.y - 1), skyCol);
+				Draw(def::Vector2f(screen.x, ScreenHeight() - screen.y - 1), skyCol);
 			}
 		}
 
@@ -66,8 +65,8 @@ public:
 	}
 
 private:
-	def::vf2d camera = { 0.0f, 0.0f };
-	def::vf2d scale = { 100.0f, 100.0f };
+	def::Vector2f camera = { 0.0f, 0.0f };
+	def::Vector2f scale = { 100.0f, 100.0f };
 	float theta = 0.0f;
 
 };

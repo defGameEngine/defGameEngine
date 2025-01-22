@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <list>
 
@@ -21,9 +20,9 @@ struct Ball
 	uint8_t type;
 	uint8_t id;
 
-	def::vf2d acc;
-	def::vf2d vel;
-	def::vf2d pos;
+	def::Vector2f acc;
+	def::Vector2f vel;
+	def::Vector2f pos;
 
 	float mass;
 	float radius;
@@ -32,22 +31,23 @@ struct Ball
 
 	bool IsOverlap(Ball& b)
 	{
-		return fabs((pos - b.pos).mag2()) <= pow(radius + b.radius, 2);
+		float dist = radius + b.radius;
+		return fabs((pos - b.pos).Length2()) <= dist * dist;
 	}
 
-	bool IsInside(const def::vf2d& p)
+	bool IsInside(const def::Vector2f& p)
 	{
-		return fabs((pos - p).mag2()) <= pow(radius, 2);
+		return fabs((pos - p).Length2()) <= radius * radius;
 	}
 
-	void Update(const float deltaTime, const def::vf2d& tl, const def::vf2d& br, const float bw)
+	void Update(const float deltaTime, const def::Vector2f& tl, const def::Vector2f& br, const float bw)
 	{
 		acc = vel * -0.98f;
 
 		vel += acc * deltaTime;
 		pos += vel * deltaTime;
 
-		if (fabs(vel.mag2()) < 0.01f)
+		if (fabs(vel.Length2()) < 0.01f)
 			vel = { 0.0f, 0.0f };
 	}
 
@@ -56,10 +56,10 @@ struct Ball
 struct Table
 {
 	Table() = default;
-	Table(const def::vf2d& tl, const def::vf2d& br, const float brdWidth, const float pctRadius)
+	Table(const def::Vector2f& tl, const def::Vector2f& br, const float brdWidth, const float pctRadius)
 		: boundary{ tl, br }, borderWidth(brdWidth) {}
 
-	void AddBall(const def::vf2d& pos, const float radius, const uint8_t type = Ball::WHITE)
+	void AddBall(const def::Vector2f& pos, const float radius, const uint8_t type = Ball::WHITE)
 	{
 		Ball b;
 		b.pos = pos;
@@ -140,7 +140,7 @@ struct Table
 		if (dge->GetMouse(def::Button::LEFT).released)
 		{
 			if (selected)
-				selected->vel = FORCE_ACC * (selected->pos - def::vf2d(dge->GetMousePos()));
+				selected->vel = FORCE_ACC * (selected->pos - def::Vector2f(dge->GetMousePos()));
 
 			selected = nullptr;
 		}
@@ -173,10 +173,10 @@ struct Table
 						{
 							collidingPairs.push_back({ &ball, &target });
 
-							float dist = (ball.pos - target.pos).mag();
+							float dist = (ball.pos - target.pos).Length();
 							float overlap = 0.5f * (dist - ball.radius - target.radius);
 
-							def::vf2d vel = overlap * (ball.pos - target.pos) / dist;
+							def::Vector2f vel = overlap * (ball.pos - target.pos) / dist;
 
 							ball.pos -= vel;
 							target.pos += vel;
@@ -209,12 +209,12 @@ struct Table
 			Ball* b1 = pair.first;
 			Ball* b2 = pair.second;
 
-			float dist = (b1->pos - b2->pos).mag();
+			float dist = (b1->pos - b2->pos).Length();
 
-			def::vf2d norm = (b2->pos - b1->pos) / dist;
+			def::Vector2f norm = (b2->pos - b1->pos) / dist;
 
-			def::vf2d k = b1->vel - b2->vel;
-			float p = 2.0f * norm.dot(k) / (b1->mass + b2->mass);
+			def::Vector2f k = b1->vel - b2->vel;
+			float p = 2.0f * norm.DotProduct(k) / (b1->mass + b2->mass);
 			b1->vel -= p * b2->mass * norm;
 			b2->vel += p * b1->mass * norm;
 		}
@@ -246,7 +246,7 @@ struct Table
 	void DrawBoundary(def::GameEngine* dge, const def::Pixel& col = def::BROWN)
 	{
 		auto& b = boundary;
-		dge->FillRectangle(b.first, def::vi2d(b.second.x - b.first.x - borderWidth, borderWidth), col);
+		dge->FillRectangle(b.first, def::Vector2i(b.second.x - b.first.x - borderWidth, borderWidth), col);
 		dge->FillRectangle(b.second.x - borderWidth, b.first.y, borderWidth, b.second.y - b.first.y - borderWidth, col);
 		dge->FillRectangle(b.first.x, b.first.x + borderWidth, borderWidth, b.second.y - b.first.y - borderWidth, col);
 		dge->FillRectangle(b.first.x + borderWidth, b.second.y - borderWidth, b.second.x - b.first.x - borderWidth, borderWidth, col);
@@ -262,8 +262,8 @@ struct Table
 	Ball* selected = nullptr;
 	std::list<Ball> balls;
 
-	std::pair<def::vf2d, def::vf2d> cuePos;
-	std::pair<def::vf2d, def::vf2d> boundary;
+	std::pair<def::Vector2f, def::Vector2f> cuePos;
+	std::pair<def::Vector2f, def::Vector2f> boundary;
 
 	float borderWidth;
 
@@ -287,36 +287,36 @@ public:
 	Table* table = nullptr;
 	int score = 0;
 
-	def::vf2d topLeft;
-	def::vf2d bottomRight;
+	def::Vector2f topLeft;
+	def::Vector2f bottomRight;
 
-	void ResetTable(const def::vf2d& tl, const def::vf2d& br, const float borderWidth = BORDER_WIDTH, const float ballRadius = BALL_RADIUS, const float pocketRadius = POCKET_RADIUS)
+	void ResetTable(const def::Vector2f& tl, const def::Vector2f& br, const float borderWidth = BORDER_WIDTH, const float ballRadius = BALL_RADIUS, const float pocketRadius = POCKET_RADIUS)
 	{
 		table->Clear();
 
-		table->AddBall(def::vf2d(ScreenWidth() * 0.4f + ballRadius * 4 + 4, ScreenHeight() - borderWidth * 5), ballRadius, Ball::BLACK);
+		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 4 + 4, ScreenHeight() - borderWidth * 5), ballRadius, Ball::BLACK);
 
-		table->AddBall(def::vf2d(ScreenWidth() * 0.4f, borderWidth * 5), ballRadius);
+		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f, borderWidth * 5), ballRadius);
 		for (int i = 0; i < 4; i++)
-			table->AddBall(table->balls.back().pos + def::vf2d(ballRadius * 2 + 2, 0), ballRadius);
+			table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::vf2d(ScreenWidth() * 0.4f + ballRadius + 1, borderWidth * 5 + ballRadius * 2 + 2), ballRadius);
+		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius + 1, borderWidth * 5 + ballRadius * 2 + 2), ballRadius);
 		for (int i = 0; i < 3; i++)
-			table->AddBall(table->balls.back().pos + def::vf2d(ballRadius * 2 + 2, 0), ballRadius);
+			table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::vf2d(ScreenWidth() * 0.4f + ballRadius * 2 + 2, borderWidth * 5 + ballRadius * 4 + 4), ballRadius);
+		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 2 + 2, borderWidth * 5 + ballRadius * 4 + 4), ballRadius);
 		for (int i = 0; i < 2; i++)
-			table->AddBall(table->balls.back().pos + def::vf2d(ballRadius * 2 + 2, 0), ballRadius);
+			table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::vf2d(ScreenWidth() * 0.4f + ballRadius * 3 + 3, borderWidth * 5 + ballRadius * 6 + 6), ballRadius);
-		table->AddBall(table->balls.back().pos + def::vf2d(ballRadius * 2 + 2, 0), ballRadius);
+		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 3 + 3, borderWidth * 5 + ballRadius * 6 + 6), ballRadius);
+		table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::vf2d(ScreenWidth() * 0.4f + ballRadius * 4 + 4, borderWidth * 5 + ballRadius * 8 + 8), ballRadius);
+		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 4 + 4, borderWidth * 5 + ballRadius * 8 + 8), ballRadius);
 
 		AddPockets(tl, br, pocketRadius);
 	}
 
-	void AddPockets(const def::vf2d& tl, const def::vf2d& br, const float radius = POCKET_RADIUS)
+	void AddPockets(const def::Vector2f& tl, const def::Vector2f& br, const float radius = POCKET_RADIUS)
 	{
 		table->AddBall(tl, radius, Ball::POCKET);
 		table->AddBall(br, radius, Ball::POCKET);

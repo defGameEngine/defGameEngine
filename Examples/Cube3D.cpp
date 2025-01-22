@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 struct Vector3
 {

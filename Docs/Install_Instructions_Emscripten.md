@@ -14,12 +14,12 @@
 
 2. Build with
 ```console
-cpp_to_web build <file_without_extension>
+./cpp_to_web build <file_without_extension>
 ```
 
 3. Run with
 ```console
-cpp_to_web run
+./cpp_to_web run
 ```
 
 ### Examples

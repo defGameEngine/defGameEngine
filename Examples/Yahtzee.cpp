@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <array>
 #include <numeric>
@@ -19,39 +18,39 @@ private:
 
 	void DrawFace(
 		const uint8_t face,
-		const def::vi2d& pos,
-		const def::vi2d& size = { 64, 64 },
+		const def::Vector2i& pos,
+		const def::Vector2i& size = { 64, 64 },
 		const int radius = 8,
 		const def::Pixel& dotCol = def::WHITE,
 		const def::Pixel& backgroundCol = def::DARK_RED
 	)
 	{
-		def::vi2d vTL = pos;
-		def::vi2d vTR = pos + def::vi2d(size.x, 0);
-		def::vi2d vLM = pos + def::vi2d(0, size.y / 2);
-		def::vi2d vBL = pos + def::vi2d(0, size.y);
-		def::vi2d vBR = pos + size;
-		def::vi2d vRM = pos + def::vi2d(size.x, size.y / 2);
-		def::vi2d vM = pos + size / 2;
+		def::Vector2i vTL = pos;
+		def::Vector2i vTR = pos + def::Vector2i(size.x, 0);
+		def::Vector2i vLM = pos + def::Vector2i(0, size.y / 2);
+		def::Vector2i vBL = pos + def::Vector2i(0, size.y);
+		def::Vector2i vBR = pos + size;
+		def::Vector2i vRM = pos + def::Vector2i(size.x, size.y / 2);
+		def::Vector2i vM = pos + size / 2;
 
 		FillRectangle(pos, size, backgroundCol);
 
 		if (std::set<uint8_t>{ 2, 3, 4, 5, 6 }.count(face) > 0)
 		{
-			FillCircle(vTL + def::vi2d(radius + 1, radius + 1), radius, dotCol);
-			FillCircle(vBR + def::vi2d(-radius - 2, -radius - 2), radius, dotCol);
+			FillCircle(vTL + def::Vector2i(radius + 1, radius + 1), radius, dotCol);
+			FillCircle(vBR + def::Vector2i(-radius - 2, -radius - 2), radius, dotCol);
 		}
 
 		if (std::set<uint8_t>{ 4, 5, 6 }.count(face) > 0)
 		{
-			FillCircle(vTR + def::vi2d(-radius - 2, radius + 1), radius, dotCol);
-			FillCircle(vBL + def::vi2d(radius + 1, -radius - 2), radius, dotCol);
+			FillCircle(vTR + def::Vector2i(-radius - 2, radius + 1), radius, dotCol);
+			FillCircle(vBL + def::Vector2i(radius + 1, -radius - 2), radius, dotCol);
 		}
 
 		if (std::set<uint8_t>{ 6 }.count(face) > 0)
 		{
-			FillCircle(vLM + def::vi2d(radius + 1, 1), radius, dotCol);
-			FillCircle(vRM + def::vi2d(-radius - 2, 1), radius, dotCol);
+			FillCircle(vLM + def::Vector2i(radius + 1, 1), radius, dotCol);
+			FillCircle(vRM + def::Vector2i(-radius - 2, 1), radius, dotCol);
 		}
 
 		if (std::set<uint8_t>{ 1, 3, 5 }.count(face) > 0)
@@ -143,8 +142,8 @@ public:
 
 		Clear(def::DARK_GREEN);
 
-		def::vi2d pos = { -58, 10 };
-		for (const auto& face : dices) DrawFace(face, pos += def::vi2d(68, 0));
+		def::Vector2i pos = { -58, 10 };
+		for (const auto& face : dices) DrawFace(face, pos += def::Vector2i(68, 0));
 
 		pos = { 10, 64 };
 
@@ -165,8 +164,8 @@ public:
 			{ "Chance       ", chance }
 		};
 
-		def::vi2d offset = { 0, 0 };
-		for (const auto& score : vecScoreTable) DrawString(pos + (offset += def::vi2d(0, 16)), score.first + " : " + std::to_string(score.second));
+		def::Vector2i offset = { 0, 0 };
+		for (const auto& score : vecScoreTable) DrawString(pos + (offset += def::Vector2i(0, 16)), score.first + " : " + std::to_string(score.second));
 
 		return true;
 	}

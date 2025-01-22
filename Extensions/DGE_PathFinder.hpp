@@ -8,7 +8,7 @@
 #include <functional>
 #include <vector>
 
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #pragma endregion
 
@@ -24,7 +24,7 @@ namespace def
 		float globalGoal;
 		float localGoal;
 
-		def::vi2d pos;
+		def::Vector2i pos;
 
 		std::vector<Node*> neighbours;
 		Node* parent;
@@ -37,7 +37,7 @@ namespace def
 		~PathFinder();
 
 	private:
-		def::vi2d m_MapSize;
+		def::Vector2i m_MapSize;
 
 		Node* m_Nodes;
 
@@ -49,9 +49,9 @@ namespace def
 	public:
 		void ClearMap();
 		bool FreeMap();
-		bool ConstructMap(const def::vi2d& size);
+		bool ConstructMap(const def::Vector2i& size);
 
-		bool SetNodes(const def::vi2d& start, const def::vi2d& goal);
+		bool SetNodes(const def::Vector2i& start, const def::Vector2i& goal);
 		void SetNodes(Node* start = nullptr, Node* goal = nullptr);
 
 		Node* GetStartNode();
@@ -62,7 +62,7 @@ namespace def
 
 		int GetMapWidth() const;
 		int GetMapHeight() const;
-		def::vi2d GetMapSize() const;
+		def::Vector2i GetMapSize() const;
 
 		void FindPath(float (*dist)(Node*, Node*), float (*heuristic)(Node*, Node*));
 
@@ -124,7 +124,7 @@ namespace def
 		return m_IsMapFreed;
 	}
 
-	bool PathFinder::ConstructMap(const def::vi2d& size)
+	bool PathFinder::ConstructMap(const def::Vector2i& size)
 	{
 		if (size.x <= 0 || size.y <= 0)
 			return false;
@@ -175,9 +175,9 @@ namespace def
 		return true;
 	}
 
-	bool PathFinder::SetNodes(const def::vi2d& start, const def::vi2d& goal)
+	bool PathFinder::SetNodes(const def::Vector2i& start, const def::Vector2i& goal)
 	{
-		if (start < def::vi2d(0, 0) || goal < def::vi2d(0, 0) || start >= m_MapSize || goal >= m_MapSize)
+		if (start < def::Vector2i(0, 0) || goal < def::Vector2i(0, 0) || start >= m_MapSize || goal >= m_MapSize)
 			return false;
 
 		m_Start = &m_Nodes[start.y * m_MapSize.x + start.x];
@@ -223,7 +223,7 @@ namespace def
 		return m_MapSize.y;
 	}
 
-	def::vi2d PathFinder::GetMapSize() const
+	def::Vector2i PathFinder::GetMapSize() const
 	{
 		return m_MapSize;
 	}

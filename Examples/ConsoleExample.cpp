@@ -1,10 +1,9 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 struct Ball
 {
-	def::vf2d pos;
-	def::vf2d vel;
+	def::Vector2f pos;
+	def::Vector2f vel;
 	
 	def::Pixel col;
 };
@@ -29,7 +28,7 @@ private:
 		return start + (float)rand() / (float)RAND_MAX * (end - start);
 	}
 
-	void AddBall(const def::vf2d& pos, const def::vf2d& vel)
+	void AddBall(const def::Vector2f& pos, const def::Vector2f& vel)
 	{
 		balls.push_back({ pos, vel, def::Pixel(rand() % 256, rand() % 256, rand() % 256) });
 	}

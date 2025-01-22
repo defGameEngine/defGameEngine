@@ -1,14 +1,13 @@
 #define DEF_GEOMETRY2D_IMPL
 #include "../defGeometry2D/defGeometry2D.hpp"
 
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 template <class T>
 struct Dynamic
 {
 	T model;
-	def::vf2d velocity;
+	def::Vector2f velocity;
 };
 
 struct Ball : Dynamic<def::circle<float>> {};
@@ -40,16 +39,16 @@ protected:
 		ball.model.radius = 5.0f;
 
 		Tile b;
-		b.model.pos = GetScreenSize() * def::vf2d(0.5f, 0.75f);
+		b.model.pos = GetScreenSize() * def::Vector2f(0.5f, 0.75f);
 		b.model.size = { 20.0f, 5.0f };
 	
 		tiles.push_back(b);
 		bat = tiles.begin();
 
-		def::vf2d origin = GetScreenSize() * 0.25f;
-		def::vf2d tileSize = { 20.0f, 10.0f };
+		def::Vector2f origin = GetScreenSize() * 0.25f;
+		def::Vector2f tileSize = { 20.0f, 10.0f };
 
-		def::vi2d count = GetScreenSize() * def::vf2d(0.5f, 0.2f) / tileSize;
+		def::Vector2i count = GetScreenSize() * def::Vector2f(0.5f, 0.2f) / tileSize;
 
 		// Add tiles
 		for (int i = 0; i < count.x; i++)
@@ -57,7 +56,7 @@ protected:
 			{
 				Tile tile;
 
-				tile.model.pos = origin + (tileSize + 1) * def::vf2d(i, j);
+				tile.model.pos = origin + (tileSize + 1) * def::Vector2f(i, j);
 				tile.model.size = tileSize;
 
 				tiles.push_back(tile);
@@ -71,7 +70,7 @@ protected:
 		if (GetKey(def::Key::LEFT).held) bat->model.pos.x -= 150.0f * deltaTime;
 		if (GetKey(def::Key::RIGHT).held) bat->model.pos.x += 150.0f * deltaTime;
 
-		def::vf2d potentialPos = ball.model.pos + ball.velocity * deltaTime * 200.0f;
+		def::Vector2f potentialPos = ball.model.pos + ball.velocity * deltaTime * 200.0f;
 
 		if (potentialPos.x < ball.model.radius)
 			ball.velocity.x *= -1.0f;

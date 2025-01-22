@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../../defGameEngine.hpp"
+#include "../../Include/defGameEngine.hpp"
 
 #define DGE_DEARIMGUI
 #include "../../Extensions/DGE_DearImGui.hpp"

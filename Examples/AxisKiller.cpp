@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <list>
 
@@ -17,15 +16,15 @@ public:
 	int border2_start;
 	int border2_end;
 
-	def::vf2d pos1, pos2;
+	def::Vector2f pos1, pos2;
 
-	def::vf2d enemyPos;
+	def::Vector2f enemyPos;
 	int objRadius = 5;
 
 	struct Bullet
 	{
-		def::vf2d vel;
-		def::vf2d pos;
+		def::Vector2f vel;
+		def::Vector2f pos;
 		bool redundant = false;
 	};
 
@@ -46,9 +45,9 @@ protected:
 		enemyPos = { (float)rndInt(border1_start, border1_end * 0.75f), (float)rndInt(border2_start, border2_end * 0.75f) };
 	}
 
-	bool PointVsCircle(const def::vf2d& point, const def::vf2d& circle, float r)
+	bool PointVsCircle(const def::Vector2f& point, const def::Vector2f& circle, float r)
 	{
-		return (circle - point).mag2() <= r * r;
+		return (circle - point).Length2() <= r * r;
 	}
 
 	bool OnUserCreate() override

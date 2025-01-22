@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 struct mat2x2
 {
@@ -18,7 +17,7 @@ void Mat_MultiplyMat(mat2x2& matA, mat2x2& matB, mat2x2& matResult)
 		}
 }
 
-void Mat_MultiplyVec(mat2x2& matA, def::vf2d& vecB, def::vf2d& vResult)
+void Mat_MultiplyVec(mat2x2& matA, def::Vector2f& vecB, def::Vector2f& vResult)
 {
 	vResult.x = matA[0][0] * vecB.x + matA[0][1] * vecB.y;
 	vResult.y = matA[1][0] * vecB.x + matA[1][1] * vecB.y;
@@ -33,7 +32,7 @@ void Mat_MakeRotation(mat2x2& matA, const float fAngle)
 	matA[1][1] = c;
 }
 
-void Mat_MakeScale(mat2x2& matA, const def::vf2d& vScale)
+void Mat_MakeScale(mat2x2& matA, const def::Vector2f& vScale)
 {
 	matA[0][0] = vScale.x;
 	matA[0][1] = 0.0f;
@@ -65,18 +64,18 @@ protected:
 
 		Clear(def::BLACK);
 
-		def::vf2d vPos;
+		def::Vector2f vPos;
 		for (vPos.y = 0; vPos.y < sprDemo->size.y; vPos.y++)
 			for (vPos.x = 0; vPos.x < sprDemo->size.x; vPos.x++)
 			{
-				def::vf2d vScaled;
+				def::Vector2f vScaled;
 				Mat_MultiplyVec(matScaled, vPos, vScaled);
 
-				def::vf2d vRotated;
+				def::Vector2f vRotated;
 				Mat_MultiplyVec(matRotated, vScaled, vRotated);
 
-				def::vf2d vTranslated;
-				vTranslated = vRotated + def::vf2d(ScreenWidth() * 0.5f, ScreenHeight() * 0.5f);
+				def::Vector2f vTranslated;
+				vTranslated = vRotated + def::Vector2f(ScreenWidth() * 0.5f, ScreenHeight() * 0.5f);
 
 				Draw(vTranslated, sprDemo->GetPixel(vPos.x, vPos.y));
 			}

@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <algorithm>
 #include <array>
@@ -23,7 +22,7 @@ private:
 
 	def::Pixel* pSelected = nullptr;
 
-	const def::vi2d vColorSize = { nColorWidth, nColorHeight };
+	const def::Vector2i vColorSize = { nColorWidth, nColorHeight };
 
 protected:
 	bool OnUserCreate() override
@@ -36,8 +35,8 @@ protected:
 
 	bool OnUserUpdate(float fDeltaTime) override
 	{
-		def::vi2d vMouse = GetMousePos();
-		def::vi2d vPalette = vMouse / vColorSize;
+		def::Vector2i vMouse = GetMousePos();
+		def::Vector2i vPalette = vMouse / vColorSize;
 
 		// Find selected color
 
@@ -45,7 +44,7 @@ protected:
 		for (int i = 0; i < nPaletteWidth; i++)
 			for (int j = 0; j < nPaletteHeight; j++)
 			{
-				if (vPalette == def::vi2d(i, j))
+				if (vPalette == def::Vector2i(i, j))
 				{
 					pSelected = &palette[j * nPaletteWidth + i];
 					bSelected = true;
@@ -66,7 +65,7 @@ protected:
 		for (int i = 0; i < nPaletteWidth; i++)
 			for (int j = 0; j < nPaletteHeight; j++)
 			{
-				def::vi2d vPos = def::vi2d(i, j) * vColorSize;
+				def::Vector2i vPos = def::Vector2i(i, j) * vColorSize;
 
 				FillRectangle(vPos, vColorSize, palette[j * nPaletteWidth + i]);
 				DrawRectangle(vPos, vColorSize, def::BLACK);
@@ -76,8 +75,8 @@ protected:
 		{
 			// Draw selected color
 
-			def::vi2d vSelectedPos = vPalette * vColorSize;
-			def::vi2d vSelectedSize = vColorSize * 2;
+			def::Vector2i vSelectedPos = vPalette * vColorSize;
+			def::Vector2i vSelectedSize = vColorSize * 2;
 
 			FillRectangle(vSelectedPos, vSelectedSize, *pSelected);
 			DrawRectangle(vSelectedPos, vSelectedSize, def::BLACK);

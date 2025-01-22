@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #define DGE_PATHFINDER
 #include "../Extensions/DGE_PathFinder.hpp"
@@ -19,7 +18,7 @@ private:
 
 	static float Distance(Node* n1, Node* n2)
 	{
-		return (n1->pos - n2->pos).length();
+		return (n1->pos - n2->pos).Length();
 	}
 
 	static float Heuristic(Node* n1, Node* n2)
@@ -44,13 +43,13 @@ protected:
 		int nodeSize = 9;
 		int nodeBorder = 2;
 
-		def::vi2d selectedNode = GetMousePos() / nodeSize;
+		def::Vector2i selectedNode = GetMousePos() / nodeSize;
 
 		Node* nodes = pathFinder.GetNodes();
 
 		if (GetMouse(def::Button::LEFT).released)
 		{
-			if (selectedNode >= def::vi2d(0, 0) && selectedNode < pathFinder.GetMapSize())
+			if (selectedNode >= def::Vector2i(0, 0) && selectedNode < pathFinder.GetMapSize())
 			{
 				int p = selectedNode.y * pathFinder.GetMapWidth() + selectedNode.x;
 
@@ -71,7 +70,7 @@ protected:
 
 		Clear(def::BLACK);
 
-		def::vi2d i;
+		def::Vector2i i;
 		for (i.x = 0; i.x < pathFinder.GetMapWidth(); i.x++)
 			for (i.y = 0; i.y < pathFinder.GetMapHeight(); i.y++)
 			{

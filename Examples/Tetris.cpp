@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <array>
 
@@ -7,7 +6,7 @@ using namespace def;
 
 // If you want to change it then edit
 // the RotatePiece function by rewriting indecies there
-const def::vi2d TETROMINO_SIZE = { 4, 4 };
+const def::Vector2i TETROMINO_SIZE = { 4, 4 };
 
 // https://tetris.fandom.com/wiki/Tetromino
 // Construct tetrominos assuming that each piece is 4x4 in size
@@ -43,7 +42,7 @@ def::Pixel GetColor(char c)
 // Assume that every piece is 4x4 in size,
 // so applying simple math we get new indices
 // of the pieces in map array
-int RotatePiece(const def::vi2d& p, uint8_t r)
+int RotatePiece(const def::Vector2i& p, uint8_t r)
 {
 	switch (r % 4)
 	{
@@ -67,20 +66,20 @@ public:
 	// equivalent
 	std::string field;
 
-	def::vi2d fieldPos = { 11, 1 };
-	def::vi2d fieldSize = { 10, 20 };
-	def::vi2d cellSize = { 8, 8 };
+	def::Vector2i fieldPos = { 11, 1 };
+	def::Vector2i fieldSize = { 10, 20 };
+	def::Vector2i cellSize = { 8, 8 };
 
 	int score = 0;
 	int piece = -1;
 	int nextPiece = -1;
 	int rotation = 0;
 
-	def::vf2d piecePos;
+	def::Vector2f piecePos;
 
 	bool gameOver = false;
 
-	bool DoesPieceFit(const def::vi2d& pos, size_t i, int r)
+	bool DoesPieceFit(const def::Vector2i& pos, size_t i, int r)
 	{
 		if (i >= TETROMINOS.size()) return false;
 
@@ -109,13 +108,13 @@ public:
 	* Draws piece and it's background
 	* based on specified flags
 	*/
-	void DrawPiece(const def::vi2d& pos, size_t i, int rot, bool fillBlank, bool colorised, const def::Pixel& blankCol = def::BLACK)
+	void DrawPiece(const def::Vector2i& pos, size_t i, int rot, bool fillBlank, bool colorised, const def::Pixel& blankCol = def::BLACK)
 	{
-		def::vi2d p;
+		def::Vector2i p;
 		for (p.y = 0; p.y < TETROMINO_SIZE.y; p.y++)
 			for (p.x = 0; p.x < TETROMINO_SIZE.x; p.x++)
 			{
-				def::vi2d gp = (fieldPos + def::vi2d(pos) + p) * cellSize;
+				def::Vector2i gp = (fieldPos + def::Vector2i(pos) + p) * cellSize;
 				char cell = TETROMINOS[i][RotatePiece(p, rot)];
 
 				if (cell != '.')
@@ -163,19 +162,19 @@ protected:
 		if (GetKey(def::Key::SPACE).pressed && DoesPieceFit(piecePos, piece, rotation + 1))
 			rotation++;
 
-		if (GetKey(def::Key::LEFT).pressed && DoesPieceFit(piecePos + def::vf2d(-1, 0), piece, rotation))
+		if (GetKey(def::Key::LEFT).pressed && DoesPieceFit(piecePos + def::Vector2f(-1, 0), piece, rotation))
 			piecePos.x--;
 
-		if (GetKey(def::Key::RIGHT).pressed && DoesPieceFit(piecePos + def::vf2d(+1, 0), piece, rotation))
+		if (GetKey(def::Key::RIGHT).pressed && DoesPieceFit(piecePos + def::Vector2f(+1, 0), piece, rotation))
 			piecePos.x++;
 
-		if (GetKey(def::Key::DOWN).held && DoesPieceFit(piecePos + def::vf2d(0, 5.0f * deltaTime), piece, rotation))
+		if (GetKey(def::Key::DOWN).held && DoesPieceFit(piecePos + def::Vector2f(0, 5.0f * deltaTime), piece, rotation))
 			piecePos.y += 5.0f * deltaTime;
 
 		// If piece fits, then move it
 		// one cell down
 
-		if (DoesPieceFit(piecePos + def::vf2d(0.0f, deltaTime * 5.0f), piece, rotation))
+		if (DoesPieceFit(piecePos + def::Vector2f(0.0f, deltaTime * 5.0f), piece, rotation))
 			piecePos.y += deltaTime * 5.0f;
 		else
 		{
@@ -203,7 +202,7 @@ protected:
 		// Destruct all fully filled lines
 		int destructedLines = 0;
 
-		def::vi2d p;
+		def::Vector2i p;
 		for (p.y = 0; p.y < fieldSize.y; p.y++)
 		{
 			bool fullyFilled = true;
@@ -260,7 +259,7 @@ protected:
 			DrawPiece(piecePos, piece, rotation, false, false);
 
 		// Draw next piece and it's borders
-		DrawPiece(fieldPos + def::vi2d(2, fieldSize.y * 0.4f), nextPiece, 0, true, true, def::DARK_GREY);
+		DrawPiece(fieldPos + def::Vector2i(2, fieldSize.y * 0.4f), nextPiece, 0, true, true, def::DARK_GREY);
 
 		// Draw score
 		FillRectangle(4, cellSize.y * 4 + 12, 8 * 9, 10, def::BLACK);

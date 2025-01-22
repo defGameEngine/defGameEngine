@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <array>
 
@@ -44,8 +43,8 @@ public:
 private:
 	Map<int> map;
 
-	def::vi2d mapSize = { MAP_WIDTH, MAP_HEIGHT };
-	def::vi2d cellSize = { CELL_SIZE, CELL_SIZE };
+	def::Vector2i mapSize = { MAP_WIDTH, MAP_HEIGHT };
+	def::Vector2i cellSize = { CELL_SIZE, CELL_SIZE };
 
 public:
 	bool OnUserCreate() override
@@ -72,9 +71,9 @@ public:
 	{
 		if (GetMouse(def::Button::LEFT).pressed)
 		{
-			def::vi2d cellPos = GetMousePos() / cellSize;
+			def::Vector2i cellPos = GetMousePos() / cellSize;
 
-			if (cellPos < mapSize && cellPos >= def::vi2d(0, 0))
+			if (cellPos < mapSize && cellPos >= def::Vector2i(0, 0))
 			{
 				int* valueOld = map.get(cellPos.x, cellPos.y);
 
@@ -101,15 +100,15 @@ public:
 
 		Clear(def::BLACK);
 
-		def::vi2d pos;
+		def::Vector2i pos;
 		for (pos.x = 0; pos.x < MAP_WIDTH; pos.x++)
 			for (pos.y = 0; pos.y < MAP_HEIGHT; pos.y++)
 			{
-				def::vi2d cellPos = pos * cellSize;
+				def::Vector2i cellPos = pos * cellSize;
 				int value = map.values[pos.y * MAP_WIDTH + pos.x];
 
 				DrawRectangle(cellPos, cellSize);
-				if (value > 0) DrawString(def::vf2d(cellPos) + def::vf2d(cellSize) * 0.25f, std::to_string(value));
+				if (value > 0) DrawString(def::Vector2f(cellPos) + def::Vector2f(cellSize) * 0.25f, std::to_string(value));
 			}
 
 		return true;

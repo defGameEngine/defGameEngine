@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <stack>
 
@@ -12,7 +11,7 @@ public:
 	}
 
 private:
-	std::stack<def::vi2d> stack;
+	std::stack<def::Vector2i> stack;
 	std::vector<int> maze;
 	int nVisited;
 
@@ -25,7 +24,7 @@ private:
 		CELL_VISITED = 16
 	};
 
-	def::vi2d vMazeSize;
+	def::Vector2i vMazeSize;
 	int nCellSize;
 
 protected:
@@ -50,14 +49,14 @@ protected:
 	{
 		auto offset = [&](int ox, int oy)
 			{
-				def::vi2d& top = stack.top();
+				def::Vector2i& top = stack.top();
 				return (top.y + oy) * vMazeSize.x + (top.x + ox);
 			};
 
 		if (nVisited < vMazeSize.x * vMazeSize.y)
 		{
 			std::vector<int> vecNeighbors;
-			def::vi2d& vLast = stack.top();
+			def::Vector2i& vLast = stack.top();
 
 			if (vLast.y > 0 && (maze[offset(0, -1)] & CELL_VISITED) == 0)
 				vecNeighbors.push_back(0);
@@ -120,10 +119,10 @@ protected:
 
 		for (int i = 0; i < vMazeSize.x * vMazeSize.y; i++)
 		{
-			def::vi2d p = { i % vMazeSize.x, i / vMazeSize.x };
+			def::Vector2i p = { i % vMazeSize.x, i / vMazeSize.x };
 
 			if (maze[i] & CELL_VISITED)
-				FillRectangle(p * (nCellSize + 1) + 1, def::vi2d(nCellSize, nCellSize), def::GREEN);
+				FillRectangle(p * (nCellSize + 1) + 1, def::Vector2i(nCellSize, nCellSize), def::GREEN);
 
 			for (int c = 0; c < nCellSize; c++)
 			{

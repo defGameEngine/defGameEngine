@@ -1,9 +1,8 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 struct Point
 {
-	def::vf2d coord;
+	def::Vector2f coord;
 	float length;
 };
 
@@ -46,7 +45,7 @@ struct Spline
 		for (float t = 0.0f; t < 1.0f; t += STEP_SIZE)
 		{
 			new_point = GetPoint((float)nNode + t, bLooped);
-			fLength += (new_point.coord - old_point.coord).mag();
+			fLength += (new_point.coord - old_point.coord).Length();
 			old_point = new_point;
 		}
 
@@ -90,12 +89,12 @@ private:
 
 		std::vector<float> t =
 		{
-			pow((points[p[0]].coord - points[p[1]].coord).mag(), fCurvation),
-			pow((points[p[1]].coord - points[p[2]].coord).mag(), fCurvation),
-			pow((points[p[2]].coord - points[p[3]].coord).mag(), fCurvation),
+			pow((points[p[0]].coord - points[p[1]].coord).Length(), fCurvation),
+			pow((points[p[1]].coord - points[p[2]].coord).Length(), fCurvation),
+			pow((points[p[2]].coord - points[p[3]].coord).Length(), fCurvation),
 		};
 
-		std::vector<def::vf2d> m =
+		std::vector<def::Vector2f> m =
 		{
 			(1.0f - fTension) * (points[p[2]].coord - points[p[1]].coord + t[1] * ((points[p[1]].coord - points[p[0]].coord) / t[0] - (points[p[2]].coord - points[p[0]].coord) / (t[0] + t[1]))),
 			(1.0f - fTension) * (points[p[2]].coord - points[p[1]].coord + t[1] * ((points[p[3]].coord - points[p[2]].coord) / t[2] - (points[p[3]].coord - points[p[1]].coord) / (t[1] + t[2]))),
@@ -185,7 +184,7 @@ protected:
 
 			float r = atan2f(-g.coord.y, g.coord.x);
 
-			def::vf2d vDir = 5.0f * def::vf2d(sin(r), cos(r));
+			def::Vector2f vDir = 5.0f * def::Vector2f(sin(r), cos(r));
 
 			DrawLine(p.coord + vDir, p.coord - vDir, def::GREY);
 			Draw(p.coord, def::WHITE);
@@ -216,7 +215,7 @@ protected:
 
 		float r = atan2f(-gradient.coord.y, gradient.coord.x);
 
-		def::vf2d vDir = 5.0f * def::vf2d(sin(r), cos(r));
+		def::Vector2f vDir = 5.0f * def::Vector2f(sin(r), cos(r));
 
 		DrawLine(marker.coord + vDir, marker.coord - vDir, def::DARK_BLUE);
 

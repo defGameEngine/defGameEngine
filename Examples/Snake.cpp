@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <list>
 
@@ -12,17 +11,17 @@ public:
 	}
 
 protected:
-	def::vi2d apple;
+	def::Vector2i apple;
 	int dir;
 	bool isDead;
 
 	int score = 0;
 	int record = 0;
 
-	std::list<def::vi2d> snake;
+	std::list<def::Vector2i> snake;
 
-	def::vi2d bodyPartSize = { 16, 16 };
-	def::vi2d worldSize;
+	def::Vector2i bodyPartSize = { 16, 16 };
+	def::Vector2i worldSize;
 
 	float delay = 0.5f;
 	float timer = 0.0f;
@@ -41,16 +40,16 @@ protected:
 	{
 		isDead = false;
 
-		apple = worldSize / def::vi2d(4, 2);
+		apple = worldSize / def::Vector2i(4, 2);
 		dir = 0;
 
-		def::vi2d snakePos = worldSize / 2;
+		def::Vector2i snakePos = worldSize / 2;
 		snake =
 		{
 			snakePos,
-			snakePos + def::vi2d(1, 0),
-			snakePos + def::vi2d(2, 0),
-			snakePos + def::vi2d(3, 0),
+			snakePos + def::Vector2i(1, 0),
+			snakePos + def::Vector2i(2, 0),
+			snakePos + def::Vector2i(3, 0),
 		};
 
 		if (record < score)
@@ -61,7 +60,7 @@ protected:
 		srand(time(0));
 	}
 
-	void DrawBodyPart(const def::vi2d& pos, const def::Pixel& col)
+	void DrawBodyPart(const def::Vector2i& pos, const def::Pixel& col)
 	{
 		FillRectangle(pos * bodyPartSize, bodyPartSize, col);
 	}
@@ -73,7 +72,7 @@ protected:
 			if (GetKey(def::Key::SPACE).pressed)
 				NewGame();
 
-			DrawString(GetScreenSize() / def::vi2d(3, 2), "GAME OVER! PRESS SPACE.");
+			DrawString(GetScreenSize() / def::Vector2i(3, 2), "GAME OVER! PRESS SPACE.");
 			return true;
 		}
 
@@ -96,7 +95,7 @@ protected:
 			{
 				score++;
 
-				apple = def::vi2d(rand(), rand()) % worldSize;
+				apple = def::Vector2i(rand(), rand()) % worldSize;
 				snake.push_back(snake.back());
 			}
 

@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 constexpr size_t STARS_COUNT = 200;
 
@@ -21,7 +20,7 @@ public:
 
 	std::vector<Star> stars;
 
-	def::vf2d origin;
+	def::Vector2f origin;
 	float bound;
 
 protected:
@@ -65,7 +64,7 @@ protected:
 			if (s.distance > bound)
 				AddStar(i);
 
-			Draw(origin + def::vf2d(cos(s.angle), sin(s.angle)) * s.distance, s.col * (s.distance / bound * 0.5f));
+			Draw(origin + def::Vector2f(cos(s.angle), sin(s.angle)) * s.distance, s.col * (s.distance / bound * 0.5f));
 		}
 
 		return true;

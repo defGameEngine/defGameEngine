@@ -1,10 +1,9 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 struct Particle
 {
-	def::vf2d offset;
-	def::vf2d velocity;
+	def::Vector2f offset;
+	def::Vector2f velocity;
 
 	float speed;
 
@@ -13,9 +12,9 @@ struct Particle
 
 struct Firework
 {
-	def::vf2d pos;
+	def::Vector2f pos;
 
-	def::vf2d explodedPos;
+	def::Vector2f explodedPos;
 
 	// Current time in milliseconds
 	float explosionTimer;

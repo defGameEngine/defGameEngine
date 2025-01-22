@@ -1,7 +1,7 @@
 #ifndef DGE_CAMERA2D_HPP
 #define DGE_CAMERA2D_HPP
 
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 namespace def
 {
@@ -18,21 +18,21 @@ namespace def
 
 	public:
 		Camera2D() = default;
-		Camera2D(const vf2d& pos, const vf2d& viewArea, const Mode mode = Mode::None);
+		Camera2D(const Vector2f& pos, const Vector2f& viewArea, const Mode mode = Mode::None);
 
-		void Initialise(const vf2d& pos, const vf2d& viewArea, const Mode mode = Mode::None);
-		vf2d Update(vf2d& target, float deltaTime);
+		void Initialise(const Vector2f& pos, const Vector2f& viewArea, const Mode mode = Mode::None);
+		Vector2f Update(Vector2f& target, float deltaTime);
 
 		void SetMode(const Mode mode);
-		void SetPosition(const vf2d& pos);
+		void SetPosition(const Vector2f& pos);
 
 		Mode GetMode() const;
-		vf2d GetPosition() const;
+		Vector2f GetPosition() const;
 
 	private:
 		Mode m_Mode;
-		vf2d m_ViewArea;
-		vf2d m_Position;
+		Vector2f m_ViewArea;
+		Vector2f m_Position;
 
 	};
 }
@@ -42,19 +42,19 @@ namespace def
 
 namespace def
 {
-	Camera2D::Camera2D(const vf2d& pos, const vf2d& viewArea, const Mode mode)
+	Camera2D::Camera2D(const Vector2f& pos, const Vector2f& viewArea, const Mode mode)
 	{
 		Initialise(pos, viewArea, mode);
 	}
 
-	void Camera2D::Initialise(const vf2d& pos, const vf2d& viewArea, const Mode mode)
+	void Camera2D::Initialise(const Vector2f& pos, const Vector2f& viewArea, const Mode mode)
 	{
 		m_Mode = mode;
 		m_ViewArea = viewArea;
 		m_Position = pos;
 	}
 
-	vf2d Camera2D::Update(vf2d& target, float deltaTime)
+	Vector2f Camera2D::Update(Vector2f& target, float deltaTime)
 	{
 		switch (m_Mode)
 		{
@@ -67,7 +67,7 @@ namespace def
 			break;
 
 		case Camera2D::Mode::BorderLock:
-			m_Position = (target / m_ViewArea).floor() * m_ViewArea + m_ViewArea * 0.5f;
+			m_Position = (target / m_ViewArea).Floor() * m_ViewArea + m_ViewArea * 0.5f;
 			break;
 
 		}
@@ -80,7 +80,7 @@ namespace def
 		m_Mode = mode;
 	}
 
-	void Camera2D::SetPosition(const vf2d& pos)
+	void Camera2D::SetPosition(const Vector2f& pos)
 	{
 		m_Position = pos;
 	}
@@ -90,7 +90,7 @@ namespace def
 		return m_Mode;
 	}
 
-	vf2d Camera2D::GetPosition() const
+	Vector2f Camera2D::GetPosition() const
 	{
 		return m_Position;
 	}

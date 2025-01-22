@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #define DGE_AFFINE_TRANSFORMS
 #include "../Extensions/DGE_AffineTransforms.hpp"
@@ -9,7 +8,7 @@ struct Shape;
 struct Node
 {
 	Shape* parent;
-	def::vi2d pos;
+	def::Vector2i pos;
 };
 
 struct Shape
@@ -21,7 +20,7 @@ struct Shape
 
 	virtual void DrawYourself(def::AffineTransforms& vendor) = 0;
 
-	Node* GetNextNode(const def::vf2d& pos)
+	Node* GetNextNode(const def::Vector2f& pos)
 	{
 		if (nodes.size() == maxNodes)
 			return nullptr;
@@ -40,7 +39,7 @@ struct Shape
 			vendor.FillTextureCircle(n.pos, 2, def::RED);
 	}
 
-	Node* HitNode(const def::vi2d& vPos)
+	Node* HitNode(const def::Vector2i& vPos)
 	{
 		for (auto& n : nodes)
 		{
@@ -82,7 +81,7 @@ struct Circle : Shape
 	{
 		vendor.DrawTextureLine(nodes[0].pos, nodes[1].pos, def::WHITE);
 
-		uint32_t radius = uint32_t((nodes[1].pos - nodes[0].pos).mag());
+		uint32_t radius = uint32_t((nodes[1].pos - nodes[0].pos).Length());
 		vendor.DrawTextureCircle(nodes[0].pos, radius);
 	}
 };
@@ -97,8 +96,8 @@ struct Rect : Shape
 
 	virtual void DrawYourself(def::AffineTransforms& vendor) override
 	{
-		def::vi2d p1 = nodes[0].pos;
-		def::vi2d p2 = nodes[1].pos;
+		def::Vector2i p1 = nodes[0].pos;
+		def::Vector2i p2 = nodes[1].pos;
 		if (p1 > p2) std::swap(p1, p2);
 
 		vendor.DrawTextureRectangle(p1, p2 - p1, def::WHITE);
@@ -123,8 +122,8 @@ struct Curve : Shape
 			vendor.DrawTextureLine(nodes[0].pos, nodes[1].pos, def::WHITE);
 			vendor.DrawTextureLine(nodes[1].pos, nodes[2].pos, def::WHITE);
 
-			def::vi2d op = nodes[0].pos;
-			def::vi2d np = op;
+			def::Vector2i op = nodes[0].pos;
+			def::Vector2i np = op;
 
 			for (float t = 0.0f; t <= 1.0f; t += 0.01f)
 			{
@@ -154,10 +153,10 @@ public:
 public:
 	void DrawSelectedArea()
 	{
-		if (selectedArea.second != def::vi2d(-1, -1))
+		if (selectedArea.second != def::Vector2i(-1, -1))
 		{
-			def::vi2d first = selectedArea.first;
-			def::vi2d second = selectedArea.second;
+			def::Vector2i first = selectedArea.first;
+			def::Vector2i second = selectedArea.second;
 
 			if (first > second)
 				std::swap(first, second);
@@ -185,7 +184,7 @@ public:
 		if (GetMouseWheelDelta() < 0)
 			at.Zoom(0.9f, GetMousePos());
 
-		def::vi2d cursor = at.ScreenToWorld(GetMousePos());
+		def::Vector2i cursor = at.ScreenToWorld(GetMousePos());
 
 		if (GetKey(def::Key::L).pressed)
 		{
@@ -247,7 +246,7 @@ public:
 
 		if (GetKey(def::Key::D).pressed)
 		{
-			if (selectedArea.second != def::vi2d(-1, -1))
+			if (selectedArea.second != def::Vector2i(-1, -1))
 			{
 				for (int32_t x = selectedArea.first.x; x <= selectedArea.second.x; x++)
 					for (int32_t y = selectedArea.first.y; y <= selectedArea.second.y; y++)
@@ -302,8 +301,8 @@ public:
 
 		at.DrawTextureCircle(cursor, 2, def::DARK_GREY);
 
-		def::vi2d origin = at.GetOrigin();
-		def::vi2d end = at.GetEnd();
+		def::Vector2i origin = at.GetOrigin();
+		def::Vector2i end = at.GetEnd();
 
 		at.DrawTextureLine({ ScreenWidth() / 2, origin.y }, { ScreenWidth() / 2, end.y }, def::GREY);
 		at.DrawTextureLine({ origin.x, ScreenHeight() / 2 }, { end.x, ScreenHeight() / 2 }, def::GREY);
@@ -339,7 +338,7 @@ private:
 	Shape* tempShape = nullptr;
 	Node* selected = nullptr;
 
-	std::pair<def::vi2d, def::vi2d> selectedArea;
+	std::pair<def::Vector2i, def::Vector2i> selectedArea;
 
 	def::AffineTransforms at;
 

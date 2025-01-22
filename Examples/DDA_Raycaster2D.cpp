@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 class Raycasting : public def::GameEngine
 {
@@ -15,18 +14,18 @@ public:
 	}
 
 private:
-	def::vi2d tileSize;
-	def::vi2d tilesCount;
+	def::Vector2i tileSize;
+	def::Vector2i tilesCount;
 
-	def::vf2d start;
-	def::vf2d end;
+	def::Vector2f start;
+	def::Vector2f end;
 
 	bool* map;
 
 	float pointSpeed = 100.0f;
 
 protected:
-	void ControlPoint(def::vf2d& point, const float deltaTime, const def::Key up, const def::Key down, const def::Key left, const def::Key right)
+	void ControlPoint(def::Vector2f& point, const float deltaTime, const def::Key up, const def::Key down, const def::Key left, const def::Key right)
 	{
 		if (GetKey(up).held)
 			point.y -= pointSpeed * deltaTime;
@@ -41,12 +40,12 @@ protected:
 			point.x += pointSpeed * deltaTime;
 	}
 
-	void SetTile(const def::vi2d& pos, const bool value)
+	void SetTile(const def::Vector2i& pos, const bool value)
 	{
 		map[pos.y * tilesCount.x + pos.x] = value;
 	}
 
-	bool GetTile(const def::vi2d& pos)
+	bool GetTile(const def::Vector2i& pos)
 	{
 		return map[pos.y * tilesCount.x + pos.x];
 	}
@@ -71,7 +70,7 @@ protected:
 
 		if (GetMouse(def::Button::RIGHT).pressed)
 		{
-			def::vi2d tilePos = GetMousePos() / tileSize;
+			def::Vector2i tilePos = GetMousePos() / tileSize;
 
 			SetTile(tilePos, !GetTile(tilePos));
 		}
@@ -79,12 +78,12 @@ protected:
 		// Perform DDA algorithm
 		// thank you, https://lodev.org/cgtutor/raycasting.html
 
-		def::vf2d rayStart = start / tileSize;
-		def::vf2d rayDirection = (end / tileSize - rayStart).norm();
-		def::vf2d stepSize = (1.0f / rayDirection).abs();
+		def::Vector2f rayStart = start / tileSize;
+		def::Vector2f rayDirection = (end / tileSize - rayStart).Normalise();
+		def::Vector2f stepSize = (1.0f / rayDirection).Abs();
 
-		def::vf2d side, step;
-		def::vi2d mapPos = rayStart;
+		def::Vector2f side, step;
+		def::Vector2i mapPos = rayStart;
 
 		if (rayDirection.x < 0)
 		{
@@ -135,14 +134,14 @@ protected:
 			}
 		}
 
-		def::vf2d intersectionPoint;
+		def::Vector2f intersectionPoint;
 
 		if (tileFound)
 			intersectionPoint = rayStart + rayDirection * distance;
 
 		Clear(def::BLACK);
 
-		def::vi2d p;
+		def::Vector2i p;
 		for (; p.y < tilesCount.y; p.y++)
 			for (p.x = 0; p.x < tilesCount.x; p.x++)
 			{

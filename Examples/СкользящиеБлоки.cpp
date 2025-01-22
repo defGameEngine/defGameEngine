@@ -1,5 +1,6 @@
-#define DGE_APPLICATION
-#include "defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
+
+#include <functional>
 
 enum ТипСтороны
 {
@@ -14,7 +15,7 @@ constexpr int РАЗМЕР_ПЛИТКИ = 32;
 
 struct Блок
 {
-		virtual void Нарисовать(def::GameEngine* движок, const def::vi2d& позиция) const
+		virtual void Нарисовать(def::GameEngine* движок, const def::Vector2i& позиция) const
 		{
 				if (движок)
 						движок->DrawPartialSprite(позиция * РАЗМЕР_ПЛИТКИ, файловаяПозиция, { РАЗМЕР_ПЛИТКИ, РАЗМЕР_ПЛИТКИ }, с_Графика);
@@ -25,7 +26,7 @@ struct Блок
 				return false;
 		}
 
-		def::vi2d файловаяПозиция;
+		def::Vector2i файловаяПозиция;
 
 		static def::Sprite* с_Графика;
 };
@@ -98,7 +99,7 @@ struct Блок_Счётчик : Блок
 				return false;
 		}
 
-		void Нарисовать(def::GameEngine* движок, const def::vi2d& позиция) const override
+		void Нарисовать(def::GameEngine* движок, const def::Vector2i& позиция) const override
 		{
 				Блок::Нарисовать(движок, позиция);
 				движок->DrawString(позиция * РАЗМЕР_ПЛИТКИ + РАЗМЕР_ПЛИТКИ / 8, std::to_string(оставшиесяХоды), def::WHITE);
@@ -132,9 +133,9 @@ public:
 		}
 
 		std::vector<Блок*> карта;
-		def::vi2d размерКарты;
+		def::Vector2i размерКарты;
 
-		def::vi2d позицияИгрока = { 1, 1 };
+		def::Vector2i позицияИгрока = { 1, 1 };
 
 protected:
 		void ДвинутьБлоки(ТипСтороны сторонаКасания)
@@ -172,7 +173,7 @@ protected:
 
 				if (сторонаКасания != СТОРОНА_НЕОПРЕДЕЛЕНО)
 				{
-						def::vi2d возможнаяПозиция = позицияИгрока;
+						def::Vector2i возможнаяПозиция = позицияИгрока;
 
 						switch (сторонаКасания)
 						{
@@ -212,7 +213,7 @@ protected:
 				размерКарты = GetScreenSize() / РАЗМЕР_ПЛИТКИ;
 				карта.resize(размерКарты.x * размерКарты.y);
 
-				def::vi2d позиция;
+				def::Vector2i позиция;
 				for (; позиция.y < размерКарты.y; позиция.y++)
 				{
 						for (; позиция.x < размерКарты.x; позиция.x++)

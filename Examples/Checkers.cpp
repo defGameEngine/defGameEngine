@@ -5,8 +5,7 @@
 * - Add game restarting
 */
 
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 constexpr int nRows = 3;
 
@@ -31,8 +30,8 @@ public:
         Colour colChecker;
     };
 
-    def::vi2d vFieldSize;
-    def::vi2d vCellSize;
+    def::Vector2i vFieldSize;
+    def::Vector2i vCellSize;
 
     std::vector<Cell> vecCells;
 
@@ -87,7 +86,7 @@ public:
     {
         if (GetMouse(def::Button::LEFT).pressed)
         {
-            def::vi2d vMouse = GetMousePos() / vCellSize;
+            def::Vector2i vMouse = GetMousePos() / vCellSize;
 
             if (vMouse.x >= 0 && vMouse.y >= 0 && vMouse.x < vFieldSize.x && vMouse.y < vFieldSize.y)
             {
@@ -156,11 +155,11 @@ public:
 
 
 
-        def::vi2d p;
+        def::Vector2i p;
         for (p.x = 0; p.x < vFieldSize.x; p.x++)
             for (p.y = 0; p.y < vFieldSize.y; p.y++)
             {
-                def::vi2d coord = p * vCellSize;
+                def::Vector2i coord = p * vCellSize;
                 int i = p.y * vFieldSize.x + p.x;
 
                 switch (vecCells[i].colCell)

@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #define DGE_AFFINE_TRANSFORMS
 #include "../Extensions/DGE_AffineTransforms.hpp"
@@ -18,8 +17,8 @@ public:
 	def::AffineTransforms at;
 	def::Camera2D camera;
 
-	def::vf2d pos;
-	def::vf2d size;
+	def::Vector2f pos;
+	def::Vector2f size;
 
 	def::Sprite* spr;
 

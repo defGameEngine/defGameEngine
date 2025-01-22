@@ -1,9 +1,8 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 using namespace def;
 
-vf2d RandomGradient(const vi2d& i)
+Vector2f RandomGradient(const Vector2i& i)
 {
 	uint32_t a = i.x, b = i.y;
 	a *= 3284157443u; b ^= a << 16 | a >> 16;
@@ -14,18 +13,18 @@ vf2d RandomGradient(const vi2d& i)
 	return { cosf(random), sinf(random) };
 }
 
-float DotProductGridGradient(const vi2d& i, const vf2d& p)
+float DotProductGridGradient(const Vector2i& i, const Vector2f& p)
 {
-	return (p - vf2d(i)).dot(RandomGradient(i));
+	return (p - Vector2f(i)).DotProduct(RandomGradient(i));
 }
 
 // Returns float value (0.0f - 1.0f)
-float PerlinNoise2D(const vf2d& p)
+float PerlinNoise2D(const Vector2f& p)
 {
-	vi2d i0 = p.floor();
-	vi2d i1 = i0 + 1.0f;
+	Vector2i i0 = p.Floor();
+	Vector2i i1 = i0 + 1.0f;
 
-	vf2d w = p - vf2d(i0);
+	Vector2f w = p - Vector2f(i0);
 
 	float ix0 = std::lerp(
 		DotProductGridGradient(i0, p),
@@ -61,7 +60,7 @@ private:
 
 				for (int o = 0; o < octaves; o++)
 				{
-					n += PerlinNoise2D(vf2d(i, j) / (vf2d)GetScreenSize() * frequency) * amplitude;
+					n += PerlinNoise2D(Vector2f(i, j) / (Vector2f)GetScreenSize() * frequency) * amplitude;
 
 					frequency *= 2.0f;
 					amplitude *= 0.5f;

@@ -1,5 +1,4 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <array>
 
@@ -11,8 +10,8 @@ public:
 		SetTitle("Jackpot");
 	}
 
-	def::vi2d machinePos = { 30, 60 };
-	def::vi2d machineCellSize = { 16, 16 };
+	def::Vector2i machinePos = { 30, 60 };
+	def::Vector2i machineCellSize = { 16, 16 };
 
 	enum CellType : uint8_t
 	{
@@ -92,7 +91,7 @@ protected:
 
 		Clear(def::BROWN);
 
-		def::vi2d p;
+		def::Vector2i p;
 		for (auto& l : lines)
 		{
 			for (p.y = 0; p.y < l.content.size(); p.y++)
@@ -106,7 +105,7 @@ protected:
 				case GREEN: col = def::GREEN; break;
 				}
 
-				def::vi2d pos = (p + def::vi2d(0.0f, l.offset)) * machineCellSize;
+				def::Vector2i pos = (p + def::Vector2i(0.0f, l.offset)) * machineCellSize;
 
 				FillRectangle(pos, machineCellSize, col);
 				DrawRectangle(pos, machineCellSize, def::BROWN);
@@ -137,21 +136,21 @@ protected:
 
 		Clear(def::DARK_CYAN);
 
-		DrawString(machinePos - def::vi2d(0, 12), "Score: " + std::to_string(score));
+		DrawString(machinePos - def::Vector2i(0, 12), "Score: " + std::to_string(score));
 		DrawSprite(machinePos, field->sprite);
 
 		int y = 0;
 
-		FillRectangle(machinePos + def::vi2d(3 * machineCellSize.x + 6, y), { 5, 5 }, def::RED);
-		DrawString(machinePos + def::vi2d(3 * machineCellSize.x + 14, y), "20");
+		FillRectangle(machinePos + def::Vector2i(3 * machineCellSize.x + 6, y), { 5, 5 }, def::RED);
+		DrawString(machinePos + def::Vector2i(3 * machineCellSize.x + 14, y), "20");
 		y += 12;
 
-		FillRectangle(machinePos + def::vi2d(3 * machineCellSize.x + 6, y), { 5, 5 }, def::BLUE);
-		DrawString(machinePos + def::vi2d(3 * machineCellSize.x + 14, y), "40");
+		FillRectangle(machinePos + def::Vector2i(3 * machineCellSize.x + 6, y), { 5, 5 }, def::BLUE);
+		DrawString(machinePos + def::Vector2i(3 * machineCellSize.x + 14, y), "40");
 		y += 12;
 
-		FillRectangle(machinePos + def::vi2d(3 * machineCellSize.x + 6, y), { 5, 5 }, def::GREEN);
-		DrawString(machinePos + def::vi2d(3 * machineCellSize.x + 14, y), "100");
+		FillRectangle(machinePos + def::Vector2i(3 * machineCellSize.x + 6, y), { 5, 5 }, def::GREEN);
+		DrawString(machinePos + def::Vector2i(3 * machineCellSize.x + 14, y), "100");
 		y += 12;
 
 		return true;

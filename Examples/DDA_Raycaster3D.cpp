@@ -1,12 +1,11 @@
-#define DGE_APPLICATION
-#include "../defGameEngine.hpp"
+#include "../Include/defGameEngine.hpp"
 
 #include <algorithm>
 
 struct Object
 {
-	def::vf2d pos;
-	def::vf2d vel;
+	def::Vector2f pos;
+	def::Vector2f vel;
 
 	float speed;
 
@@ -62,12 +61,12 @@ private:
 
 	std::string map;
 
-	def::vi2d mapSize = { 32, 32 };
-	def::vi2d texSize = { 64, 64 };
+	def::Vector2i mapSize = { 32, 32 };
+	def::Vector2i texSize = { 64, 64 };
 
-	def::vf2d playerPos = { 7.0f, 3.0f };
-	def::vf2d playerVel = { -1.0, 0.0f };
-	def::vf2d playerPlane = { 0.0f, 0.66f };
+	def::Vector2f playerPos = { 7.0f, 3.0f };
+	def::Vector2f playerVel = { -1.0, 0.0f };
+	def::Vector2f playerPlane = { 0.0f, 0.66f };
 
 	float moveSpeed = 5.0f;
 	float rotSpeed = 3.0f;
@@ -137,7 +136,7 @@ protected:
 
 		if (GetKey(def::Key::W).held)
 		{
-			def::vf2d vel = playerVel * moveSpeed * deltaTime;
+			def::Vector2f vel = playerVel * moveSpeed * deltaTime;
 
 			if (PointOnMap(int(playerPos.x + vel.x), (int)playerPos.y) && map[(int)playerPos.y * mapSize.x + int(playerPos.x + vel.x)] == '.')
 				playerPos.x += vel.x;
@@ -148,7 +147,7 @@ protected:
 
 		if (GetKey(def::Key::S).held)
 		{
-			def::vf2d vel = playerVel * moveSpeed * deltaTime;
+			def::Vector2f vel = playerVel * moveSpeed * deltaTime;
 
 			if (PointOnMap(int(playerPos.x - vel.x), (int)playerPos.y) && map[(int)playerPos.y * mapSize.x + int(playerPos.x - vel.x)] == '.')
 				playerPos.x -= vel.x;
@@ -188,7 +187,7 @@ protected:
 			{
 				if (o1.id != o2.id)
 				{
-					if (o1.pos.round() == o2.pos.round())
+					if (o1.pos.Round() == o2.pos.Round())
 					{
 						if (o1.type == Objects::BULLET || o2.type == Objects::BULLET)
 						{
@@ -207,16 +206,16 @@ protected:
 		{
 			float playerAngle = 2.0f * (float)x / (float)ScreenWidth() - 1.0f;
 
-			def::vf2d rayDir = playerVel + playerPlane * playerAngle;
-			def::vf2d distance = (1.0f / rayDir).abs();
+			def::Vector2f rayDir = playerVel + playerPlane * playerAngle;
+			def::Vector2f distance = (1.0f / rayDir).Abs();
 
 			bool doesHitWall = false;
 			bool noWall = false;
 			int side = 0;
 
-			def::vi2d step;
-			def::vf2d fromCurrentDistance;
-			def::vi2d mapPos = playerPos;
+			def::Vector2i step;
+			def::Vector2f fromCurrentDistance;
+			def::Vector2i mapPos = playerPos;
 
 			float distanceToWall;
 
@@ -287,7 +286,7 @@ protected:
 
 			testPoint -= floorf(testPoint);
 
-			def::vi2d tex = { int(testPoint * (float)texSize.x), 0 };
+			def::Vector2i tex = { int(testPoint * (float)texSize.x), 0 };
 
 			if ((side == 0 && rayDir.x > 0.0f) || (side == 1 && rayDir.y < 0.0f))
 				tex.x = texSize.x - tex.x - 1;
@@ -301,10 +300,10 @@ protected:
 				{
 					float planeZ = float(ScreenHeight() / 2) / float(ScreenHeight() / 2 - y);
 
-					def::vf2d planePoint = playerPos + 2.0f * rayDir * planeZ;
-					def::vf2d planeSample = planePoint - planePoint.floor();
+					def::Vector2f planePoint = playerPos + 2.0f * rayDir * planeZ;
+					def::Vector2f planeSample = planePoint - planePoint.Floor();
 
-					def::vi2d texPos = (planeSample * texSize).min(texSize);
+					def::Vector2i texPos = (planeSample * texSize).Min(texSize);
 
 					Draw(x, y, tiles->GetPixel(ceilingId * texSize.x + texPos.x, texPos.y)); // ceiling
 					Draw(x, ScreenHeight() - y, tiles->GetPixel(floorId * texSize.x + texPos.x, texPos.y)); // floor
@@ -326,13 +325,13 @@ protected:
 		{
 			o.pos += o.vel * o.speed * deltaTime;
 
-			if (o.pos.floor() >= def::vf2d(0, 0) && o.pos.floor() < mapSize && !std::isdigit(map[(int)o.pos.y * mapSize.x + (int)o.pos.x]))
+			if (o.pos.Floor() >= def::Vector2f(0, 0) && o.pos.Floor() < mapSize && !std::isdigit(map[(int)o.pos.y * mapSize.x + (int)o.pos.x]))
 			{
-				def::vf2d objectPos = o.pos - playerPos;
+				def::Vector2f objectPos = o.pos - playerPos;
 
 				float invDet = 1.0f / (playerPlane.x * playerVel.y - playerPlane.y * playerVel.x);
 
-				def::vf2d transform =
+				def::Vector2f transform =
 				{
 					invDet * (playerVel.y * objectPos.x - playerVel.x * objectPos.y),
 					invDet * (-playerPlane.y * objectPos.x + playerPlane.x * objectPos.y)
@@ -340,14 +339,14 @@ protected:
 
 				float aspectRatio = transform.x / transform.y;
 
-				def::vi2d objectScreenPos = { int(float(ScreenWidth() / 2) * (1.0f + aspectRatio)), ScreenHeight() / 2 };
+				def::Vector2i objectScreenPos = { int(float(ScreenWidth() / 2) * (1.0f + aspectRatio)), ScreenHeight() / 2 };
 				int objectScreenSize = int((float)ScreenHeight() / transform.y);
 
-				def::vi2d ceilingPos = def::vi2d(objectScreenSize, objectScreenSize) / -2 + objectScreenPos;
-				def::vi2d floorPos = def::vi2d(objectScreenSize, objectScreenSize) / 2 + objectScreenPos;
+				def::Vector2i ceilingPos = def::Vector2i(objectScreenSize, objectScreenSize) / -2 + objectScreenPos;
+				def::Vector2i floorPos = def::Vector2i(objectScreenSize, objectScreenSize) / 2 + objectScreenPos;
 
-				ceilingPos = ceilingPos.max(def::vi2d(0, 0)).min(GetScreenSize());
-				floorPos = floorPos.max(def::vi2d(0, 0)).min(GetScreenSize());
+				ceilingPos = ceilingPos.Max(def::Vector2i(0, 0)).Min(GetScreenSize());
+				floorPos = floorPos.Max(def::Vector2i(0, 0)).Min(GetScreenSize());
 
 				SetPixelMode(def::Pixel::Mode::MASK);
 
