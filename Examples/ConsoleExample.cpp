@@ -14,6 +14,7 @@ public:
 	Demo()
 	{
 		SetTitle("Demo");
+		UseOnlyTextures(true);
 	}
 
 private:
@@ -111,10 +112,10 @@ protected:
 			ball.pos += ballSpeed * ball.vel * deltaTime;
 		}
 
-		Clear(def::DARK_BLUE);
+		ClearTexture(def::DARK_BLUE);
 
 		for (const auto& ball : balls)
-			FillCircle(ball.pos, ballRadius, ball.col);
+			FillTextureCircle(ball.pos, ballRadius, ball.col);
 
 		return true;
 	}

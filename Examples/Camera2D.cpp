@@ -25,7 +25,7 @@ public:
 protected:
 	bool OnUserCreate() override
 	{
-		camera.Initialise({ 0, 0 }, GetScreenSize(), def::Camera2D::Mode::BorderLock);
+		camera.Initialise({ 0, 0 }, GetScreenSize(), def::Camera2D::Mode::LazyLock);
 
 		size = { 20, 20 };
 
@@ -62,7 +62,7 @@ int main()
 {
 	AffineTransforms app;
 
-	if (app.Construct(1280, 720, 1, 1))
+	if (app.Construct(1280, 720, 1, 1, false, true))
 		app.Run();
 
 	return 0;

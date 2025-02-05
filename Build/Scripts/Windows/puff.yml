@@ -1,0 +1,64 @@
+data:
+  authors: ["Alex"]
+  description: Build script for defGameEngine
+  projectName: defGameEngine
+
+configuration:
+  shell: powershell
+
+variables:
+  glfw_include: C:\SDK\glfw\include
+  glfw_lib: C:\SDK\glfw\x64\lib-mingw-w64
+  stb_include: C:\SDK\stb
+  libs: -lgdi32 -luser32 -lkernel32 -lopengl32 -lglfw3dll -lglu32
+  flags: -Wall -pedantic -std=c++20 -fms-extensions
+  sources: ../../../Sources/defGameEngine.cpp ../../../Sources/Graphic.cpp ../../../Sources/KeyState.cpp ../../../Sources/Pixel.cpp ../../../Sources/PlatformGL.cpp ../../../Sources/PlatformGLFW3.cpp ../../../Sources/Sprite.cpp ../../../Sources/StbImage.cpp ../../../Sources/Texture.cpp
+
+tasks:
+  build:
+    arguments:
+      - name: name
+      - name: path
+    description: Build single cpp file project
+    commands:
+      - g++ -I"../../../Include" ${flags} -o ../../Target/${name} ${sources} ${path} -I"${stb_include}" -I"${glfw_include}" -L"${glfw_lib}" ${libs}
+
+  build-example:
+    arguments:
+      - name: name
+    description: builds file from the Example folder
+    commands:
+      - puff build ${name} ../../../Examples/${name}.cpp
+
+  build-examples:
+    description: Build all files from Examples folder
+    commands:
+      - puff build-example Tetris
+      - puff build-example Asteroids
+      - puff build-example AxisKiller
+      - puff build-example BreakOut
+      - puff build-example CAD
+      - puff build-example Camera2D
+      - puff build-example Checkers
+      - puff build-example ColorPalette
+      - puff build-example ConsoleExample
+      - puff build-example Cube3D
+      - puff build-example DDA_Raycaster2D
+      - puff build-example DDA_Raycaster3D
+      - puff build-example Fireworks
+      - puff build-example Jackpot
+      - puff build-example Matrices
+      - puff build-example Mazes
+      - puff build-example Mode7
+      - puff build-example PathFinder
+      - puff build-example PerlinNoise
+      - puff build-example PlatformGame
+      - puff build-example Plots
+      - puff build-example Pool
+      - puff build-example SlidingPuzzle
+      - puff build-example Snake
+      - puff build-example Snow
+      - puff build-example Splines
+      - puff build-example StarField
+      - puff build-example Timer
+      - puff build-example Yahtzee
