@@ -126,7 +126,7 @@ int main()
 {
 	Demo app;
 
-	if (app.Construct(256, 240, 4, 4))
+	if (app.Construct(256, 240, 4, 4, false, true))
 		app.Run();
 
 	return 0;

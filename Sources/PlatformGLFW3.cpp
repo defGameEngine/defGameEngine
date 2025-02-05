@@ -101,8 +101,7 @@ namespace def
 		if (!m_Monitor)
 			return false;
 
-		if (!vsync)
-			glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, vsync ? GLFW_TRUE : GLFW_FALSE);
 
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
 		if (!videoMode) return false;
