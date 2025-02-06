@@ -1,4 +1,5 @@
 # Installation Instructions on MacOS
+
 ### Dependencies
 1. Download a C++ IDE, but in these instructions we will be using [Xcode](https://developer.apple.com/xcode).
 

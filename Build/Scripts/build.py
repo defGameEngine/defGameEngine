@@ -98,6 +98,8 @@ def main():
                 c.add_flag('lXinerama')
                 c.add_flag('lXcursor')
                 c.add_flag('lstb')
+            case _:
+                assert False, 'Not implemeneted for your OS, please send an issue'
 
         builder.add_command(c)
 
