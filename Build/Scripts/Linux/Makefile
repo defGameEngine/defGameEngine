@@ -8,7 +8,7 @@ CC_ENGINE_SOURCES=../../../Sources/defGameEngine.cpp ../../../Sources/Graphic.cp
 					../../../Sources/Sprite.cpp ../../../Sources/StbImage.cpp ../../../Sources/Texture.cpp
 
 define compile
-	$(CC) $(CC_FLAGS) -o ../../Target/$(1) $(CC_ENGINE_SOURCES) ../../../Examples/$(1).cpp $(CC_LIBS)
+	$(CC) -I"../../../Include" $(CC_FLAGS) -o ../../Target/$(1) $(CC_ENGINE_SOURCES) ../../../Examples/$(1).cpp $(CC_LIBS)
 endef
 
 .PHONY: all

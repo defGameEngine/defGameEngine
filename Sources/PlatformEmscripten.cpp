@@ -76,10 +76,10 @@ namespace def
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_VbQuad);
 		Vertex verts[4] = {
-			{ { -1.0f, -1.0f, 1.0 }, { 0.0f, 1.0f }, tint },
-			{ { +1.0f, -1.0f, 1.0 }, { 1.0f, 1.0f }, tint },
-			{ { -1.0f, +1.0f, 1.0 }, { 0.0f, 0.0f }, tint },
-			{ { +1.0f, +1.0f, 1.0 }, { 1.0f, 0.0f }, tint },
+			{ { -1.0f, -1.0f, 1.0f }, { 0.0f, 1.0f }, tint },
+			{ { +1.0f, -1.0f, 1.0f }, { 1.0f, 1.0f }, tint },
+			{ { -1.0f, +1.0f, 1.0f }, { 0.0f, 0.0f }, tint },
+			{ { +1.0f, +1.0f, 1.0f }, { 1.0f, 0.0f }, tint },
 		};
 
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, verts, GL_STREAM_DRAW);
@@ -126,8 +126,8 @@ namespace def
 	{
 		emscripten_set_canvas_element_size("#canvas", windowSize.x, windowSize.y);
 
-		EGLint const attributes[] = { EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_ALPHA_SIZE, 8, EGL_NONE };
-		EGLint const configAttributes[] = { EGL_CONTEXT_CLIENT_VERSION , 2, EGL_NONE };
+		const EGLint attributes[] = { EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_ALPHA_SIZE, 8, EGL_NONE };
+		const EGLint configAttributes[] = { EGL_CONTEXT_CLIENT_VERSION , 2, EGL_NONE };
 		EGLint configsCount;
 
 		m_Display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -217,7 +217,7 @@ namespace def
 
 	void PlatformEmscripten::SetIcon(Sprite& icon) const
 	{
-
+		// To set icon you need to put an .ico file near the .html file
 	}
 
 	void PlatformEmscripten::MainLoop()
@@ -252,7 +252,7 @@ namespace def
 	EM_BOOL PlatformEmscripten::WheelCallback(int eventType, const EmscriptenWheelEvent* event, void* userData)
 	{
 		if (eventType == EMSCRIPTEN_EVENT_WHEEL)
-			GameEngine::s_Engine->m_ScrollDelta = -1 * event->deltaY;
+			GameEngine::s_Engine->m_ScrollDelta = -int(event->deltaY);
 
 		return EM_TRUE;
 	}
@@ -280,7 +280,7 @@ namespace def
 		break;
 
 		case EMSCRIPTEN_EVENT_TOUCHEND:
-		e->m_MouseNewState[0] = false;
+			e->m_MouseNewState[0] = false;
 		break;
 
 		}
