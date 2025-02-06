@@ -115,4 +115,28 @@ load images from and save them to files
 ## Texture
 
 ### Description
-Stores info about a texture that you can load from a file or create your own from sprite
+Stores info about a texture that you can load from a file or create your own from a sprite
+
+### Fields
+- **id** - OpenGL id of a texture (used internaly)
+- **uvScale** - simply 1 / size (also used internaly)
+- **size** - size of the texture
+
+### Methods
+- **Load(sprite)** - creates a texture from a sprite
+- **Update(sprite)** - updates a texture using sprite data
+
+## Graphic
+
+### Description
+Combines texture and sprite instances
+
+### Fields
+- **texture** - stores a texture
+- **sprite** - stores a sprite
+
+### Methods
+- **Load(fileName)** - loads a texture and a sprite from a file
+- **Load(size)** - creates a blank sprite and a blank texture
+- **Save(fileName, type)** - saves sprite to a file
+- **UpdateTexture()** - updates content of a texture with sprite data
