@@ -1,8 +1,17 @@
 <p align="center"><img src="Logos/dge_logo_large.png"></p>
 
-# defGameEngine
+# Overview
 
-A cross-platform game engine available on Windows, Linux, and MacOS. This repository includes a comprehensive set of custom functions to create games, along with examples to demonstrate and test each feature.
+defGameEngine is a lightweight, cross-platform 2D game engine designed for simplicity and ease of use. It provides essential tools for rendering graphics, handling input, and managing game states. The engine supports both desktop (via GLFW) and web (via Emscripten) platforms.
+
+# Features
+
+- Cross-Platform: Supports Windows, Linux, macOS, and web browsers.
+- 2D Rendering: Draw shapes, sprites, and text with various blending modes.
+- Input Handling: Keyboard, mouse, and touch input support.
+- Sprite & Texture Management: Load, manipulate, and render images.
+- Layers: Organize rendering into layers with custom shaders.
+- Customizable: Extendable via virtual methods for game logic and rendering.
 
 ## Getting Started
 

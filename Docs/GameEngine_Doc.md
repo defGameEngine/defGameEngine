@@ -7,44 +7,112 @@ Emscripten demo: https://defini7.itch.io/defgameengine-raycaster.
 
 ## Table of Contents
 
-1. [Construct Method](#construct-method)
-2. [DrawString Function](#drawstring-function)
+### Classes and structures
 
-## Construct Method
+1. [Vector2D](#vector2d)
+2. [KeyState](#keystate)
+3. [Pixel](#pixel)
+4. [Sprite](#sprite)
+5. [Texture](#texture)
+6. [Graphic](#graphic)
+7. [Layer](#layer)
+8. [GameEngine](#gameengine)
 
-Initialize the GameEngine with screen and window settings. Configuration with numerical values for the screen size and pixel width, and boolean values for fullscreen, vsync, and dirty pixel.
+## Vector2D
 
-#### Parameters:
+### Description
+Stores **x** and **y** components and provides an useful set of methods and operations to manipulate them
 
-- `screenWidth`: Width of the screen.
-- `screenHeight`: Height of the screen.
-- `pixelWidth`: Pixel width on the screen.
-- `pixelHeight`: Pixel height on the screen.
-- `fullScreen`: Full-screen mode.
-- `vsync`: Vertical synchronization.
-- `dirtyPixel`: Dirty pixel rendering.
+### Fields
+- **x** - first coordinate
+- **y** - second coordinate
 
-#### Example:
-```cpp
-GameEngine::Construct(800, 600, 1, 1, false, false, false);
-```
-This code initializes the GameEngine with a screen size of 800x600 and x and y pixel width by 1. The rest of the parameters are disabled.
+### Methods
+- **Clamp(start, end)** - clamps each component withing the [*start*, *end*] range
+- **Lerp(vector, time)** - linearly interpolates between *this* and *vector* by *time*
+- **Distance(vector)** - computes distance between *this* and *vector*
+- **DotProduct(vector)** - computes dot product of *this* and *vector*
+- **CrossProduct(vector)** - computes cross product of *this* and *vector*
+- **Angle(vector)** - computes angle between *this* and *vector* using dot product
+- **Length2()** - returns squared length of a vector
+- **Length()** - returns length of a vector
+- **ManhattanDistance(vector)** - returns manhattan distance between *this* and *vector*
+- **Max(vector)** - performs **std::max** on each component with *this* and *vector*
+- **Min(vector)** - performs **std::min** on each component with *this* and *vector*
+- **Swap(vector)** - swaps values of *this* and *vector* using **std::swap**
+- **Normalise()** - normalises a vector
+- **Abs()** - performs **std::abs** on each component of a vector
+- **Perpendicular()** - gives a vector that's perpendicular to *this*
+- **Floor()** - performs **std::floor** on each component
+- **Ceil()** - performs **std::ceil** on each component
+- **Round()** - performs **std::round** on each component
+- **Cartesian()** - takes *x* as a radius and *y* as an angle and converts from polar to cartesian space
+- **Polar()** - sets *x* to a radius and *y* to an angle and converts from cartesian to polar space
+- **ToString()** - represents a vector as a string
 
-## DrawString Function
+### Types
+- **Vector2i** - Vector2D with int
+- **Vector2f** - Vector2D with float
+- **Vector2d** - Vector2D with double
 
-Draw a string at a specified position with custom color and scaling.
+## KeyState
 
-#### Parameters:
+### Description
+Stores a state of a key 
 
-- `x`: X-position to start.
-- `y`: Y-position to start.
-- `s`: String to be drawn.
-- `col`: Text color.
-- `scaleX`: Scale for x. 
-- `scaleY`: Scale for y. 
+### Fields
+- **held** - true if key has been held otherwise false
+- **released** - true if key has been released otherwise false
+- **pressed** - true if key has been pressed otherwise false
 
-#### Example:
-```cpp
-GameEngine::DrawString(10, 10, "Hello World", WHITE, 2, 2);
-```
-Starting at position (10, 10), the code draws the text "Hello World" in a white color and scales both x and y by 2.
+## Pixel
+
+### Description
+Stores pixel data in the RGBA format and provides an useful set of methods to manipulate them
+
+### Fields
+- **r** - red component
+- **g** - green component
+- **b** - blue component
+- **a** - alpha component
+- **rgba_n** - rgba as a 32-bit integer
+- **rgba_v** - rgba as an array of 8-bit integers
+
+### Methods
+- **Lerp(pixel, factor)** - linearly interpolates between *this* and *vector* by factor
+- **ToString()** - represents a pixel as a string
+- **Float(r, g, b, a)** - constructs **def::Pixel** from normalised float values
+
+### Constants
+- **Mode**:
+    1) **DEFAULT** - simply draws a pixel
+    2) **ALPHA** - draws a pixel with alpha component enabled
+    3) **MASK** - draws a pixel only when **a** == 255
+    4) **CUSTOM** - draws a custom pixel (a.k.a. shaders)
+- **Colours**:
+*BLACK, DARK_BLUE, DARK_GREEN, DARK_CYAN, DARK_RED, DARK_MAGENTA, DARK_GREY, DARK_ORANGE, DARK_BROWN, DARK_PURPLE, ORANGE, GREY, BLUE, GREEN, CYAN, RED, MAGENTA, YELLOW, WHITE, GOLD, PINK, MAROON, LIME, BROWN, BEIGE, VIOLET, PURPLE, NONE*
+
+## Sprite
+
+### Description
+Stores info about an image, i.e. it's size and pixel data, you're able to
+load images from and save them to files
+
+### Fields
+- **pixels** - an image by itself represented as a vector of pixels
+- **size** - size of the image
+
+### Methods
+- **Create(size)** - allocates memory for a new sprite and clears the old one
+- **Load(fileName)** - loads image from a file with **fileName** name
+- **Save(fileName, type)** - saves all pixels to a specified file with **fileName** name and specified **type**
+- **SetPixel(x, y, colour)** - sets **colour** at **x** and **y** coordinates
+- **GetPixel(x, y, wrap)** - gets **colour** at the modified by the **wrap** method **x** and **y** coordinates
+- **GetPixel(pos, wrap)** - the same as before but using **def::Vector2i**
+- **SetPixelData(colour)** - fill the pixels vector with **colour**
+- **Sample(x, y, sample, wrap)** - samples the pixel with **sample** and **wrap** methods
+
+## Texture
+
+### Description
+Stores info about a texture that you can load from a file or create your own from sprite

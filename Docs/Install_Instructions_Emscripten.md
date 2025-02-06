@@ -4,7 +4,6 @@
 1. Download [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html).
 
 2. Download the following header files.
-    - [defGameEngine.hpp](https://raw.githubusercontent.com/defini7/defGameEngine/master/defGameEngine.hpp)
     - [stb_image.h](https://github.com/nothings/stb/blob/master/stb_image.h)
     - [stb_image_write.h](https://github.com/nothings/stb/blob/master/stb_image_write.h)
 
