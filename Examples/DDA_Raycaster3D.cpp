@@ -54,8 +54,6 @@ private:
 
 	def::Sprite* tiles = nullptr;
 
-	int mapCellSize = 3;
-
 	int floorId = Objects::GREYSTONE;
 	int ceilingId = Objects::WOOD;
 
@@ -78,7 +76,7 @@ private:
 protected:
 	bool OnUserCreate() override
 	{
-		tiles = new def::Sprite("Assets/tileset.png");
+		tiles = new def::Sprite("./Assets/tileset.png");
 
 		map =
 			"77777777777777777.........777777"

@@ -190,7 +190,7 @@ protected:
 
 		bool OnUserCreate() override
 		{
-				Блок::с_Графика = new def::Sprite("Assets/blocks.png");
+				Блок::с_Графика = new def::Sprite("../../Examples/Assets/blocks.png");
 
 				std::string строка;
 				строка += "################";

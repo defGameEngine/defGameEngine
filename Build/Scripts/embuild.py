@@ -11,9 +11,7 @@ ASSETS_FOLDER = '../../Examples/Assets'
 ENGINE_INCLUDE_PATH = '../../Include'
 ENGINE_SOURCES_PATH = '../../Sources'
 
-TARGETS = [
-    'СкользящиеБлоки'
-]
+TARGETS = []
 
 
 def construct_engine_sources() -> list[str]:
@@ -58,11 +56,9 @@ def main():
         c.add_flag('o')
         c.add_argument(f'../Target/{target}/index.js')
 
-        assets_dir = f'{get_cwd()}/{ASSETS_FOLDER}'
-
-        if is_dir(assets_dir):
+        if is_dir(ASSETS_FOLDER):
             c.add_argument('--preload-file')
-            c.add_argument(assets_dir)
+            c.add_argument(ASSETS_FOLDER)
 
         builder.add_command(command_initialise.combine(c))
 
