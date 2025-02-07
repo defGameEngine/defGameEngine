@@ -15,8 +15,7 @@ Emscripten demo: https://defini7.itch.io/defgameengine-raycaster.
 4. [Sprite](#sprite)
 5. [Texture](#texture)
 6. [Graphic](#graphic)
-7. [Layer](#layer)
-8. [GameEngine](#gameengine)
+7. [GameEngine](#gameengine)
 
 ## Vector2D
 
@@ -90,7 +89,34 @@ Stores pixel data in the RGBA format and provides an useful set of methods to ma
     3) **MASK** - draws a pixel only when **a** == 255
     4) **CUSTOM** - draws a custom pixel (a.k.a. shaders)
 - **Colours**:
-*BLACK, DARK_BLUE, DARK_GREEN, DARK_CYAN, DARK_RED, DARK_MAGENTA, DARK_GREY, DARK_ORANGE, DARK_BROWN, DARK_PURPLE, ORANGE, GREY, BLUE, GREEN, CYAN, RED, MAGENTA, YELLOW, WHITE, GOLD, PINK, MAROON, LIME, BROWN, BEIGE, VIOLET, PURPLE, NONE*
+    1) BLACK
+    2) DARK_BLUE
+    3) DARK_GREEN
+    4) DARK_CYAN
+    5) DARK_RED
+    6) DARK_MAGENTA
+    7) DARK_GREY
+    8) DARK_ORANGE
+    9) DARK_BROWN
+    10) DARK_PURPLE
+    11) ORANGE
+    12) GREY
+    13) BLUE
+    14) GREEN
+    15) CYAN
+    16) RED
+    17) MAGENTA
+    18) YELLOW
+    19) WHITE
+    20) GOLD
+    21) PINK
+    22) MAROON
+    23) LIME
+    24) BROWN
+    25) BEIGE
+    26) VIOLET
+    27) PURPLE
+    28) NONE
 
 ## Sprite
 
@@ -119,7 +145,7 @@ Stores info about a texture that you can load from a file or create your own fro
 
 ### Fields
 - **id** - OpenGL id of a texture (used internaly)
-- **uvScale** - simply 1 / size (also used internaly)
+- **uvScale** - simply 1 / **size** (also used internaly)
 - **size** - size of the texture
 
 ### Methods
@@ -140,3 +166,55 @@ Combines texture and sprite instances
 - **Load(size)** - creates a blank sprite and a blank texture
 - **Save(fileName, type)** - saves sprite to a file
 - **UpdateTexture()** - updates content of a texture with sprite data
+
+## GameEngine
+
+### Description
+The main class that you need to inherit from, provides functionality for input handling and drawing
+
+### Methods
+
+- **OnUserCreate()** - you **must** override it and the method is called before the start of the application, return true if you want to continue an execution and return false if you want to terminate the application, this method can be used for initialising variables (e.g. def::Sprite*)
+
+- **OnUserUpdate(deltaTime)** - this method is called on every frame of the application and provides **deltaTime** that stores time between the current frame and the last frame in seconds (you also **must** override it)
+
+- **OnAfterDraw()** - this method is called before flushing the screen buffer and after drawing layers
+
+- **OnTextCapturingComplete(text)** - is called when a user presses the **def::ENTER** key and it stores the entered text in **text**
+
+- **OnConsoleCommand** - is called when a user presses the **def::ENTER** key when the console is opened and stores the entered prompt in **command**, you can respond to **output** and set a colour of the respondence in **colour**
+
+- **Construct(screenWidth, screenHeight, pixelWidth, pixelHeight, fullScreen, vsync, dirtyPixel)** - this method **must** be called in the **main** function and it basically constructs a window (arguments are 
+self-explanatory)
+
+- **Run()** - call it when you want to start your application (most of the time after calling the **Construct** method)
+
+    Example:
+    ```cpp
+    App app;
+
+    if (app.Construct(256, 240, 4, 4))
+        app.Run();
+    ```
+
+- **Draw(x, y, colour)** - draws a single pixel on the screen at **x** and **y** coordinates with **colour**
+
+- **DrawLine(x1, y1, x2, y2, colour)** - draws a line with start at **x1** and **y1** and end in the **x2** and **y2** coordinates
+
+- **DrawTriangle(x1, y1, x2, y2, x3, y3, colour)** - draws a triangle at the specified coordinates
+
+- **FillTriangle(x1, y1, x2, y2, x3, y3, colour)** - draws a filled triangle with **colour** colour
+
+- **DrawRectangle(x, y, sizeX, sizeY, colour)** - draws a rectangle at **x** and **y** with the size of (**sizeX**, **sizeY**)
+
+- **FillRectangle(x, y, sizeX, sizeY, colour)** - draws a filled rectangle with **colour** colour at **x** and **y** with the size of (**sizeX**, **sizeY**)
+
+- **DrawCircle(x, y, radius, colour)** - draws a circle with the center at (**x**, **y**)
+
+- **FillCircle(x, y, radius, colour)** - draws a filled circle with **colour** colour
+
+- **DrawEllipse(x, y, sizeX, sizeY, colour)** - draws an ellipse with a start at (**x**, **y**) and the size of (**sizeX**, **sizeY**)
+
+- **FillEllipse(x, y, sizeX, sizeY, colour)** - draws a filled ellipse with a start at (**x**, **y**) and the size of (**sizeX**, **sizeY**)
+
+
