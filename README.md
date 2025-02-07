@@ -10,8 +10,8 @@ defGameEngine is a lightweight, cross-platform 2D game engine designed for simpl
 - 2D Rendering: Draw shapes, sprites, and text with various blending modes.
 - Input Handling: Keyboard, mouse, and touch input support.
 - Sprite & Texture Management: Load, manipulate, and render images.
-- Layers: Organize rendering into layers with custom shaders.
-- Customizable: Extendable via virtual methods for game logic and rendering.
+- Layers: Organise rendering into layers with custom shaders.
+- Customisable: Extendable via virtual methods for game logic and rendering.
 
 ## Getting Started
 

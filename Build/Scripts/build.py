@@ -1,4 +1,8 @@
-from helpers import Builder, Command
+"""
+    It's a build script that you can use for Windows and Linux (no Emscripten support yet)
+"""
+
+from helpers import *
 import platform
 
 
@@ -41,20 +45,15 @@ if OS == 'Windows':
     GLFW_LIB = 'C:/SDK/glfw/x64/lib-mingw-w64'
     STB_INCLUDE = 'C:/SDK/stb'
 
-ENGINE_SOURCES = [
-    'defGameEngine.cpp',
-    'Graphic.cpp',
-    'KeyState.cpp',
-    'Pixel.cpp',
-    'PlatformGL.cpp',
-    'PlatformGLFW3.cpp',
-    'Sprite.cpp',
-    'StbImage.cpp',
-    'Texture.cpp'
-]
+
+def construct_engine_sources() -> list[str]:
+    return [file_name for file_name in get_files('../../Sources/')]
+
 
 def main():
     builder = Builder()
+
+    create_dir_if_not_exists('../Target')
 
     for target in TARGETS:
         c = Command('g++')
@@ -67,8 +66,9 @@ def main():
         c.add_flag('o')
         c.add_argument(f'../Target/{target}')
         
-        for source in ENGINE_SOURCES:
-            c.add_argument('../../Sources/' + source)
+        for source in construct_engine_sources():
+            if source != 'PlatformEmscripten.cpp':
+                c.add_argument('../../Sources/' + source)
 
         c.add_argument(f'../../Examples/{target}.cpp')
 
