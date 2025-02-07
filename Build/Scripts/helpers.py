@@ -1,5 +1,6 @@
 import subprocess
 import os
+import shutil
 
 
 class Command:
@@ -17,6 +18,15 @@ class Command:
             arg += '=' + value
         
         self.arguments.append(arg)
+
+    def combine(self, cmd):
+        new_cmd = Command(self.tool)
+
+        new_cmd.arguments = self.arguments.copy()
+        new_cmd.arguments.extend(['&', cmd.tool])
+        new_cmd.arguments.extend(cmd.arguments.copy())
+
+        return new_cmd
 
 
 class Builder:
@@ -36,10 +46,10 @@ class Builder:
             run = subprocess.run(prompt, capture_output=True, shell=True)
 
             if show_stdout and len(run.stdout) > 0:
-                print(run.stdout.decode("utf-8"))
+                print(run.stdout.decode(errors='ignore'))
 
             if show_stderr and len(run.stderr) > 0:
-                print(run.stderr.decode("utf-8"))
+                print(run.stderr.decode(errors='ignore'))
 
 
 def is_dir(path: str) -> bool:
@@ -86,3 +96,7 @@ def get_files(path, is_local=True) -> list[str] | None:
 
 def get_path_base(path: str):
     return os.path.basename(path)
+
+
+def copy(source: str, dest: str, is_source_local=True, is_dest_local=True):
+    shutil.copy2(fix_path(source, is_source_local), fix_path(dest, is_dest_local))

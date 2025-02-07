@@ -24,7 +24,7 @@ if "%1" == "run" goto :run
 
 :build
     if exist "%SOURCES_PATH%\assets" (
-        call em++ %COMPILER_FLAGS% %EMSCRIPTEN_FLAGS% -I"%STB_PATH%" -I"%ENGINE_INCLUDE_PATH%" -I"%SOURCES_PATH%" %SOURCES_PATH%\%2.cpp %ENGINE_SOURCES% -o ..\..\Target\%2\index.js --preload-file %SOURCES_PATH%\assets
+        call em++ %COMPILER_FLAGS% %EMSCRIPTEN_FLAGS% -I"%STB_PATH%" -I"%ENGINE_INCLUDE_PATH%" %SOURCES_PATH%\%2.cpp %ENGINE_SOURCES% -o ..\..\Target\%2\index.js --preload-file %SOURCES_PATH%\assets
     ) else (
         call em++ %COMPILER_FLAGS% %EMSCRIPTEN_FLAGS% -I"%STB_PATH%" -I"%ENGINE_INCLUDE_PATH%" %SOURCES_PATH%\%2.cpp %ENGINE_SOURCES% -o ..\..\Target\%2\index.js
     )

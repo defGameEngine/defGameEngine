@@ -1,5 +1,5 @@
 """
-    It's a build script that you can use for Windows and Linux (no Emscripten support yet)
+    It's a build script that you can use for Windows and Linux
 """
 
 from helpers import *
@@ -99,7 +99,7 @@ def main():
                 c.add_flag('lXcursor')
                 c.add_flag('lstb')
             case _:
-                assert False, 'Not implemeneted for your OS, please send an issue'
+                assert False, 'The builder is not implemeneted for your OS, please send an issue'
 
         builder.add_command(c)
 
