@@ -1,8 +1,6 @@
 #ifndef DGE_VECTOR2D_HPP
 #define DGE_VECTOR2D_HPP
 
-#ifndef DGE_IGNORE_VEC2D
-
 #include <string>
 #include <algorithm>
 #include <cmath>
@@ -346,7 +344,5 @@ namespace def
 		return v1.x != v2.x || v1.y != v2.y;
 	}
 }
-
-#endif
 
 #endif

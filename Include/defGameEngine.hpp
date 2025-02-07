@@ -36,7 +36,7 @@
 
 #include "Constants.hpp"
 
-#ifndef DGE_IGNORE_VEC2D
+#ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
 #endif
 

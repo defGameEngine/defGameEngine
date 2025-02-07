@@ -4,7 +4,10 @@
 #include <string_view>
 #include <vector>
 
+#ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
+#endif
+
 #include "Pixel.hpp"
 
 namespace def

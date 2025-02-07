@@ -1,7 +1,10 @@
 #ifndef DGE_TEXTURE_HPP
 #define DGE_TEXTURE_HPP
 
+#ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
+#endif
+
 #include "Sprite.hpp"
 
 namespace def
