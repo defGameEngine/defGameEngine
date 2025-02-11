@@ -31,7 +31,7 @@ def send(target):
     builder.add_command(commit)
     builder.add_command(push)
 
-    builder.execute(True, True, True)
+    builder.execute(True, True, True, True)
 
 
 if __name__ == '__main__':

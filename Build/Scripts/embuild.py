@@ -26,8 +26,6 @@ def build(targets):
     command_initialise.add_argument('activate')
     command_initialise.add_argument('latest')
 
-    builder.add_command(command_initialise)
-
     for target in targets:
         create_dir_if_not_exists(f'../Target/{target}')
 

@@ -36,10 +36,8 @@ class Builder:
     def add_command(self, command: Command):
         self.commands.append(command)
 
-    def execute(self, show_stdout=False, show_stderr=False, show_prompt=False):
-        for command in self.commands:
-            prompt = f'{command.tool} {" ".join(command.arguments)}'
-
+    def execute(self, show_stdout=False, show_stderr=False, show_prompt=False, all_at_once=False):
+        def exec(prompt):
             if show_prompt:
                 print(prompt)
 
@@ -50,6 +48,12 @@ class Builder:
 
             if show_stderr and len(run.stderr) > 0:
                 print(run.stderr.decode(errors='ignore'))
+
+        if all_at_once:
+            exec(' & '.join([f'{c.tool} {" ".join(c.arguments)}' for c in self.commands]))
+        else:
+            for command in self.commands:
+                exec(f'{command.tool} {" ".join(command.arguments)}')
 
 
 def is_dir(path: str) -> bool:
