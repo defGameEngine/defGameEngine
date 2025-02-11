@@ -4,9 +4,9 @@ import shutil
 
 
 class Command:
-    def __init__(self, tool: str):
+    def __init__(self, tool: str, arguments=None):
         self.tool = tool
-        self.arguments = []
+        self.arguments = arguments if arguments else []
 
     def add_argument(self, argument: str):
         self.arguments.append(argument)
