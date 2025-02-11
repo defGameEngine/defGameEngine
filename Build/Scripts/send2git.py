@@ -19,7 +19,7 @@ def send(target):
 
     commit = Command('git')
     commit.add_argument('commit')
-    commit.add_flag('m', f'"added {target}"')
+    commit.add_flag('m', f'"added {target}"', True)
 
     push = Command('git')
     push.add_argument('push')

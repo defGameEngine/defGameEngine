@@ -11,11 +11,14 @@ class Command:
     def add_argument(self, argument: str):
         self.arguments.append(argument)
 
-    def add_flag(self, flag: str, value: str | None = None):
+    def add_flag(self, flag: str, value: str | None = None, omit_equals=False):
         arg = '-' + flag
 
         if value:
-            arg += '=' + value
+            if omit_equals:
+                arg += value
+            else:
+                arg += '=' + value
         
         self.arguments.append(arg)
 
