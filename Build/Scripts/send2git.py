@@ -23,6 +23,9 @@ def send(target):
 
     push = Command('git')
     push.add_argument('push')
+    push.add_argument('origin')
+    push.add_argument('master')
+    push.add_argument('--force')
     
     builder.add_command(add)
     builder.add_command(commit)
