@@ -11,14 +11,12 @@ ASSETS_FOLDER = '../../Examples/Assets'
 ENGINE_INCLUDE_PATH = '../../Include'
 ENGINE_SOURCES_PATH = '../../Sources'
 
-TARGETS = []
-
 
 def construct_engine_sources() -> list[str]:
     return [file_name for file_name in get_files('../../Sources/')]
 
 
-def main():
+def build(targets):
     builder = Builder()
 
     create_dir_if_not_exists('../Target')
@@ -30,7 +28,7 @@ def main():
 
     builder.add_command(command_initialise)
 
-    for target in TARGETS:
+    for target in targets:
         create_dir_if_not_exists(f'../Target/{target}')
 
         c = Command('em++')
@@ -63,8 +61,8 @@ def main():
         builder.add_command(command_initialise.combine(c))
 
     builder.execute(True, True, True)
-    copy('Emscripten/template.html', f'../Target/{target}/index.html')
+    copy_file('Emscripten/template.html', f'../Target/{target}/index.html')
 
 
 if __name__ == '__main__':
-    main()
+    build([]) # provide target here

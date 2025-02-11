@@ -4,10 +4,8 @@ import subprocess
 
 EMSDK_PATH = 'C:/SDK/emsdk'
 
-def main():
-    assert len(sys.argv) > 1, 'Please provide target'
-
-    run = subprocess.run(f'{EMSDK_PATH}/emsdk activate latest & emrun ../Target/{sys.argv[1]}/index.html', capture_output=True, shell=True)
+def run(target):
+    run = subprocess.run(f'{EMSDK_PATH}/emsdk activate latest & emrun ../Target/{target}/index.html', capture_output=True, shell=True)
 
     if len(run.stdout) > 0:
         print(run.stdout.decode(errors='ignore'))
@@ -17,4 +15,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    assert len(sys.argv) > 1, 'Please provide target'
+    run(sys.argv[1])

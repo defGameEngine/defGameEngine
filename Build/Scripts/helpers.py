@@ -98,5 +98,13 @@ def get_path_base(path: str):
     return os.path.basename(path)
 
 
-def copy(source: str, dest: str, is_source_local=True, is_dest_local=True):
-    shutil.copy2(fix_path(source, is_source_local), fix_path(dest, is_dest_local))
+def _copy(source: str, dest: str, is_source_local=True, is_dest_local=True, func=None):
+    func(fix_path(source, is_source_local), fix_path(dest, is_dest_local))
+
+
+def copy_file(source: str, dest: str, is_source_local=True, is_dest_local=True):
+    _copy(source, dest, is_source_local, is_dest_local, shutil.copy2)
+
+
+def copy_dirs(source: str, dest: str, is_source_local=True, is_dest_local=True):
+    _copy(source, dest, is_source_local, is_dest_local, os.rename)

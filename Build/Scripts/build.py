@@ -50,7 +50,7 @@ def construct_engine_sources() -> list[str]:
     return [file_name for file_name in get_files('../../Sources/')]
 
 
-def main():
+def build():
     builder = Builder()
 
     create_dir_if_not_exists('../Target')
@@ -106,4 +106,4 @@ def main():
     builder.execute(True, True, True)
 
 if __name__ == '__main__':
-    main()
+    build()
