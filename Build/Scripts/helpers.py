@@ -15,11 +15,8 @@ class Command:
         arg = '-' + flag
 
         if value:
-            if omit_equals:
-                arg += value
-            else:
-                arg += '=' + value
-        
+            arg += (' ' if omit_equals else '=') + value
+
         self.arguments.append(arg)
 
     def combine(self, cmd):
