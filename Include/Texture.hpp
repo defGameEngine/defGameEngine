@@ -14,8 +14,10 @@ namespace def
 		enum class Structure
 		{
 			DEFAULT,
-			FAN,
-			STRIP,
+			TRIANGLE_FAN,
+			TRIANGLE_STRIP,
+			LINES,
+			LINE_STRIP,
 			WIREFRAME
 		};
 

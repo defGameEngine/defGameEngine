@@ -37,10 +37,12 @@ namespace def
 
 		switch (texInst.structure)
 		{
-		case Texture::Structure::DEFAULT:	glBegin(GL_TRIANGLES);		break;
-		case Texture::Structure::FAN:		glBegin(GL_TRIANGLE_FAN);	break;
-		case Texture::Structure::STRIP:		glBegin(GL_TRIANGLE_STRIP);	break;
-		case Texture::Structure::WIREFRAME:	glBegin(GL_LINE_LOOP);		break;
+		case Texture::Structure::DEFAULT:		 glBegin(GL_TRIANGLES);		 break;
+		case Texture::Structure::TRIANGLE_FAN:	 glBegin(GL_TRIANGLE_FAN);	 break;
+		case Texture::Structure::TRIANGLE_STRIP: glBegin(GL_TRIANGLE_STRIP); break;
+		case Texture::Structure::LINES:		 	 glBegin(GL_LINES);	 	 	 break;
+		case Texture::Structure::LINE_STRIP:	 glBegin(GL_LINE_STRIP); 	 break;
+		case Texture::Structure::WIREFRAME:		 glBegin(GL_LINE_LOOP);		 break;
 		}
 
 		for (uint32_t i = 0; i < texInst.points; i++)

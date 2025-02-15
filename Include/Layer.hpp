@@ -15,7 +15,7 @@ namespace def
 		Vector2i offset;
 		Vector2i size;
 
-		Texture::Structure textureStructure = Texture::Structure::FAN;
+		Texture::Structure textureStructure = Texture::Structure::TRIANGLE_FAN;
 		Pixel::Mode pixelMode = Pixel::Mode::DEFAULT;
 
 		bool visible = true;

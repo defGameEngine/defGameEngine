@@ -942,7 +942,7 @@ next:
 
 void GameEngine::DrawRectangle(int x, int y, int sizeX, int sizeY, const Pixel& col)
 {
-	for (int i = 0; i < sizeX - 1; i++)
+	for (int i = 0; i < sizeX; i++)
 	{
 		Draw(x + i, y, col);
 		Draw(x + i, y + sizeY, col);
@@ -953,8 +953,6 @@ void GameEngine::DrawRectangle(int x, int y, int sizeX, int sizeY, const Pixel& 
 		Draw(x, y + i, col);
 		Draw(x + sizeX - 1, y + i, col);
 	}
-
-	Draw(x + sizeX - 1, y + sizeY, col);
 }
 
 void GameEngine::FillRectangle(int x, int y, int sizeX, int sizeY, const Pixel& col)
@@ -1444,27 +1442,28 @@ void GameEngine::DrawTexturePolygon(const std::vector<Vector2f>& verts, const st
 
 void GameEngine::DrawTextureLine(const Vector2i& pos1, const Vector2i& pos2, const Pixel& col)
 {
-	DrawTexturePolygon({ pos1, pos2 }, { col, col }, Texture::Structure::WIREFRAME);
+	DrawTexturePolygon({ pos1, pos2 }, { col }, Texture::Structure::WIREFRAME);
 }
 
 void GameEngine::DrawTextureTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
 {
-	DrawTexturePolygon({ pos1, pos2, pos3 }, { col, col, col }, Texture::Structure::WIREFRAME);
+	DrawTexturePolygon({ pos1, pos2, pos3 }, { col }, Texture::Structure::WIREFRAME);
 }
 
 void GameEngine::FillTextureTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
 {
-	DrawTexturePolygon({ pos1, pos2, pos3 }, { col, col, col }, Texture::Structure::FAN);
+	DrawTexturePolygon({ pos1, pos2, pos3 }, { col }, Texture::Structure::TRIANGLE_FAN);
 }
 
 void GameEngine::DrawTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
 {
-	DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { col, col, col, col }, Texture::Structure::WIREFRAME);
+	// Adding 0.25 is a fix for now, I don't know if that can lead to problems on different configurations
+	DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) + 0.25f } }, { col }, Texture::Structure::WIREFRAME);
 }
 
 void GameEngine::FillTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
 {
-	DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { col, col, col, col }, Texture::Structure::FAN);
+	DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { col }, Texture::Structure::TRIANGLE_FAN);
 }
 
 void GameEngine::DrawTextureCircle(const Vector2i& pos, int radius, const Pixel& col)
@@ -1484,17 +1483,17 @@ void GameEngine::FillTextureCircle(const Vector2i& pos, int radius, const Pixel&
 	for (size_t i = 0; i < verts.size(); i++)
 		verts[i] = s_UnitCircle[i] * (float)radius + pos;
 
-	DrawTexturePolygon(verts, { col }, Texture::Structure::FAN);
+	DrawTexturePolygon(verts, { col }, Texture::Structure::TRIANGLE_FAN);
 }
 
 void GameEngine::GradientTextureTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col1, const Pixel& col2, const Pixel& col3)
 {
-	DrawTexturePolygon({ pos1, pos2, pos3 }, { col1, col2, col3 }, Texture::Structure::FAN);
+	DrawTexturePolygon({ pos1, pos2, pos3 }, { col1, col2, col3 }, Texture::Structure::TRIANGLE_FAN);
 }
 
 void GameEngine::GradientTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& colTL, const Pixel& colTR, const Pixel& colBR, const Pixel& colBL)
 {
-	DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { colTL, colTR, colBR, colBL }, Texture::Structure::FAN);
+	DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { colTL, colTR, colBR, colBL }, Texture::Structure::TRIANGLE_FAN);
 }
 
 void GameEngine::DrawTextureString(const Vector2i& pos, std::string_view text, const Pixel& col, const Vector2f& scale)

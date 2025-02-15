@@ -78,7 +78,7 @@ namespace def
 	{
 		texture = nullptr;
 
-		structure = Texture::Structure::FAN;
+		structure = Texture::Structure::TRIANGLE_FAN;
 		points = 0;
 
 		uv = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
