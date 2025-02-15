@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_CONSTANTS_HPP
 #define DGE_CONSTANTS_HPP
 
