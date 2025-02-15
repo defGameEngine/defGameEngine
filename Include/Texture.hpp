@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_TEXTURE_HPP
 #define DGE_TEXTURE_HPP
 

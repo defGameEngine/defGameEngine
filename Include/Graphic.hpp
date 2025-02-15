@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_GRAPHIC_HPP
 #define DGE_GRAPHIC_HPP
 

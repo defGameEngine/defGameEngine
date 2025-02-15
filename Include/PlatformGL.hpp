@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_PLATFORM_GL_HPP
 #define DGE_PLATFORM_GL_HPP
 

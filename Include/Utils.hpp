@@ -1,8 +1,10 @@
+#pragma once
+
 #ifndef DGE_UTILS_HPP
 #define DGE_UTILS_HPP
 
 #include <list>
-#include <iostream>
+#include <cstdio>
 
 namespace def
 {
@@ -15,9 +17,9 @@ namespace def
 			(values.emplace_back(std::move(args)), ...);
 
 			for (const auto& val : values)
-				std::cout << val << std::endl;
+				fprintf(stderr, "%s\n", val);
 
-			std::cerr << std::endl;
+			fprintf(stderr, "\n");
 
 			exit(1);
 		}

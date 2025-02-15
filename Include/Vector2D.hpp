@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_VECTOR2D_HPP
 #define DGE_VECTOR2D_HPP
 

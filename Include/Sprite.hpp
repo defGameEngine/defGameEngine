@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_SPRITE_HPP
 #define DGE_SPRITE_HPP
 

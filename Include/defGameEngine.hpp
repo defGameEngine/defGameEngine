@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DEF_GAME_ENGINE_HPP
 #define DEF_GAME_ENGINE_HPP
 

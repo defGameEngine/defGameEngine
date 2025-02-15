@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_LAYER_HPP
 #define DGE_LAYER_HPP
 

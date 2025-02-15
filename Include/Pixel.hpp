@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_PIXEL_HPP
 #define DGE_PIXEL_HPP
 

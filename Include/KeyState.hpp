@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DGE_KEY_STATE_HPP
 #define DGE_KEY_STATE_HPP
 
