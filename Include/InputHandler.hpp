@@ -65,6 +65,12 @@ namespace def
         void GrabEvents();
         void FlushBuffers();
 
+		void GrabText();
+		void SetInputText(const std::string& text);
+		void SetTextCursorPosition(size_t pos);
+
+		void ClearCapturedText();
+
         const KeyState& GetKeyState(Key key) const;
         const KeyState& GetButtonState(Button button) const;
 
@@ -98,6 +104,10 @@ namespace def
         int m_ScrollDelta;
 
 		bool m_CaptureText;
+		bool m_Caps;
+
+		std::string m_TextInput;
+		size_t m_TextInputCursorPos;
 
 		Platform* m_Platform;
 

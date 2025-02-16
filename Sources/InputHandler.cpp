@@ -1,4 +1,5 @@
 #include "InputHandler.hpp"
+#include "defGameEngine.hpp"
 
 namespace def
 {
@@ -141,7 +142,7 @@ namespace def
 
 #endif
 
-    InputHandler::InputHandler(Platform* platform) : m_MousePos(-1, -1), m_Platform(platform), m_CaptureText(false)
+    InputHandler::InputHandler(Platform* platform) : m_MousePos(-1, -1), m_Platform(platform), m_CaptureText(false), m_Caps(false)
     {
         uint8_t keysCount = static_cast<uint8_t>(Key::KEYS_COUNT);
 
@@ -170,6 +171,84 @@ namespace def
     {
         UpdateState(m_Keys, m_KeyNewState, m_KeyOldState, static_cast<uint8_t>(Key::KEYS_COUNT));
 		UpdateState(m_Mouse, m_MouseNewState, m_MouseOldState, 8);
+    }
+
+    void InputHandler::GrabText()
+    {
+        if (GetKeyState(Key::CAPS_LOCK).pressed)
+			m_Caps = !m_Caps;
+
+        if (!m_CaptureText)
+            return;
+
+        bool isUp = GetKeyState(Key::LEFT_SHIFT).held || GetKeyState(Key::RIGHT_SHIFT).held;
+
+        for (const auto& [key, chars] : s_KeyboardUS)
+        {
+            if (GetKeyState(key).pressed)
+            {
+                if (m_Caps || isUp)
+                    m_TextInput.insert(m_TextInputCursorPos, 1, chars.second);
+                else
+                    m_TextInput.insert(m_TextInputCursorPos, 1, chars.first);
+
+                m_TextInputCursorPos++;
+            }
+        }
+
+        if (GetKeyState(Key::BACKSPACE).pressed)
+        {
+            if (m_TextInputCursorPos > 0)
+            {
+                m_TextInput.erase(m_TextInputCursorPos - 1, 1);
+                m_TextInputCursorPos--;
+            }
+        }
+
+        if (GetKeyState(Key::DEL).pressed)
+        {
+            if (m_TextInputCursorPos < m_TextInput.length())
+                m_TextInput.erase(m_TextInputCursorPos, 1);
+        }
+
+        if (GetKeyState(Key::LEFT).pressed)
+        {
+            if (m_TextInputCursorPos > 0)
+                m_TextInputCursorPos--;
+        }
+
+        if (GetKeyState(Key::RIGHT).pressed)
+        {
+            if (m_TextInputCursorPos < m_TextInput.length())
+                m_TextInputCursorPos++;
+        }
+
+        if (GetKeyState(Key::ENTER).pressed)
+        {
+            GameEngine::s_Engine->OnTextCapturingComplete(m_TextInput);
+            GameEngine::s_Engine->m_Console->HandleCommand(m_TextInput);
+
+            m_TextInput.clear();
+            m_TextInputCursorPos = 0;
+        }
+
+        GameEngine::s_Engine->m_Console->HandleHistoryBrowsing();
+    }
+
+    void InputHandler::SetInputText(const std::string& text)
+    {
+        m_TextInput = text;
+    }
+
+    void InputHandler::SetTextCursorPosition(size_t pos)
+    {
+        m_TextInputCursorPos = pos;
+    }
+
+    void InputHandler::ClearCapturedText()
+    {
+        m_TextInput.clear();
+	    m_TextInputCursorPos = 0;
     }
 
     const KeyState& InputHandler::GetKeyState(Key key) const

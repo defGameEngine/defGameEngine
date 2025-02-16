@@ -25,6 +25,9 @@ namespace def
         explicit Console(Layer* layer);
 
         void Clear();
+        void HandleCommand(const std::string& command);
+        void HandleHistoryBrowsing();
+
         void Show(bool show);
         void SetBackgroundColour(const Pixel& colour);
 

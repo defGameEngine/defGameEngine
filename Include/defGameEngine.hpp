@@ -81,6 +81,7 @@ namespace def
 	#endif
 
 		friend class Console;
+		friend class InputHandler;
 
 	private:
 		std::unique_ptr<Window> m_Window;
@@ -98,12 +99,6 @@ namespace def
 		size_t m_ConsoleLayer;
 
 		Pixel m_BackgroundColour;
-
-		std::string m_TextInput;
-		size_t m_CursorPos;
-
-		bool m_CaptureText;
-		bool m_Caps;
 
 		float m_DeltaTime;
 		float m_TickTimer;

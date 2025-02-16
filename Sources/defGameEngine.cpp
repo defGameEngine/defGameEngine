@@ -67,106 +67,7 @@ void GameEngine::MainLoop()
 			m_IsAppRunning = false;
 
 		m_Input->FlushBuffers();
-
-		if (m_Keys[(size_t)Key::CAPS_LOCK].pressed)
-			m_Caps = !m_Caps;
-
-		if (m_CaptureText)
-		{
-			bool isUp = m_Keys[(size_t)Key::LEFT_SHIFT].held || m_Keys[(size_t)Key::RIGHT_SHIFT].held;
-
-			for (const auto& [key, chars] : s_KeyboardUS)
-			{
-				if (GetKey(key).pressed)
-				{
-					if (m_Caps || isUp)
-						m_TextInput.insert(m_CursorPos, 1, chars.second);
-					else
-						m_TextInput.insert(m_CursorPos, 1, chars.first);
-
-					m_CursorPos++;
-				}
-			}
-
-			if (m_Keys[(size_t)Key::BACKSPACE].pressed)
-			{
-				if (m_CursorPos > 0)
-				{
-					m_TextInput.erase(m_CursorPos - 1, 1);
-					m_CursorPos--;
-				}
-			}
-
-			if (m_Keys[(size_t)Key::DEL].pressed)
-			{
-				if (m_CursorPos < m_TextInput.length())
-					m_TextInput.erase(m_CursorPos, 1);
-			}
-
-			if (m_Keys[(size_t)Key::LEFT].pressed)
-			{
-				if (m_CursorPos > 0)
-					m_CursorPos--;
-			}
-
-			if (m_Keys[(size_t)Key::RIGHT].pressed)
-			{
-				if (m_CursorPos < m_TextInput.length())
-					m_CursorPos++;
-			}
-
-			if (m_Keys[(size_t)Key::ENTER].pressed)
-			{
-				OnTextCapturingComplete(m_TextInput);
-
-				if (IsConsoleEnabled())
-				{
-					std::stringstream output;
-					Pixel colour = WHITE;
-
-					if (OnConsoleCommand(m_TextInput, output, colour))
-					{
-						m_ConsoleHistory.push_back({ m_TextInput, output.str(), colour });
-						m_PickedConsoleHistoryCommand = m_ConsoleHistory.size();
-					}
-				}
-
-				m_TextInput.clear();
-				m_CursorPos = 0;
-			}
-
-			if (IsConsoleEnabled())
-			{
-				if (!m_ConsoleHistory.empty())
-				{
-					bool moved = false;
-
-					if (m_Keys[(size_t)Key::UP].pressed)
-					{
-						if (m_PickedConsoleHistoryCommand > 0)
-						{
-							m_PickedConsoleHistoryCommand--;
-							moved = true;
-						}
-					}
-
-					if (m_Keys[(size_t)Key::DOWN].pressed)
-					{
-						if (m_PickedConsoleHistoryCommand < m_ConsoleHistory.size() - 1)
-						{
-							m_PickedConsoleHistoryCommand++;
-							moved = true;
-						}
-					}
-
-					if (moved)
-					{
-						m_TextInput = m_ConsoleHistory[m_PickedConsoleHistoryCommand].command;
-						m_CursorPos = m_TextInput.length();
-					}
-				}
-			}
-		}
+		m_Input->GrabText();
 
 		if (!OnUserUpdate(m_DeltaTime))
 			m_IsAppRunning = false;
@@ -1562,8 +1463,7 @@ size_t GameEngine::GetCursorPos() const
 
 void GameEngine::ClearCapturedText()
 {
-	m_TextInput.clear();
-	m_CursorPos = 0;
+	
 }
 
 void GameEngine::ShowConsole(bool enable)
