@@ -36,15 +36,11 @@
 */
 #endif
 
-#include "Constants.hpp"
-
 #ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
 #endif
 
-#include "KeyState.hpp"
 #include "Pixel.hpp"
-	
 #include "Sprite.hpp"
 #include "Texture.hpp"
 #include "Graphic.hpp"
@@ -62,6 +58,9 @@
 #endif
 
 #include "Layer.hpp"
+#include "Window.hpp"
+#include "InputHandler.hpp"
+#include "Console.hpp"
 
 namespace def
 {
@@ -81,30 +80,15 @@ namespace def
 		friend class PlatformEmscripten;
 	#endif
 
-	private:
-		std::string m_AppName;
+		friend class Console;
 
-		Vector2i m_WindowSize;
-		Vector2i m_ScreenSize;
-		Vector2f m_InvScreenSize;
-		Vector2i m_PixelSize;
+	private:
+		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<InputHandler> m_Input;
+		std::unique_ptr<Console> m_Console;
 
 		bool m_IsAppRunning;
-		bool m_IsFullScreen;
-		bool m_IsDirtyPixel;
-		bool m_IsVSync;
 		bool m_OnlyTextures;
-
-		KeyState m_Keys[(size_t)Key::KEYS_COUNT];
-		KeyState m_Mouse[8];
-
-		bool m_KeyOldState[(size_t)Key::KEYS_COUNT];
-		bool m_KeyNewState[(size_t)Key::KEYS_COUNT];
-
-		bool m_MouseOldState[8];
-		bool m_MouseNewState[8];
-
-		Vector2i m_MousePos;
 
 		Graphic m_Font;
 		int m_TabSize;
@@ -113,11 +97,7 @@ namespace def
 		size_t m_PickedLayer;
 		size_t m_ConsoleLayer;
 
-		Pixel m_ConsoleBackgroundColour;
 		Pixel m_BackgroundColour;
-
-		std::vector<std::string> m_DropCache;
-		int m_ScrollDelta;
 
 		std::string m_TextInput;
 		size_t m_CursorPos;
@@ -125,21 +105,10 @@ namespace def
 		bool m_CaptureText;
 		bool m_Caps;
 
-		struct ConsoleEntry
-		{
-			std::string command;
-			std::string output;
-
-			Pixel outputColour;
-		};
-
-		std::vector<ConsoleEntry> m_ConsoleHistory;
-		size_t m_PickedConsoleHistoryCommand;
-
 		float m_DeltaTime;
 		float m_TickTimer;
 
-		Platform* m_Platform;
+		std::unique_ptr<Platform> m_Platform;
 
 		std::chrono::system_clock::time_point m_TimeStart;
 		std::chrono::system_clock::time_point m_TimeEnd;
@@ -150,8 +119,6 @@ namespace def
 
 	public:
 		static GameEngine* s_Engine;
-		static std::unordered_map<Key, std::pair<char, char>> s_KeyboardUS;
-		static std::unordered_map<int, Key> s_KeysTable;
 		inline static std::vector<Vector2f> s_UnitCircle;
 
 		virtual bool OnUserCreate() = 0;
@@ -166,7 +133,6 @@ namespace def
 
 	private:
 		void Destroy();
-		void ScanHardware(KeyState* data, bool* newState, bool* oldState, size_t count);
 		void MainLoop();
 
 		static void MakeUnitCircle(std::vector<Vector2f>& circle, size_t verts);
@@ -300,9 +266,9 @@ namespace def
 		auto GetWindow()
 		{
 		#if defined(DGE_PLATFORM_GLFW3)
-			return ((PlatformGLFW3*)m_Platform)->m_Window;
+			return ((PlatformGLFW3*)m_Platform.get())->m_Window;
 		#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-			return ((PlatformEmscripten*)m_Platform)->m_Display;
+			return ((PlatformEmscripten*)m_Platform.get())->m_Display;
 		#endif
 		}
 

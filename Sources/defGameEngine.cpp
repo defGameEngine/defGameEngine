@@ -2,155 +2,11 @@
 
 namespace def
 {
-
-std::unordered_map<Key, std::pair<char, char>> GameEngine::s_KeyboardUS =
-{
-	{ Key::SPACE, { ' ', ' ' } }, { Key::APOSTROPHE, { '\'', '"' } },
-	{ Key::COMMA, { ',', '<' } }, { Key::MINUS, { '-', '_' } },
-	{ Key::PERIOD, { '.', '>' } }, { Key::SLASH, { '/', '?' } },
-	{ Key::K0, { '0', ')' } }, { Key::K1, { '1', '!' } },
-	{ Key::K2, { '2', '@' } }, { Key::K3, { '3', '#' } },
-	{ Key::K4, { '4', '$' } }, { Key::K5, { '5', '%' } },
-	{ Key::K6, { '6', '^' } }, { Key::K7, { '7', '&' } },
-	{ Key::K8, { '8', '*' } }, { Key::K9, { '9', '(' } },
-	{ Key::SEMICOLON, { ';', ':' } }, { Key::EQUAL, { '=', '+' } },
-	{ Key::A, { 'a', 'A' } }, { Key::B, { 'b', 'B' } },
-	{ Key::C, { 'c', 'C' } }, { Key::D, { 'd', 'D' } },
-	{ Key::E, { 'e', 'E' } }, { Key::F, { 'f', 'F' } },
-	{ Key::G, { 'g', 'G' } }, { Key::H, { 'h', 'H' } },
-	{ Key::I, { 'i', 'I' } }, { Key::J, { 'j', 'J' } },
-	{ Key::K, { 'k', 'K' } }, { Key::L, { 'l', 'L' } },
-	{ Key::M, { 'm', 'M' } }, { Key::N, { 'n', 'N' } },
-	{ Key::O, { 'o', 'O' } }, { Key::P, { 'p', 'P' } },
-	{ Key::Q, { 'q', 'Q' } }, { Key::R, { 'r', 'R' } },
-	{ Key::S, { 's', 'S' } }, { Key::T, { 't', 'T' } },
-	{ Key::U, { 'u', 'U' } }, { Key::V, { 'v', 'V' } },
-	{ Key::W, { 'w', 'W' } }, { Key::X, { 'x', 'X' } },
-	{ Key::Y, { 'y', 'Y' } }, { Key::Z, { 'z', 'Z' } },
-	{ Key::LEFT_BRACKET, { '[', '{' } }, { Key::BACKSLASH, { '\\', '|' } },
-	{ Key::RIGHT_BRACKET, { ']', '}' } },
-	{ Key::NP_0, { '0', '0' } }, { Key::NP_1, { '1', '1' } },
-	{ Key::NP_2, { '2', '2' } }, { Key::NP_3, { '3', '3' } },
-	{ Key::NP_4, { '4', '4' } }, { Key::NP_5, { '5', '5' } },
-	{ Key::NP_6, { '6', '6' } }, { Key::NP_7, { '7', '7' } },
-	{ Key::NP_8, { '8', '8' } }, { Key::NP_9, { '9', '9' } },
-	{ Key::NP_DIVIDE, { '/', '/' } }, { Key::NP_MULTIPLY, { '*', '*' } },
-	{ Key::NP_SUBTRACT, { '-', '-' } }, { Key::NP_ADD, { '+', '+' } },
-	{ Key::NP_EQUAL, { '=', '+' } }
-};
-
-#ifdef DGE_PLATFORM_GLFW3
-
-std::unordered_map<int, Key> GameEngine::s_KeysTable =
-{
-	{ GLFW_KEY_SPACE, Key::SPACE }, { GLFW_KEY_APOSTROPHE, Key::APOSTROPHE }, { GLFW_KEY_COMMA, Key::COMMA },
-	{ GLFW_KEY_MINUS, Key::MINUS }, { GLFW_KEY_PERIOD, Key::PERIOD }, { GLFW_KEY_SLASH, Key::SLASH },
-
-	{ GLFW_KEY_0, Key::K0 }, { GLFW_KEY_1, Key::K1 }, { GLFW_KEY_2, Key::K2 }, { GLFW_KEY_3, Key::K3 }, { GLFW_KEY_4, Key::K4 },
-	{ GLFW_KEY_5, Key::K5 }, { GLFW_KEY_6, Key::K6 }, { GLFW_KEY_7, Key::K7 }, { GLFW_KEY_8, Key::K8 }, { GLFW_KEY_9, Key::K9 },
-
-	{ GLFW_KEY_SEMICOLON, Key::SEMICOLON }, { GLFW_KEY_EQUAL, Key::EQUAL },
-
-	{ GLFW_KEY_A, Key::A }, { GLFW_KEY_B, Key::B }, { GLFW_KEY_C, Key::C }, { GLFW_KEY_D, Key::D },
-	{ GLFW_KEY_E, Key::E }, { GLFW_KEY_F, Key::F }, { GLFW_KEY_G, Key::G }, { GLFW_KEY_H, Key::H },
-	{ GLFW_KEY_I, Key::I }, { GLFW_KEY_J, Key::J }, { GLFW_KEY_K, Key::K }, { GLFW_KEY_L, Key::L },
-	{ GLFW_KEY_M, Key::M }, { GLFW_KEY_N, Key::N }, { GLFW_KEY_O, Key::O }, { GLFW_KEY_P, Key::P },
-	{ GLFW_KEY_Q, Key::Q }, { GLFW_KEY_R, Key::R }, { GLFW_KEY_S, Key::S }, { GLFW_KEY_T, Key::T },
-	{ GLFW_KEY_U, Key::U }, { GLFW_KEY_V, Key::V }, { GLFW_KEY_W, Key::W }, { GLFW_KEY_X, Key::X },
-	{ GLFW_KEY_Y, Key::Y }, { GLFW_KEY_Z, Key::Z },
-	{ GLFW_KEY_LEFT_BRACKET, Key::LEFT_BRACKET }, { GLFW_KEY_BACKSLASH, Key::BACKSLASH }, { GLFW_KEY_RIGHT_BRACKET, Key::RIGHT_BRACKET },
-
-	{ GLFW_KEY_ESCAPE, Key::ESCAPE }, { GLFW_KEY_ENTER, Key::ENTER }, { GLFW_KEY_TAB, Key::TAB }, { GLFW_KEY_BACKSPACE, Key::BACKSPACE },
-	{ GLFW_KEY_INSERT, Key::INSERT }, { GLFW_KEY_DELETE, Key::DEL }, { GLFW_KEY_RIGHT, Key::RIGHT }, { GLFW_KEY_LEFT, Key::LEFT },
-	{ GLFW_KEY_DOWN, Key::DOWN }, { GLFW_KEY_UP, Key::UP }, { GLFW_KEY_PAGE_UP, Key::PAGE_UP }, { GLFW_KEY_PAGE_DOWN, Key::PAGE_DOWN },
-	{ GLFW_KEY_HOME, Key::HOME }, { GLFW_KEY_END, Key::END },
-	{ GLFW_KEY_CAPS_LOCK, Key::CAPS_LOCK }, { GLFW_KEY_SCROLL_LOCK, Key::SCROLL_LOCK }, { GLFW_KEY_NUM_LOCK, Key::NUM_LOCK },
-	{ GLFW_KEY_PRINT_SCREEN, Key::PRINT_SCREEN }, { GLFW_KEY_PAUSE, Key::PAUSE },
-
-	{ GLFW_KEY_F1, Key::F1 }, { GLFW_KEY_F2, Key::F2 }, { GLFW_KEY_F3, Key::F3 }, { GLFW_KEY_F4, Key::F4 }, { GLFW_KEY_F5, Key::F5 }, { GLFW_KEY_F6, Key::F6 },
-	{ GLFW_KEY_F7, Key::F7 }, { GLFW_KEY_F8, Key::F8 }, { GLFW_KEY_F9, Key::F9 }, { GLFW_KEY_F10, Key::F10 }, { GLFW_KEY_F11, Key::F11 }, { GLFW_KEY_F12, Key::F12 },
-	{ GLFW_KEY_F13, Key::F13 }, { GLFW_KEY_F14, Key::F14 }, { GLFW_KEY_F15, Key::F15 }, { GLFW_KEY_F16, Key::F16 }, { GLFW_KEY_F17, Key::F17 }, { GLFW_KEY_F18, Key::F18 },
-	{ GLFW_KEY_F19, Key::F19 }, { GLFW_KEY_F20, Key::F20 }, { GLFW_KEY_F21, Key::F21 }, { GLFW_KEY_F22, Key::F22 }, { GLFW_KEY_F23, Key::F23 }, { GLFW_KEY_F24, Key::F24 },
-
-	{ GLFW_KEY_KP_0, Key::NP_0 }, { GLFW_KEY_KP_1, Key::NP_1 }, { GLFW_KEY_KP_2, Key::NP_2 },
-	{ GLFW_KEY_KP_3, Key::NP_3 }, { GLFW_KEY_KP_4, Key::NP_4 }, { GLFW_KEY_KP_5, Key::NP_5 },
-	{ GLFW_KEY_KP_6, Key::NP_6 }, { GLFW_KEY_KP_7, Key::NP_7 }, { GLFW_KEY_KP_8, Key::NP_8 },
-	{ GLFW_KEY_KP_9, Key::NP_9 }, { GLFW_KEY_KP_DECIMAL, Key::NP_DECIMAL },
-	{ GLFW_KEY_KP_DIVIDE, Key::NP_DIVIDE }, { GLFW_KEY_KP_MULTIPLY, Key::NP_MULTIPLY },
-	{ GLFW_KEY_KP_SUBTRACT, Key::NP_SUBTRACT }, { GLFW_KEY_KP_ADD, Key::NP_ADD },
-	{ GLFW_KEY_KP_ENTER, Key::NP_ENTER }, { GLFW_KEY_KP_EQUAL, Key::NP_EQUAL },
-
-	{ GLFW_KEY_LEFT_SHIFT, Key::LEFT_SHIFT }, { GLFW_KEY_LEFT_CONTROL, Key::LEFT_CONTROL },
-	{ GLFW_KEY_LEFT_ALT, Key::LEFT_ALT }, { GLFW_KEY_LEFT_SUPER, Key::LEFT_SUPER },
-	{ GLFW_KEY_RIGHT_SHIFT, Key::RIGHT_SHIFT }, { GLFW_KEY_RIGHT_CONTROL, Key::RIGHT_CONTROL },
-	{ GLFW_KEY_RIGHT_ALT, Key::RIGHT_ALT }, { GLFW_KEY_RIGHT_SUPER, Key::RIGHT_SUPER }, { GLFW_KEY_MENU, Key::MENU },
-
-	{ GLFW_KEY_UNKNOWN, Key::NONE }
-};
-
-#endif
-
-#ifdef DGE_PLATFORM_EMSCRIPTEN
-
-std::unordered_map<int, Key> GameEngine::s_KeysTable =
-{
-	{ DOM_PK_SPACE, Key::SPACE }, { DOM_PK_QUOTE, Key::APOSTROPHE }, { DOM_PK_COMMA, Key::COMMA },
-	{ DOM_PK_MINUS, Key::MINUS }, { DOM_PK_PERIOD, Key::PERIOD }, { DOM_PK_SLASH, Key::SLASH },
-
-	{ DOM_PK_0, Key::K0 }, { DOM_PK_1, Key::K1 }, { DOM_PK_2, Key::K2 }, { DOM_PK_3, Key::K3 }, { DOM_PK_4, Key::K4 },
-	{ DOM_PK_5, Key::K5 }, { DOM_PK_6, Key::K6 }, { DOM_PK_7, Key::K7 }, { DOM_PK_8, Key::K8 }, { DOM_PK_9, Key::K9 },
-
-	{ DOM_PK_SEMICOLON, Key::SEMICOLON }, { DOM_PK_EQUAL, Key::EQUAL },
-
-	{ DOM_PK_A, Key::A }, { DOM_PK_B, Key::B }, { DOM_PK_C, Key::C }, { DOM_PK_D, Key::D },
-	{ DOM_PK_E, Key::E }, { DOM_PK_F, Key::F }, { DOM_PK_G, Key::G }, { DOM_PK_H, Key::H },
-	{ DOM_PK_I, Key::I }, { DOM_PK_J, Key::J }, { DOM_PK_K, Key::K }, { DOM_PK_L, Key::L },
-	{ DOM_PK_M, Key::M }, { DOM_PK_N, Key::N }, { DOM_PK_O, Key::O }, { DOM_PK_P, Key::P },
-	{ DOM_PK_Q, Key::Q }, { DOM_PK_R, Key::R }, { DOM_PK_S, Key::S }, { DOM_PK_T, Key::T },
-	{ DOM_PK_U, Key::U }, { DOM_PK_V, Key::V }, { DOM_PK_W, Key::W }, { DOM_PK_X, Key::X },
-	{ DOM_PK_Y, Key::Y }, { DOM_PK_Z, Key::Z },
-
-	{ DOM_PK_BRACKET_LEFT, Key::LEFT_BRACKET }, { DOM_PK_BACKSLASH, Key::BACKSLASH }, { DOM_PK_BRACKET_RIGHT, Key::RIGHT_BRACKET },
-
-	{ DOM_PK_ESCAPE, Key::ESCAPE }, { DOM_PK_ENTER, Key::ENTER }, { DOM_PK_TAB, Key::TAB }, { DOM_PK_BACKSPACE, Key::BACKSPACE },
-	{ DOM_PK_INSERT, Key::INSERT }, { DOM_PK_DELETE, Key::DEL }, { DOM_PK_ARROW_RIGHT, Key::RIGHT }, { DOM_PK_ARROW_LEFT, Key::LEFT },
-	{ DOM_PK_ARROW_DOWN, Key::DOWN }, { DOM_PK_ARROW_UP, Key::UP }, { DOM_PK_PAGE_UP, Key::PAGE_UP }, { DOM_PK_PAGE_DOWN, Key::PAGE_DOWN },
-	{ DOM_PK_HOME, Key::HOME }, { DOM_PK_END, Key::END },
-	{ DOM_PK_CAPS_LOCK, Key::CAPS_LOCK }, { DOM_PK_SCROLL_LOCK, Key::SCROLL_LOCK }, { DOM_PK_NUM_LOCK, Key::NUM_LOCK },
-	{ DOM_PK_PRINT_SCREEN, Key::PRINT_SCREEN }, { DOM_PK_PAUSE, Key::PAUSE },
-
-	{ DOM_PK_F1, Key::F1 }, { DOM_PK_F2, Key::F2 }, { DOM_PK_F3, Key::F3 }, { DOM_PK_F4, Key::F4 }, { DOM_PK_F5, Key::F5 }, { DOM_PK_F6, Key::F6 },
-	{ DOM_PK_F7, Key::F7 }, { DOM_PK_F8, Key::F8 }, { DOM_PK_F9, Key::F9 }, { DOM_PK_F10, Key::F10 }, { DOM_PK_F11, Key::F11 }, { DOM_PK_F12, Key::F12 },
-	{ DOM_PK_F13, Key::F13 }, { DOM_PK_F14, Key::F14 }, { DOM_PK_F15, Key::F15 }, { DOM_PK_F16, Key::F16 }, { DOM_PK_F17, Key::F17 }, { DOM_PK_F18, Key::F18 },
-	{ DOM_PK_F19, Key::F19 }, { DOM_PK_F20, Key::F20 }, { DOM_PK_F21, Key::F21 }, { DOM_PK_F22, Key::F22 }, { DOM_PK_F23, Key::F23 }, { DOM_PK_F24, Key::F24 },
-
-	{ DOM_PK_NUMPAD_0, Key::NP_0 }, { DOM_PK_NUMPAD_1, Key::NP_1 }, { DOM_PK_NUMPAD_2, Key::NP_2 },
-	{ DOM_PK_NUMPAD_3, Key::NP_3 }, { DOM_PK_NUMPAD_4, Key::NP_4 }, { DOM_PK_NUMPAD_5, Key::NP_5 },
-	{ DOM_PK_NUMPAD_6, Key::NP_6 }, { DOM_PK_NUMPAD_7, Key::NP_7 }, { DOM_PK_NUMPAD_8, Key::NP_8 },
-	{ DOM_PK_NUMPAD_9, Key::NP_9 }, { DOM_PK_NUMPAD_DECIMAL, Key::NP_DECIMAL },
-	{ DOM_PK_NUMPAD_DIVIDE, Key::NP_DIVIDE }, { DOM_PK_NUMPAD_MULTIPLY, Key::NP_MULTIPLY },
-	{ DOM_PK_NUMPAD_SUBTRACT, Key::NP_SUBTRACT }, { DOM_PK_NUMPAD_ADD, Key::NP_ADD },
-	{ DOM_PK_NUMPAD_ENTER, Key::NP_ENTER }, { DOM_PK_NUMPAD_EQUAL, Key::NP_EQUAL },
-
-	{ DOM_PK_SHIFT_LEFT, Key::LEFT_SHIFT }, { DOM_PK_CONTROL_LEFT, Key::LEFT_CONTROL },
-	{ DOM_PK_ALT_LEFT, Key::LEFT_ALT }, { DOM_PK_OS_LEFT, Key::LEFT_SUPER },
-	{ DOM_PK_SHIFT_RIGHT, Key::RIGHT_SHIFT }, { DOM_PK_CONTROL_RIGHT, Key::RIGHT_CONTROL },
-	{ DOM_PK_ALT_RIGHT, Key::RIGHT_ALT }, { DOM_PK_OS_RIGHT, Key::RIGHT_SUPER }, { DOM_PK_CONTEXT_MENU, Key::MENU },
-
-	{ DOM_PK_UNKNOWN, Key::NONE }
-};
-
-#endif
-
 GameEngine* GameEngine::s_Engine = nullptr;
 
 GameEngine::GameEngine()
 {
-	m_AppName = "Undefined";
-	m_MousePos = { -1, -1 };
-
 	m_BackgroundColour = { 255, 255, 255, 255 };
-	m_ConsoleBackgroundColour = { 0, 0, 255, 100 };
 
 	m_CaptureText = false;
 	m_Caps = false;
@@ -161,7 +17,6 @@ GameEngine::GameEngine()
 
 	s_Engine = this;
 
-	m_PickedConsoleHistoryCommand = 0;
 	m_PickedLayer = 0;
 	m_CursorPos = 0;
 
@@ -170,12 +25,15 @@ GameEngine::GameEngine()
 	m_OnlyTextures = false;
 
 #if defined(DGE_PLATFORM_GLFW3)
-	m_Platform = new PlatformGLFW3();
+	m_Platform = std::make_unique<PlatformGLFW3>();
 #elif defined(DGE_PLATFORM_EMSCRIPTEN)
-	m_Platform = new PlatformEmscripten();
+	m_Platform = std::make_unique<PlatformEmscripten>();
 #else
 #error No platform has been selected
 #endif
+
+	m_Input = std::make_unique<InputHandler>(m_Platform);
+	m_Window = std::make_unique<Window>(m_Platform);
 }
 
 GameEngine::~GameEngine()
@@ -192,32 +50,6 @@ void GameEngine::Destroy()
 	}
 
 	m_Platform->Destroy();
-	delete m_Platform;
-}
-
-void GameEngine::ScanHardware(KeyState* data, bool* newState, bool* oldState, size_t count)
-{
-	for (size_t i = 0; i < count; i++)
-	{
-		data[i].pressed = false;
-		data[i].released = false;
-
-		if (newState[i] != oldState[i])
-		{
-			if (newState[i])
-			{
-				data[i].pressed = !data[i].held;
-				data[i].held = true;
-			}
-			else
-			{
-				data[i].released = true;
-				data[i].held = false;
-			}
-		}
-
-		oldState[i] = newState[i];
-	}
 }
 
 void GameEngine::MainLoop()
@@ -234,8 +66,7 @@ void GameEngine::MainLoop()
 		if (m_Platform->IsWindowClose())
 			m_IsAppRunning = false;
 
-		ScanHardware(m_Keys, m_KeyNewState, m_KeyOldState, (size_t)Key::KEYS_COUNT);
-		ScanHardware(m_Mouse, m_MouseNewState, m_MouseOldState, 8);
+		m_Input->FlushBuffers();
 
 		if (m_Keys[(size_t)Key::CAPS_LOCK].pressed)
 			m_Caps = !m_Caps;
@@ -340,8 +171,6 @@ void GameEngine::MainLoop()
 		if (!OnUserUpdate(m_DeltaTime))
 			m_IsAppRunning = false;
 
-		m_ScrollDelta = 0;
-
 		if (IsConsoleEnabled())
 		{
 			int currentLayer = m_PickedLayer;
@@ -399,15 +228,15 @@ void GameEngine::MainLoop()
 			m_IsAppRunning = false;
 
 		m_Platform->OnAfterDraw();
-		m_Platform->FlushScreen(m_IsVSync);
-		m_Platform->PollEvents();
+		m_Window->Flush();
+		m_Input->GrabEvents();
 
 	#ifndef DGE_PLATFORM_EMSCRIPTEN
 		m_FramesCount++;
 
 		if (m_TickTimer >= 1.0f)
 		{
-			m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_AppName + " - FPS: " + std::to_string(m_FramesCount));
+			m_Window->UpdateCaption(m_FramesCount);
 
 			m_TickTimer = 0.0f;
 			m_FramesCount = 0;
@@ -437,26 +266,12 @@ void GameEngine::Run()
 	m_TimeStart = std::chrono::system_clock::now();
 	m_TimeEnd = m_TimeStart;
 
-	for (size_t i = 0; i < (size_t)Key::KEYS_COUNT; i++)
-	{
-		m_Keys[i] = { false, false, false };
-		m_KeyOldState[i] = false;
-		m_KeyNewState[i] = false;
-	}
-
-	for (int i = 0; i < 8; i++)
-	{
-		m_Mouse[i] = { false, false, false };
-		m_MouseOldState[i] = false;
-		m_MouseNewState[i] = false;
-	}
-
 #ifdef DGE_PLATFORM_EMSCRIPTEN
-	m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_AppName);
-
+	m_Window.UpdateCaption(-1);
+	
 	emscripten_set_main_loop(&PlatformEmscripten::MainLoop, 0, 1);
 #else
-	m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_AppName + " - FPS: 0");
+	m_Window.UpdateCaption(0);
 	m_FramesCount = 0;
 
 	while (m_IsAppRunning)
@@ -481,18 +296,7 @@ bool GameEngine::OnConsoleCommand(const std::string& command, std::stringstream&
 
 bool GameEngine::Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen, bool vsync, bool dirtyPixel)
 {
-	m_ScreenSize = { screenWidth, screenHeight };
-	m_PixelSize = { pixelWidth, pixelHeight };
-	m_WindowSize = m_ScreenSize * m_PixelSize;
-
-	m_InvScreenSize = { 1.0f / (float)m_ScreenSize.x, 1.0f / (float)m_ScreenSize.y };
-
-	m_IsFullScreen = fullScreen;
-	m_IsVSync = vsync;
-
-	m_IsDirtyPixel = dirtyPixel;
-
-	if (!m_Platform->ConstructWindow(m_ScreenSize, m_PixelSize, m_WindowSize, vsync, fullScreen, dirtyPixel))
+	if (!m_Window.Construct(screenWidth, screenHeight, pixelWidth, pixelHeight, fullScreen, vsync, dirtyPixel))
 		return false;
 
 	m_ConsoleLayer = CreateLayer({ 0, 0 }, m_ScreenSize, false, false);
@@ -1768,17 +1572,6 @@ void GameEngine::ShowConsole(bool enable)
 	layer.visible = enable;
 	layer.update = enable;
 	m_CaptureText = enable;
-}
-
-void GameEngine::SetConsoleBackgroundColour(const Pixel& col)
-{
-	m_ConsoleBackgroundColour = col;
-}
-
-void GameEngine::ClearConsole()
-{
-	m_PickedConsoleHistoryCommand = 0;
-	m_ConsoleHistory.clear();
 }
 
 bool GameEngine::IsCapturingText() const
