@@ -2,7 +2,7 @@
 
 namespace def
 {
-    Console::Console(Layer* layer) : m_Layer(layer), m_BackgroundColour(0, 0, 255, 100), m_PickedHistoryCommand(0)
+    Console::Console() : m_BackgroundColour(0, 0, 255, 100), m_PickedHistoryCommand(0)
     {
     }
 
@@ -14,8 +14,7 @@ namespace def
 
     void Console::HandleCommand(const std::string& command)
     {
-        // Tells us that the console is enabled
-        if (!m_Layer->visible)
+        if (!IsShown())
             return;
 
         std::stringstream output;
@@ -30,7 +29,7 @@ namespace def
 
     void Console::HandleHistoryBrowsing()
     {
-        if (!m_Layer->visible || m_History.empty())
+        if (!IsShown() || m_History.empty())
             return;
 
         bool moved = false;
@@ -57,9 +56,47 @@ namespace def
         {
             const std::string& command = m_History[m_PickedHistoryCommand].command;
             
-            GameEngine::s_Engine->m_Input->SetInputText(command);
-            GameEngine::s_Engine->m_Input->SetTextCursorPosition(command.length());
+            GameEngine::s_Engine->m_Input->SetCapturedText(command);
+            GameEngine::s_Engine->m_Input->SetCapturedTextCursorPosition(command.length());
         }
+    }
+
+    void Console::Draw()
+    {
+        if (!IsShown())
+            return;
+
+        GameEngine* e = GameEngine::s_Engine;
+
+        int currentLayer = GameEngine::s_Engine->m_PickedLayer;
+        e->PickLayer(m_LayerIndex);
+
+        e->FillTextureRectangle({ 0, 0 }, e->m_Window->GetScreenSize(), m_BackgroundColour);
+
+        int printCount = std::min(e->m_Window->GetScreenHeight() / 22, (int)m_History.size());
+        int start = m_History.size() - printCount;
+
+        for (size_t i = start; i < m_History.size(); i++)
+        {
+            auto& entry = m_History[i];
+
+            e->DrawTextureString({ 10, 10 + int(i - start) * 20 }, "> " + entry.command);
+            e->DrawTextureString({ 10, 20 + int(i - start) * 20 }, entry.output, entry.outputColour);
+        }
+
+        int x = e->m_Input->GetCapturedTextCursorPosition() * 8 + 36;
+        int y = e->m_Window->GetScreenHeight() - 18;
+
+        e->DrawTextureString({ 20, y }, "> " + e->m_Input->GetCapturedText(), YELLOW);
+        e->DrawTextureLine({ x, y }, { x, y + 8 }, RED);
+
+        e->PickLayer(currentLayer);
+    }
+
+    void Console::SetLayer(Layer* layer, size_t index)
+    {
+        m_Layer = layer;
+        m_LayerIndex = index;
     }
 
     void Console::Show(bool show)
@@ -72,5 +109,10 @@ namespace def
     void Console::SetBackgroundColour(const Pixel& colour)
     {
         m_BackgroundColour = colour;
+    }
+
+    bool Console::IsShown() const
+    {
+        return m_Layer->visible;
     }
 }

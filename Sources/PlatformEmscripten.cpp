@@ -1,5 +1,5 @@
-#include "../Include/PlatformEmscripten.hpp"
-#include "../Include/defGameEngine.hpp"
+#include "PlatformEmscripten.hpp"
+#include "defGameEngine.hpp"
 
 namespace def
 {

@@ -21,16 +21,16 @@ namespace def
     class Window
     {
     public:
-        explicit Window(Platform* platform);
+        friend class GameEngine;
 
-        bool Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen, bool vsync, bool dirtyPixel);
-        void UpdateCaption(int fps);
-        void Flush();
+    public:
+        Window(Platform* platform);
 
         int GetScreenWidth() const;
         int GetScreenHeight() const;
 
         const Vector2i& GetScreenSize() const;
+        const Vector2i& GetWindowSize() const;
 
         const Vector2f& GetInvertedScreenSize() const;
         const Vector2i& GetPixelSize() const;
@@ -38,13 +38,21 @@ namespace def
         bool IsFullScreen() const;
         bool IsDirtyPixel() const;
         bool IsVSync() const;
+        bool IsFocused() const;
 
-        void SetName(const std::string& name);
+        void SetTitle(const std::string& title);
+        void SetIcon(const std::string& path);
 
-        const std::vector<std::string>& GetDropCache();
+        std::vector<std::string>& GetDroppedFiles();
 
     private:
-        std::string m_Name;
+        bool Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen, bool vsync, bool dirtyPixel);
+
+        void UpdateCaption(int fps);
+        void Flush();
+
+    private:
+        std::string m_Title;
 
         Vector2i m_WindowSize;
         Vector2i m_ScreenSize;

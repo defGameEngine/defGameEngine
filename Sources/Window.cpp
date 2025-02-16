@@ -2,7 +2,7 @@
 
 namespace def
 {
-    Window::Window(Platform* platform) : m_Name("Undefined"), m_Platform(platform)
+    Window::Window(Platform* platform) : m_Title("Undefined"), m_Platform(platform)
     {
     }
 
@@ -26,9 +26,9 @@ namespace def
     void Window::UpdateCaption(int fps)
     {
         if (fps < 0)
-            m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_Name);
+            m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_Title);
         else
-            m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_Name + " - FPS: " + std::to_string(fps));
+            m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_Title + " - FPS: " + std::to_string(fps));
     }
 
     void Window::Flush()
@@ -49,6 +49,11 @@ namespace def
     const Vector2i& Window::GetScreenSize() const
     {
         return m_ScreenSize;
+    }
+
+    const Vector2i& Window::GetWindowSize() const
+    {
+        return m_WindowSize;
     }
 
     const Vector2f& Window::GetInvertedScreenSize() const
@@ -76,12 +81,23 @@ namespace def
         return m_IsVSync;
     }
 
-    void Window::SetName(const std::string& name)
+    bool Window::IsFocused() const
     {
-        m_Name = name;
+        return m_Platform->IsWindowFocused();
     }
 
-    const std::vector<std::string>& Window::GetDropCache()
+    void Window::SetTitle(const std::string& title)
+    {
+        m_Title = title;
+    }
+
+    void Window::SetIcon(const std::string& path)
+    {
+        Sprite icon(path);
+	    m_Platform->SetIcon(icon);
+    }
+
+    std::vector<std::string>& Window::GetDroppedFiles()
     {
         return m_DropCache;
     }

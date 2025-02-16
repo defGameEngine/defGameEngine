@@ -14,6 +14,10 @@ namespace def
     class Console
     {
     public:
+        friend class InputHandler;
+        friend class GameEngine;
+
+    public:
         struct Entry
         {
             std::string command;
@@ -22,14 +26,20 @@ namespace def
             Pixel outputColour;
         };
 
-        explicit Console(Layer* layer);
+        Console();
 
         void Clear();
-        void HandleCommand(const std::string& command);
-        void HandleHistoryBrowsing();
-
         void Show(bool show);
         void SetBackgroundColour(const Pixel& colour);
+
+        bool IsShown() const;
+
+    protected:
+        void HandleCommand(const std::string& command);
+        void HandleHistoryBrowsing();
+        void Draw();
+
+        void SetLayer(Layer* layer, size_t index);
 
     private:
         Pixel m_BackgroundColour;
@@ -38,6 +48,7 @@ namespace def
 		size_t m_PickedHistoryCommand;
 
         Layer* m_Layer;
+        size_t m_LayerIndex;
 
     };
 }

@@ -1,5 +1,5 @@
-#include "../Include/PlatformGLFW3.hpp"
-#include "../Include/defGameEngine.hpp"
+#include "PlatformGLFW3.hpp"
+#include "defGameEngine.hpp"
 
 #include <iostream>
 
@@ -30,7 +30,7 @@ namespace def
 
 	void PlatformGLFW3::DropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 	{
-		auto& cache = GameEngine::s_Engine->GetDropped();
+		auto& cache = GameEngine::s_Engine->m_Window->GetDroppedFiles();
 
 		cache.clear();
 		cache.reserve(pathCount);
@@ -92,8 +92,8 @@ namespace def
 
 	void PlatformGLFW3::PollEvents() const
 	{
-		// glfwPollEvents();
-		glfwWaitEvents();
+		glfwPollEvents();
+		//glfwWaitEvents();
 	}
 
 	bool PlatformGLFW3::ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel)
@@ -147,7 +147,6 @@ namespace def
 		}
 
 		glfwSetDropCallback(m_Window, DropCallback);
-
 		glfwSetScrollCallback(m_Window, ScrollCallback);
 		glfwSetCursorPosCallback(m_Window, MousePosCallback);
 		glfwSetMouseButtonCallback(m_Window, MouseButtonCallback);

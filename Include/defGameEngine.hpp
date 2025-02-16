@@ -65,6 +65,7 @@
 namespace def
 {
 	class Platform;
+	class Console;
 
 	class GameEngine
 	{
@@ -84,10 +85,6 @@ namespace def
 		friend class InputHandler;
 
 	private:
-		std::unique_ptr<Window> m_Window;
-		std::unique_ptr<InputHandler> m_Input;
-		std::unique_ptr<Console> m_Console;
-
 		bool m_IsAppRunning;
 		bool m_OnlyTextures;
 
@@ -107,6 +104,10 @@ namespace def
 
 		std::chrono::system_clock::time_point m_TimeStart;
 		std::chrono::system_clock::time_point m_TimeEnd;
+
+		std::unique_ptr<InputHandler> m_Input;
+		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<Console> m_Console;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
@@ -206,33 +207,8 @@ namespace def
 
 		void DrawTextureString(const Vector2i& pos, std::string_view text, const Pixel& col = WHITE, const Vector2f& scale = { 1.0f, 1.0f });
 
-		KeyState GetKey(Key key) const;
-		KeyState GetMouse(Button button) const;
-
-		const Vector2i& GetMousePos() const;
-		int GetMouseWheelDelta() const;
-
-		int GetMouseX() const;
-		int GetMouseY() const;
-
-		void SetTitle(std::string_view title);
-
-		const Vector2i& GetScreenSize() const;
-		const Vector2i& GetWindowSize() const;
-
-		int ScreenWidth() const;
-		int ScreenHeight() const;
-
-		bool IsFullScreen() const;
-		bool IsVSync() const;
-		bool IsFocused() const;
-
-		void SetIcon(std::string_view fileName);
-
 		void SetDrawTarget(Graphic* target);
 		Graphic* GetDrawTarget();
-
-		std::vector<std::string>& GetDropped();
 
 		void SetPixelMode(Pixel::Mode pixelMode);
 		Pixel::Mode GetPixelMode() const;
@@ -242,23 +218,10 @@ namespace def
 
 		void SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&));
 
-		void CaptureText(bool enable);
-		bool IsCapturingText() const;
-
-		const std::string& GetCapturedText() const;
-		size_t GetCursorPos() const;
-
-		void SetConsoleBackgroundColour(const Pixel& col);
-		void ShowConsole(bool enable);
-		bool IsConsoleEnabled() const;
-		void ClearCapturedText();
-		void ClearConsole();
-		bool IsCaps() const;
-
 		void UseOnlyTextures(bool enable);
 		float GetDeltaTime() const;
 
-		auto GetWindow()
+		auto GetNativeWindow()
 		{
 		#if defined(DGE_PLATFORM_GLFW3)
 			return ((PlatformGLFW3*)m_Platform.get())->m_Window;
@@ -271,6 +234,10 @@ namespace def
 		void PickLayer(size_t layer);
 		size_t GetPickedLayer() const;
 		Layer* GetLayerByIndex(size_t index);
+
+		Window *const GetWindow();
+		InputHandler *const GetInput();
+		Console *const GetConsole();
 
 	};
 }

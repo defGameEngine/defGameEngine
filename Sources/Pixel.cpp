@@ -1,4 +1,4 @@
-#include "../Include/Pixel.hpp"
+#include "Pixel.hpp"
 
 #include <algorithm>
 #include <cmath>

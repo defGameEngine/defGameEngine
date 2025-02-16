@@ -55,7 +55,7 @@ def build():
 
     create_dir_if_not_exists('../Target')
 
-    for target in TARGETS:
+    for target in TARGETS[:1]:
         c = Command('g++')
 
         c.add_flag('I"../../Include"')

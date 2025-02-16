@@ -142,6 +142,17 @@ namespace def
 
 #endif
 
+    KeyState::KeyState() : held(false), released(false), pressed(false)
+    {
+
+    }
+
+	KeyState::KeyState(bool held, bool released, bool pressed)
+        : held(held), released(released), pressed(pressed)
+    {
+
+    }
+
     InputHandler::InputHandler(Platform* platform) : m_MousePos(-1, -1), m_Platform(platform), m_CaptureText(false), m_Caps(false)
     {
         uint8_t keysCount = static_cast<uint8_t>(Key::KEYS_COUNT);
@@ -188,67 +199,67 @@ namespace def
             if (GetKeyState(key).pressed)
             {
                 if (m_Caps || isUp)
-                    m_TextInput.insert(m_TextInputCursorPos, 1, chars.second);
+                    m_CapturedText.insert(m_CapturedTextCursorPos, 1, chars.second);
                 else
-                    m_TextInput.insert(m_TextInputCursorPos, 1, chars.first);
+                    m_CapturedText.insert(m_CapturedTextCursorPos, 1, chars.first);
 
-                m_TextInputCursorPos++;
+                m_CapturedTextCursorPos++;
             }
         }
 
         if (GetKeyState(Key::BACKSPACE).pressed)
         {
-            if (m_TextInputCursorPos > 0)
+            if (m_CapturedTextCursorPos > 0)
             {
-                m_TextInput.erase(m_TextInputCursorPos - 1, 1);
-                m_TextInputCursorPos--;
+                m_CapturedText.erase(m_CapturedTextCursorPos - 1, 1);
+                m_CapturedTextCursorPos--;
             }
         }
 
         if (GetKeyState(Key::DEL).pressed)
         {
-            if (m_TextInputCursorPos < m_TextInput.length())
-                m_TextInput.erase(m_TextInputCursorPos, 1);
+            if (m_CapturedTextCursorPos < m_CapturedText.length())
+                m_CapturedText.erase(m_CapturedTextCursorPos, 1);
         }
 
         if (GetKeyState(Key::LEFT).pressed)
         {
-            if (m_TextInputCursorPos > 0)
-                m_TextInputCursorPos--;
+            if (m_CapturedTextCursorPos > 0)
+                m_CapturedTextCursorPos--;
         }
 
         if (GetKeyState(Key::RIGHT).pressed)
         {
-            if (m_TextInputCursorPos < m_TextInput.length())
-                m_TextInputCursorPos++;
+            if (m_CapturedTextCursorPos < m_CapturedText.length())
+                m_CapturedTextCursorPos++;
         }
 
         if (GetKeyState(Key::ENTER).pressed)
         {
-            GameEngine::s_Engine->OnTextCapturingComplete(m_TextInput);
-            GameEngine::s_Engine->m_Console->HandleCommand(m_TextInput);
+            GameEngine::s_Engine->OnTextCapturingComplete(m_CapturedText);
+            GameEngine::s_Engine->m_Console->HandleCommand(m_CapturedText);
 
-            m_TextInput.clear();
-            m_TextInputCursorPos = 0;
+            m_CapturedText.clear();
+            m_CapturedTextCursorPos = 0;
         }
 
         GameEngine::s_Engine->m_Console->HandleHistoryBrowsing();
     }
 
-    void InputHandler::SetInputText(const std::string& text)
+    void InputHandler::SetCapturedText(const std::string& text)
     {
-        m_TextInput = text;
+        m_CapturedText = text;
     }
 
-    void InputHandler::SetTextCursorPosition(size_t pos)
+    void InputHandler::SetCapturedTextCursorPosition(size_t pos)
     {
-        m_TextInputCursorPos = pos;
+        m_CapturedTextCursorPos = pos;
     }
 
     void InputHandler::ClearCapturedText()
     {
-        m_TextInput.clear();
-	    m_TextInputCursorPos = 0;
+        m_CapturedText.clear();
+	    m_CapturedTextCursorPos = 0;
     }
 
     const KeyState& InputHandler::GetKeyState(Key key) const
@@ -290,6 +301,16 @@ namespace def
     bool InputHandler::IsCapturingText() const
     {
         return m_CaptureText;
+    }
+
+    const std::string& InputHandler::GetCapturedText() const
+    {
+        return m_CapturedText;
+    }
+
+    size_t InputHandler::GetCapturedTextCursorPosition() const
+    {
+        return m_CapturedTextCursorPos;
     }
 
     void InputHandler::UpdateState(KeyState* data, bool* newState, bool* oldState, uint8_t count)

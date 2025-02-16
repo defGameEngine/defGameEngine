@@ -4,6 +4,7 @@
 #define DGE_INPUT_HANDLER_HPP
 
 #include <unordered_map>
+#include <cstdint>
 
 #include "Vector2D.hpp"
 #include "Platform.hpp"
@@ -59,15 +60,12 @@ namespace def
 
     class InputHandler
     {
+	public:
+		friend class GameEngine;
+		friend class Console;
+
     public:
         explicit InputHandler(Platform* platform);
-
-        void GrabEvents();
-        void FlushBuffers();
-
-		void GrabText();
-		void SetInputText(const std::string& text);
-		void SetTextCursorPosition(size_t pos);
 
 		void ClearCapturedText();
 
@@ -83,9 +81,21 @@ namespace def
 		void CaptureText(bool enable);
 		bool IsCapturingText() const;
 
+		const std::string& GetCapturedText() const;
+		size_t GetCapturedTextCursorPosition() const;
+
     public:
         static std::unordered_map<Key, std::pair<char, char>> s_KeyboardUS;
 		static std::unordered_map<int, Key> s_KeysTable;
+
+	protected:
+		void SetCapturedText(const std::string& text);
+		void SetCapturedTextCursorPosition(size_t pos);
+
+		void GrabEvents();
+		void FlushBuffers();
+
+		void GrabText();
 
     private:
         static void UpdateState(KeyState* data, bool* newState, bool* oldState, uint8_t count);
@@ -106,8 +116,8 @@ namespace def
 		bool m_CaptureText;
 		bool m_Caps;
 
-		std::string m_TextInput;
-		size_t m_TextInputCursorPos;
+		std::string m_CapturedText;
+		size_t m_CapturedTextCursorPos;
 
 		Platform* m_Platform;
 

@@ -1,8 +1,8 @@
-#include "../Include/Texture.hpp"
-#include "../Include/defGameEngine.hpp"
+#include "Texture.hpp"
+#include "defGameEngine.hpp"
 
 #if defined(DGE_PLATFORM_GLFW3)
-#include "../Include/PlatformGL.hpp"
+#include "PlatformGL.hpp"
 #elif defined(DGE_PLATFORM_EMSCRIPTEN)
 #include "PlatformEmscripten.hpp"
 #else
