@@ -140,7 +140,7 @@ class SimpleCAD : public def::GameEngine
 public:
 	SimpleCAD()
 	{
-		SetTitle("SimpleCAD");
+		GetWindow()->SetTitle("SimpleCAD");
 		UseOnlyTextures(true);
 	}
 
@@ -172,21 +172,21 @@ public:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetMouse(def::Button::WHEEL).pressed)
-			at.StartPan(GetMousePos());
+		if (GetInput()->GetButtonState(def::Button::WHEEL).pressed)
+			at.StartPan(GetInput()->GetMousePosition());
 
-		if (GetMouse(def::Button::WHEEL).held)
-			at.UpdatePan(GetMousePos());
+		if (GetInput()->GetButtonState(def::Button::WHEEL).held)
+			at.UpdatePan(GetInput()->GetMousePosition());
 
-		if (GetMouseWheelDelta() > 0)
-			at.Zoom(1.1f, GetMousePos());
+		if (GetInput()->GetScrollDelta() > 0)
+			at.Zoom(1.1f, GetInput()->GetMousePosition());
 
-		if (GetMouseWheelDelta() < 0)
-			at.Zoom(0.9f, GetMousePos());
+		if (GetInput()->GetScrollDelta() < 0)
+			at.Zoom(0.9f, GetInput()->GetMousePosition());
 
-		def::Vector2i cursor = at.ScreenToWorld(GetMousePos());
+		def::Vector2i cursor = at.ScreenToWorld(GetInput()->GetMousePosition());
 
-		if (GetKey(def::Key::L).pressed)
+		if (GetInput()->GetKeyState(def::Key::L).pressed)
 		{
 			tempShape = new Line();
 
@@ -194,7 +194,7 @@ public:
 			selected = tempShape->GetNextNode(cursor);
 		}
 
-		if (GetKey(def::Key::C).pressed)
+		if (GetInput()->GetKeyState(def::Key::C).pressed)
 		{
 			tempShape = new Circle();
 
@@ -202,7 +202,7 @@ public:
 			selected = tempShape->GetNextNode(cursor);
 		}
 
-		if (GetKey(def::Key::R).pressed)
+		if (GetInput()->GetKeyState(def::Key::R).pressed)
 		{
 			tempShape = new Rect();
 
@@ -210,7 +210,7 @@ public:
 			selected = tempShape->GetNextNode(cursor);
 		}
 
-		if (GetKey(def::Key::B).pressed)
+		if (GetInput()->GetKeyState(def::Key::B).pressed)
 		{
 			tempShape = new Curve();
 
@@ -218,7 +218,7 @@ public:
 			selected = tempShape->GetNextNode(cursor);
 		}
 
-		if (GetMouse(def::Button::RIGHT).pressed)
+		if (GetInput()->GetButtonState(def::Button::RIGHT).pressed)
 		{
 			for (const auto& shape : shapes)
 			{
@@ -238,13 +238,13 @@ public:
 			}
 		}
 
-		if (GetMouse(def::Button::RIGHT).held)
+		if (GetInput()->GetButtonState(def::Button::RIGHT).held)
 		{
 			if (!selected)
 				selectedArea.second = cursor;
 		}
 
-		if (GetKey(def::Key::D).pressed)
+		if (GetInput()->GetKeyState(def::Key::D).pressed)
 		{
 			if (selectedArea.second != def::Vector2i(-1, -1))
 			{
@@ -282,7 +282,7 @@ public:
 		if (selected)
 			selected->pos = cursor;
 
-		if (GetMouse(def::Button::LEFT).released)
+		if (GetInput()->GetButtonState(def::Button::LEFT).released)
 		{
 			if (tempShape)
 			{
@@ -304,8 +304,8 @@ public:
 		def::Vector2i origin = at.GetOrigin();
 		def::Vector2i end = at.GetEnd();
 
-		at.DrawTextureLine({ ScreenWidth() / 2, origin.y }, { ScreenWidth() / 2, end.y }, def::GREY);
-		at.DrawTextureLine({ origin.x, ScreenHeight() / 2 }, { end.x, ScreenHeight() / 2 }, def::GREY);
+		at.DrawTextureLine({ GetWindow()->GetScreenWidth() / 2, origin.y }, { GetWindow()->GetScreenWidth() / 2, end.y }, def::GREY);
+		at.DrawTextureLine({ origin.x, GetWindow()->GetScreenHeight() / 2 }, { end.x, GetWindow()->GetScreenHeight() / 2 }, def::GREY);
 
 		for (size_t i = 0; i < shapes.size(); i++)
 		{

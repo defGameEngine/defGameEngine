@@ -37,7 +37,7 @@ class SlidingPuzzle : public def::GameEngine
 public:
 	SlidingPuzzle()
 	{
-		SetTitle("Sliding Puzzle");
+		GetWindow()->SetTitle("Sliding Puzzle");
 	}
 
 private:
@@ -69,9 +69,9 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		if (GetMouse(def::Button::LEFT).pressed)
+		if (GetInput()->GetButtonState(def::Button::LEFT).pressed)
 		{
-			def::Vector2i cellPos = GetMousePos() / cellSize;
+			def::Vector2i cellPos = GetInput()->GetMousePosition() / cellSize;
 
 			if (cellPos < mapSize && cellPos >= def::Vector2i(0, 0))
 			{

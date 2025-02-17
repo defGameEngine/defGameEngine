@@ -48,7 +48,7 @@ class Asteroids : public def::GameEngine
 public:
 	Asteroids()
 	{
-		SetTitle("Asteroids");
+		GetWindow()->SetTitle("Asteroids");
 	}
 
 	std::mt19937 randomEngine;
@@ -89,16 +89,16 @@ private:
 
 	void WrapCoordinates(float& x, float& y)
 	{
-		if (x < 0.0f) x += (float)ScreenWidth();
-		if (y < 0.0f) y += (float)ScreenHeight();
+		if (x < 0.0f) x += (float)GetWindow()->GetScreenWidth();
+		if (y < 0.0f) y += (float)GetWindow()->GetScreenHeight();
 
-		if (x >= (float)ScreenWidth()) x -= (float)ScreenWidth();
-		if (y >= (float)ScreenHeight()) y -= (float)ScreenHeight();
+		if (x >= (float)GetWindow()->GetScreenWidth()) x -= (float)GetWindow()->GetScreenWidth();
+		if (y >= (float)GetWindow()->GetScreenHeight()) y -= (float)GetWindow()->GetScreenHeight();
 	}
 
 	void Reset()
 	{
-		player.pos = GetScreenSize() / 2;
+		player.pos = GetWindow()->GetScreenSize() / 2;
 		player.vel = { 0, 0 };
 
 		player.angle = 0.0f;
@@ -108,8 +108,8 @@ private:
 
 		randomEngine.seed(std::chrono::system_clock::now().time_since_epoch().count());
 
-		std::uniform_int_distribution<int> distPosX(0, ScreenWidth());
-		std::uniform_int_distribution<int> distPosY(0, ScreenHeight());
+		std::uniform_int_distribution<int> distPosX(0, GetWindow()->GetScreenWidth());
+		std::uniform_int_distribution<int> distPosY(0, GetWindow()->GetScreenHeight());
 
 		std::uniform_real_distribution<float> distVel(-20.0f, 20.0f);
 
@@ -144,29 +144,29 @@ protected:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetKey(def::Key::A).held) player.angle -= 5.0f * deltaTime;
-		if (GetKey(def::Key::D).held) player.angle += 5.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::A).held) player.angle -= 5.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::D).held) player.angle += 5.0f * deltaTime;
 
-		if (GetKey(def::Key::W).held)
+		if (GetInput()->GetKeyState(def::Key::W).held)
 		{
 			player.vel.x += sinf(player.angle) * 20.0f * deltaTime;
 			player.vel.y -= cosf(player.angle) * 20.0f * deltaTime;
 		}
 
-		if (GetKey(def::Key::S).held)
+		if (GetInput()->GetKeyState(def::Key::S).held)
 		{
 			player.vel.x -= sinf(player.angle) * 20.0f * deltaTime;
 			player.vel.y += cosf(player.angle) * 20.0f * deltaTime;
 		}
 
-		if (GetMouse(def::Button::LEFT).pressed)
+		if (GetInput()->GetButtonState(def::Button::LEFT).pressed)
 			CreateBullet(player.pos, { 50.0f * sinf(player.angle), -50.0f * cosf(player.angle) });
 
 		for (auto& b : bullets)
 		{
 			b.pos += b.vel * deltaTime;
 			
-			if (b.pos.x < 0 || b.pos.y < 0 || b.pos.x >= (float)ScreenWidth() || b.pos.y >= (float)ScreenHeight())
+			if (b.pos.x < 0 || b.pos.y < 0 || b.pos.x >= (float)GetWindow()->GetScreenWidth() || b.pos.y >= (float)GetWindow()->GetScreenHeight())
 				b.redundant = true;
 
 			if (!b.redundant)

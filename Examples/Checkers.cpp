@@ -14,7 +14,7 @@ class Checkers : public def::GameEngine
 public:
     Checkers()
     {
-        SetTitle("Checkers");
+        GetWindow()->SetTitle("Checkers");
     }
 
     struct Cell
@@ -47,7 +47,7 @@ public:
     bool OnUserCreate() override
     {
         vCellSize = { 32, 32 };
-        vFieldSize = GetScreenSize() / vCellSize;
+        vFieldSize = GetWindow()->GetScreenSize() / vCellSize;
 
         vecCells.resize(vFieldSize.x * vFieldSize.y);
 
@@ -84,9 +84,9 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override
     {
-        if (GetMouse(def::Button::LEFT).pressed)
+        if (GetInput()->GetButtonState(def::Button::LEFT).pressed)
         {
-            def::Vector2i vMouse = GetMousePos() / vCellSize;
+            def::Vector2i vMouse = GetInput()->GetMousePosition() / vCellSize;
 
             if (vMouse.x >= 0 && vMouse.y >= 0 && vMouse.x < vFieldSize.x && vMouse.y < vFieldSize.y)
             {
@@ -150,10 +150,6 @@ public:
             }
 
         }
-
-
-
-
 
         def::Vector2i p;
         for (p.x = 0; p.x < vFieldSize.x; p.x++)

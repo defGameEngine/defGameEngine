@@ -303,6 +303,26 @@ namespace def
         return m_CaptureText;
     }
 
+    const Vector2i& InputHandler::GetMousePosition() const
+    {
+        return m_MousePos;
+    }
+
+    int InputHandler::GetMouseX() const
+    {
+        return m_MousePos.x;
+    }
+
+	int InputHandler::GetMouseY() const
+    {
+        return m_MousePos.y;
+    }
+
+    int InputHandler::GetScrollDelta() const
+    {
+        return m_ScrollDelta;
+    }
+
     const std::string& InputHandler::GetCapturedText() const
     {
         return m_CapturedText;

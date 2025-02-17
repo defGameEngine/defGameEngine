@@ -94,7 +94,7 @@ class Engine3D : public def::GameEngine
 public:
 	Engine3D()
 	{
-		SetTitle("Engine 3D");
+		GetWindow()->SetTitle("Engine 3D");
 	}
 
 	Matrix4x4 projMatrix;
@@ -133,7 +133,7 @@ protected:
 		float fov = 3.14159f * 0.5f;
 		float near = 0.001f;
 		float far = 1000.0f;
-		float aspectRatio = (float)ScreenWidth() / (float)ScreenHeight();
+		float aspectRatio = (float)GetWindow()->GetScreenWidth() / (float)GetWindow()->GetScreenHeight();
 
 		projMatrix.m[0][0] = 1.0f / (aspectRatio * tanf(fov * 0.5f));
 		projMatrix.m[1][1] = 1.0f / tanf(fov * 0.5f);
@@ -204,9 +204,9 @@ protected:
 				projected.p[1].x += 0.5f; projected.p[1].y += 0.5f;
 				projected.p[2].x += 0.5f; projected.p[2].y += 0.5f;
 
-				projected.p[0].x *= (float)ScreenWidth(); projected.p[0].y *= (float)ScreenHeight();
-				projected.p[1].x *= (float)ScreenWidth(); projected.p[1].y *= (float)ScreenHeight();
-				projected.p[2].x *= (float)ScreenWidth(); projected.p[2].y *= (float)ScreenHeight();
+				projected.p[0].x *= (float)GetWindow()->GetScreenWidth(); projected.p[0].y *= (float)GetWindow()->GetScreenHeight();
+				projected.p[1].x *= (float)GetWindow()->GetScreenWidth(); projected.p[1].y *= (float)GetWindow()->GetScreenHeight();
+				projected.p[2].x *= (float)GetWindow()->GetScreenWidth(); projected.p[2].y *= (float)GetWindow()->GetScreenHeight();
 
 				Vector3 lightDir = { 0.0f, 0.0f, -1.0f };
 

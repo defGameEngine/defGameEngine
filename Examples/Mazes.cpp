@@ -7,7 +7,7 @@ class Maze : public def::GameEngine
 public:
 	Maze()
 	{
-		SetTitle("Maze");
+		GetWindow()->SetTitle("Maze");
 	}
 
 private:

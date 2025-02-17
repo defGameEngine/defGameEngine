@@ -124,12 +124,12 @@ struct Table
 
 	void UpdateCue(def::GameEngine* dge)
 	{
-		if (dge->GetMouse(def::Button::LEFT).pressed)
+		if (dge->GetInput()->GetButtonState(def::Button::LEFT).pressed)
 		{
 			selected = nullptr;
 			for (auto& ball : balls)
 			{
-				if (ball.type == Ball::BLACK && ball.IsInside(dge->GetMousePos()))
+				if (ball.type == Ball::BLACK && ball.IsInside(dge->GetInput()->GetMousePosition()))
 				{
 					selected = &ball;
 					break;
@@ -137,10 +137,10 @@ struct Table
 			}
 		}
 
-		if (dge->GetMouse(def::Button::LEFT).released)
+		if (dge->GetInput()->GetButtonState(def::Button::LEFT).released)
 		{
 			if (selected)
-				selected->vel = FORCE_ACC * (selected->pos - def::Vector2f(dge->GetMousePos()));
+				selected->vel = FORCE_ACC * (selected->pos - def::Vector2f(dge->GetInput()->GetMousePosition()));
 
 			selected = nullptr;
 		}
@@ -240,7 +240,7 @@ struct Table
 	void DrawCue(def::GameEngine* dge, const def::Pixel& col = def::DARK_GREY)
 	{
 		if (selected)
-			dge->DrawLine(selected->pos, dge->GetMousePos(), col);
+			dge->DrawLine(selected->pos, dge->GetInput()->GetMousePosition(), col);
 	}
 
 	void DrawBoundary(def::GameEngine* dge, const def::Pixel& col = def::BROWN)
@@ -276,7 +276,7 @@ class Pool : public def::GameEngine
 public:
 	Pool()
 	{
-		SetTitle("Pool");
+		GetWindow()->SetTitle("Pool");
 	}
 
 	~Pool()
@@ -294,24 +294,24 @@ public:
 	{
 		table->Clear();
 
-		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 4 + 4, ScreenHeight() - borderWidth * 5), ballRadius, Ball::BLACK);
+		table->AddBall(def::Vector2f(GetWindow()->GetScreenWidth() * 0.4f + ballRadius * 4 + 4, GetWindow()->GetScreenHeight() - borderWidth * 5), ballRadius, Ball::BLACK);
 
-		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f, borderWidth * 5), ballRadius);
+		table->AddBall(def::Vector2f(GetWindow()->GetScreenWidth() * 0.4f, borderWidth * 5), ballRadius);
 		for (int i = 0; i < 4; i++)
 			table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius + 1, borderWidth * 5 + ballRadius * 2 + 2), ballRadius);
+		table->AddBall(def::Vector2f(GetWindow()->GetScreenWidth() * 0.4f + ballRadius + 1, borderWidth * 5 + ballRadius * 2 + 2), ballRadius);
 		for (int i = 0; i < 3; i++)
 			table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 2 + 2, borderWidth * 5 + ballRadius * 4 + 4), ballRadius);
+		table->AddBall(def::Vector2f(GetWindow()->GetScreenWidth() * 0.4f + ballRadius * 2 + 2, borderWidth * 5 + ballRadius * 4 + 4), ballRadius);
 		for (int i = 0; i < 2; i++)
 			table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 3 + 3, borderWidth * 5 + ballRadius * 6 + 6), ballRadius);
+		table->AddBall(def::Vector2f(GetWindow()->GetScreenWidth() * 0.4f + ballRadius * 3 + 3, borderWidth * 5 + ballRadius * 6 + 6), ballRadius);
 		table->AddBall(table->balls.back().pos + def::Vector2f(ballRadius * 2 + 2, 0), ballRadius);
 
-		table->AddBall(def::Vector2f(ScreenWidth() * 0.4f + ballRadius * 4 + 4, borderWidth * 5 + ballRadius * 8 + 8), ballRadius);
+		table->AddBall(def::Vector2f(GetWindow()->GetScreenWidth() * 0.4f + ballRadius * 4 + 4, borderWidth * 5 + ballRadius * 8 + 8), ballRadius);
 
 		AddPockets(tl, br, pocketRadius);
 	}
@@ -351,7 +351,7 @@ private:
 	bool OnUserCreate() override
 	{
 		topLeft = { 0.0f, 0.0f };
-		bottomRight = GetScreenSize();
+		bottomRight = GetWindow()->GetScreenSize();
 
 		table = new Table(topLeft, bottomRight, BORDER_WIDTH, POCKET_RADIUS);
 

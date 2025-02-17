@@ -22,7 +22,7 @@ class BreakOut : public def::GameEngine
 public:
 	BreakOut()
 	{
-		SetTitle("Break Out");
+		GetWindow()->SetTitle("Break Out");
 	}
 
 private:
@@ -34,21 +34,21 @@ private:
 protected:
 	bool OnUserCreate() override
 	{
-		ball.model.pos = GetScreenSize() / 2;
+		ball.model.pos = GetWindow()->GetScreenSize() / 2;
 		ball.velocity = { 0.5f, 0.8f };
 		ball.model.radius = 5.0f;
 
 		Tile b;
-		b.model.pos = GetScreenSize() * def::Vector2f(0.5f, 0.75f);
+		b.model.pos = GetWindow()->GetScreenSize() * def::Vector2f(0.5f, 0.75f);
 		b.model.size = { 20.0f, 5.0f };
 	
 		tiles.push_back(b);
 		bat = tiles.begin();
 
-		def::Vector2f origin = GetScreenSize() * 0.25f;
+		def::Vector2f origin = GetWindow()->GetScreenSize() * 0.25f;
 		def::Vector2f tileSize = { 20.0f, 10.0f };
 
-		def::Vector2i count = GetScreenSize() * def::Vector2f(0.5f, 0.2f) / tileSize;
+		def::Vector2i count = GetWindow()->GetScreenSize() * def::Vector2f(0.5f, 0.2f) / tileSize;
 
 		// Add tiles
 		for (int i = 0; i < count.x; i++)
@@ -67,21 +67,21 @@ protected:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetKey(def::Key::LEFT).held) bat->model.pos.x -= 150.0f * deltaTime;
-		if (GetKey(def::Key::RIGHT).held) bat->model.pos.x += 150.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::LEFT).held) bat->model.pos.x -= 150.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::RIGHT).held) bat->model.pos.x += 150.0f * deltaTime;
 
 		def::Vector2f potentialPos = ball.model.pos + ball.velocity * deltaTime * 200.0f;
 
 		if (potentialPos.x < ball.model.radius)
 			ball.velocity.x *= -1.0f;
 
-		if (potentialPos.x >= (float)ScreenWidth() - ball.model.radius)
+		if (potentialPos.x >= (float)GetWindow()->GetScreenWidth() - ball.model.radius)
 			ball.velocity.x *= -1.0f;
 
 		if (potentialPos.y < ball.model.radius)
 			ball.velocity.y *= -1.0f;
 
-		if (potentialPos.y >= (float)ScreenHeight() - ball.model.radius)
+		if (potentialPos.y >= (float)GetWindow()->GetScreenHeight() - ball.model.radius)
 			ball.velocity.y *= -1.0f;
 
 		for (auto it = tiles.begin(); it != tiles.end(); it++)

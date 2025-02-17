@@ -21,6 +21,8 @@ namespace def
 
         if (!m_Platform->ConstructWindow(m_ScreenSize, m_PixelSize, m_WindowSize, vsync, fullScreen, dirtyPixel))
 		    return false;
+
+        return true;
     }
 
     void Window::UpdateCaption(int fps)

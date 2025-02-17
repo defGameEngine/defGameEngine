@@ -81,6 +81,13 @@ namespace def
 		void CaptureText(bool enable);
 		bool IsCapturingText() const;
 
+		const Vector2i& GetMousePosition() const;
+
+		int GetMouseX() const;
+		int GetMouseY() const;
+
+		int GetScrollDelta() const;
+
 		const std::string& GetCapturedText() const;
 		size_t GetCapturedTextCursorPosition() const;
 
