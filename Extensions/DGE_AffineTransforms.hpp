@@ -135,7 +135,7 @@ namespace def
 
 	Vector2f AffineTransforms::GetEnd()
 	{
-		return ScreenToWorld(m_Engine->GetScreenSize());
+		return ScreenToWorld(m_Engine->GetWindow()->GetScreenSize());
 	}
 
 	void AffineTransforms::SetScale(const Vector2f& scale)
@@ -172,7 +172,7 @@ namespace def
 	{
 		Vector2f p = WorldToScreen(point);
 
-		return p.x >= 0.0f && p.y >= 0.0f && p.x < m_Engine->ScreenWidth() && p.y < m_Engine->ScreenHeight();
+		return p.x >= 0.0f && p.y >= 0.0f && p.x < m_Engine->GetWindow()->GetScreenWidth() && p.y < m_Engine->GetWindow()->GetScreenHeight();
 	}
 
 	bool AffineTransforms::IsRectVisible(const Vector2f& pos, const Vector2f& size)
@@ -180,7 +180,7 @@ namespace def
 		Vector2f p = WorldToScreen(pos);
 		Vector2f s = size * m_Scale;
 
-		return p.x + s.x >= 0.0f && p.y + s.y >= 0.0f && p.x < m_Engine->ScreenWidth() && p.y < m_Engine->ScreenHeight();
+		return p.x + s.x >= 0.0f && p.y + s.y >= 0.0f && p.x < m_Engine->GetWindow()->GetScreenWidth() && p.y < m_Engine->GetWindow()->GetScreenHeight();
 	}
 
 	bool AffineTransforms::Draw(const Vector2i& pos, Pixel col)
@@ -293,7 +293,7 @@ namespace def
 			Vector2i spriteEnd = WorldToScreen(pos + sprite->size);
 
 			Vector2i screenStart = spriteStart.Max({ 0, 0 });
-			Vector2i screenEnd = spriteEnd.Min(m_Engine->GetScreenSize());
+			Vector2i screenEnd = spriteEnd.Min(m_Engine->GetWindow()->GetScreenSize());
 
 			Vector2f step = 1.0f / size;
 
@@ -421,7 +421,7 @@ namespace def
 
 	void AffineTransforms::FillTextureTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
 	{
-		DrawTexturePolygon({ pos1, pos2, pos3 }, { col, col, col }, Texture::Structure::FAN);
+		DrawTexturePolygon({ pos1, pos2, pos3 }, { col, col, col }, Texture::Structure::TRIANGLE_FAN);
 	}
 
 	void AffineTransforms::DrawTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
@@ -431,7 +431,7 @@ namespace def
 
 	void AffineTransforms::FillTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
 	{
-		DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { col, col, col, col }, Texture::Structure::FAN);
+		DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { col, col, col, col }, Texture::Structure::TRIANGLE_FAN);
 	}
 
 	void AffineTransforms::DrawTextureCircle(const Vector2i& pos, int radius, const Pixel& col)

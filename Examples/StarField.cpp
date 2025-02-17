@@ -7,7 +7,7 @@ class Sample : public def::GameEngine
 public:
 	Sample()
 	{
-		SetTitle("Space");
+		GetWindow()->SetTitle("Space");
 	}
 
 	struct Star
@@ -41,8 +41,8 @@ protected:
 
 	bool OnUserCreate() override
 	{
-		origin = GetScreenSize() / 2;
-		bound = float(std::max(ScreenWidth(), ScreenHeight())) * 0.8f;
+		origin = GetWindow()->GetScreenSize() / 2;
+		bound = float(std::max(GetWindow()->GetScreenWidth(), GetWindow()->GetScreenHeight())) * 0.8f;
 
 		stars.resize(STARS_COUNT);
 

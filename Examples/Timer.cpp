@@ -5,7 +5,7 @@ class Timer final : public def::GameEngine
 public:
 	Timer()
 	{
-		SetTitle("Timer");
+		GetWindow()->SetTitle("Timer");
 	}
 
 	std::chrono::system_clock::time_point begin;
@@ -24,7 +24,7 @@ protected:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetKey(def::Key::SPACE).pressed)
+		if (GetInput()->GetKeyState(def::Key::SPACE).pressed)
 		{
 			isPaused = !isPaused;
 
@@ -34,7 +34,7 @@ protected:
 				begin += std::chrono::system_clock::now() - pausedTime;
 		}
 
-		if (GetKey(def::Key::ENTER).pressed)
+		if (GetInput()->GetKeyState(def::Key::ENTER).pressed)
 			enableMilliseconds = !enableMilliseconds;
 
 		if (!isPaused)

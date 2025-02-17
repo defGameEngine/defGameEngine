@@ -5,7 +5,7 @@ class Snow : public def::GameEngine
 public:
 	Snow()
 	{
-		SetTitle("Snow");
+		GetWindow()->SetTitle("Snow");
 	}
 
 private:
@@ -37,7 +37,7 @@ protected:
 
 		for (auto& f : flakes)
 		{
-			f.pos = { rnd(0.0f, ScreenWidth()), float(-flakeRadius) };
+			f.pos = { rnd(0.0f, GetWindow()->GetScreenWidth()), float(-flakeRadius) };
 			f.speed = rnd(100.0f, 200.0f);
 		}
 
@@ -46,10 +46,10 @@ protected:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetKey(def::Key::UP).held)
+		if (GetInput()->GetKeyState(def::Key::UP).held)
 			speedDiff += deltaTime * 100.0f;
 
-		if (GetKey(def::Key::DOWN).held)
+		if (GetInput()->GetKeyState(def::Key::DOWN).held)
 			speedDiff -= deltaTime * 100.0f;
 
 		speedDiff = std::max(0.0f, speedDiff);
@@ -59,9 +59,9 @@ protected:
 			f.time += deltaTime;
 			f.pos.y = f.time * (f.speed + speedDiff);
 
-			if (f.pos.y >= ScreenHeight() + flakeRadius)
+			if (f.pos.y >= GetWindow()->GetScreenHeight() + flakeRadius)
 			{
-				f.pos = { rnd(-speedDiff / 10.0f, ScreenWidth()), float(-flakeRadius) };
+				f.pos = { rnd(-speedDiff / 10.0f, GetWindow()->GetScreenWidth()), float(-flakeRadius) };
 				f.time = 0.0f;
 			}
 		}

@@ -9,6 +9,7 @@ import platform
 OS = platform.system()
 
 TARGETS = [
+    'ConsoleExample',
     'Tetris',
     'Asteroids',
     'AxisKiller',
@@ -17,7 +18,6 @@ TARGETS = [
     'Camera2D',
     'Checkers',
     'ColorPalette',
-    'ConsoleExample',
     'Cube3D',
     'DDA_Raycaster2D',
     'DDA_Raycaster3D',

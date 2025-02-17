@@ -115,7 +115,7 @@ class Example : public def::GameEngine
 public:
 	Example()
 	{
-		SetTitle("Splines!");
+		GetWindow()->SetTitle("Splines!");
 	}
 
 	Spline path;
@@ -142,8 +142,8 @@ protected:
 
 		for (int i = 0; i < 10; i++)
 		{
-			float x = 30.0f * sinf((float)i / 10.0f * 2.0f * 3.14159f) + ScreenWidth() / 2;
-			float y = 30.0f * cosf((float)i / 10.0f * 2.0f * 3.14159f) + ScreenHeight() / 2;
+			float x = 30.0f * sinf((float)i / 10.0f * 2.0f * 3.14159f) + GetWindow()->GetScreenWidth() / 2;
+			float y = 30.0f * cosf((float)i / 10.0f * 2.0f * 3.14159f) + GetWindow()->GetScreenHeight() / 2;
 
 			path.points.push_back({ { x, y } });
 		}
@@ -153,24 +153,24 @@ protected:
 
 	bool OnUserUpdate(float fDeltaTime) override
 	{
-		if (GetKey(def::Key::Z).pressed)
+		if (GetInput()->GetKeyState(def::Key::Z).pressed)
 			nSelectedPoint--;
 
-		if (GetKey(def::Key::X).pressed)
+		if (GetInput()->GetKeyState(def::Key::X).pressed)
 			nSelectedPoint++;
 
 		nSelectedPoint %= path.points.size();
 
-		if (GetKey(def::Key::UP).held)
+		if (GetInput()->GetKeyState(def::Key::UP).held)
 			path.points[nSelectedPoint].coord.y -= fMoveSpeed * fDeltaTime;
 
-		if (GetKey(def::Key::DOWN).held)
+		if (GetInput()->GetKeyState(def::Key::DOWN).held)
 			path.points[nSelectedPoint].coord.y += fMoveSpeed * fDeltaTime;
 
-		if (GetKey(def::Key::LEFT).held)
+		if (GetInput()->GetKeyState(def::Key::LEFT).held)
 			path.points[nSelectedPoint].coord.x -= fMoveSpeed * fDeltaTime;
 
-		if (GetKey(def::Key::RIGHT).held)
+		if (GetInput()->GetKeyState(def::Key::RIGHT).held)
 			path.points[nSelectedPoint].coord.x += fMoveSpeed * fDeltaTime;
 
 		fMarker += fMoveSpeed * fDeltaTime;
