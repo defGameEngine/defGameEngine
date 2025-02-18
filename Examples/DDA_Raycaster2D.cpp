@@ -5,7 +5,7 @@ class Raycasting : public def::GameEngine
 public:
 	Raycasting()
 	{
-		SetTitle("Raycasting");
+		GetWindow()->SetTitle("Raycasting");
 	}
 
 	virtual ~Raycasting()
@@ -27,16 +27,16 @@ private:
 protected:
 	void ControlPoint(def::Vector2f& point, const float deltaTime, const def::Key up, const def::Key down, const def::Key left, const def::Key right)
 	{
-		if (GetKey(up).held)
+		if (GetInput()->GetKeyState(up).held)
 			point.y -= pointSpeed * deltaTime;
 
-		if (GetKey(down).held)
+		if (GetInput()->GetKeyState(down).held)
 			point.y += pointSpeed * deltaTime;
 
-		if (GetKey(left).held)
+		if (GetInput()->GetKeyState(left).held)
 			point.x -= pointSpeed * deltaTime;
 
-		if (GetKey(right).held)
+		if (GetInput()->GetKeyState(right).held)
 			point.x += pointSpeed * deltaTime;
 	}
 
@@ -53,7 +53,7 @@ protected:
 	bool OnUserCreate() override
 	{
 		tileSize = { 8, 8 };
-		tilesCount = GetScreenSize() / tileSize;
+		tilesCount = GetWindow()->GetScreenSize() / tileSize;
 
 		map = new bool[tilesCount.x * tilesCount.y] { false };
 
@@ -68,9 +68,9 @@ protected:
 		ControlPoint(start, deltaTime, def::Key::W, def::Key::S, def::Key::A, def::Key::D);
 		ControlPoint(end, deltaTime, def::Key::UP, def::Key::DOWN, def::Key::LEFT, def::Key::RIGHT);
 
-		if (GetMouse(def::Button::RIGHT).pressed)
+		if (GetInput()->GetButtonState(def::Button::RIGHT).pressed)
 		{
-			def::Vector2i tilePos = GetMousePos() / tileSize;
+			def::Vector2i tilePos = GetInput()->GetMousePosition() / tileSize;
 
 			SetTile(tilePos, !GetTile(tilePos));
 		}

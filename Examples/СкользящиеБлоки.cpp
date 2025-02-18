@@ -121,7 +121,7 @@ class СкользящиеБлоки : public def::GameEngine
 public:
 		СкользящиеБлоки()
 		{
-				SetTitle("Sliding Blocks");
+				GetWindow()->SetTitle("Sliding Blocks");
 		}
 
 		virtual ~СкользящиеБлоки()
@@ -210,7 +210,7 @@ protected:
 				строка += "#........-.....#";
 				строка += "################";
 
-				размерКарты = GetScreenSize() / РАЗМЕР_ПЛИТКИ;
+				размерКарты = GetWindow()->GetScreenSize() / РАЗМЕР_ПЛИТКИ;
 				карта.resize(размерКарты.x * размерКарты.y);
 
 				def::Vector2i позиция;
@@ -246,10 +246,10 @@ protected:
 		{
 				ТипСтороны сторонаКасания = СТОРОНА_НЕОПРЕДЕЛЕНО;
 
-				if (GetKey(def::Key::LEFT).pressed)	 сторонаКасания = СТОРОНА_ПРАВО;
-				if (GetKey(def::Key::RIGHT).pressed) сторонаКасания = СТОРОНА_ЛЕВО;
-				if (GetKey(def::Key::UP).pressed)	 сторонаКасания = СТОРОНА_НИЗ;
-				if (GetKey(def::Key::DOWN).pressed)  сторонаКасания = СТОРОНА_ВЕРХ;
+				if (GetInput()->GetKeyState(def::Key::LEFT).pressed)  сторонаКасания = СТОРОНА_ПРАВО;
+				if (GetInput()->GetKeyState(def::Key::RIGHT).pressed) сторонаКасания = СТОРОНА_ЛЕВО;
+				if (GetInput()->GetKeyState(def::Key::UP).pressed)    сторонаКасания = СТОРОНА_НИЗ;
+				if (GetInput()->GetKeyState(def::Key::DOWN).pressed)  сторонаКасания = СТОРОНА_ВЕРХ;
 
 				ДвинутьБлоки(сторонаКасания);
 

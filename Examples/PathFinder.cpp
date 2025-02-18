@@ -10,7 +10,7 @@ class AStar : public def::GameEngine
 public:
 	AStar()
 	{
-		SetTitle("AStar algorithm");
+		GetWindow()->SetTitle("AStar algorithm");
 	}
 
 private:
@@ -43,19 +43,19 @@ protected:
 		int nodeSize = 9;
 		int nodeBorder = 2;
 
-		def::Vector2i selectedNode = GetMousePos() / nodeSize;
+		def::Vector2i selectedNode = GetInput()->GetMousePosition() / nodeSize;
 
 		Node* nodes = pathFinder.GetNodes();
 
-		if (GetMouse(def::Button::LEFT).released)
+		if (GetInput()->GetButtonState(def::Button::LEFT).released)
 		{
 			if (selectedNode >= def::Vector2i(0, 0) && selectedNode < pathFinder.GetMapSize())
 			{
 				int p = selectedNode.y * pathFinder.GetMapWidth() + selectedNode.x;
 
-				if (GetKey(def::Key::S).held)
+				if (GetInput()->GetKeyState(def::Key::S).held)
 					pathFinder.SetNodes(&nodes[p], nullptr);
-				else if (GetKey(def::Key::G).held)
+				else if (GetInput()->GetKeyState(def::Key::G).held)
 					pathFinder.SetNodes(nullptr, &nodes[p]);
 				else
 				{

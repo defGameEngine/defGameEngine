@@ -1,4 +1,4 @@
-#include "../Include/Graphic.hpp"
+#include "Graphic.hpp"
 
 namespace def
 {

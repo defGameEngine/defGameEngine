@@ -7,7 +7,7 @@ class Sample : public def::GameEngine
 public:
 	Sample()
 	{
-		SetTitle("Sample");
+		GetWindow()->SetTitle("Sample");
 	}
 
 	def::Vector2f scale = { 1.0f, 1.0f };
@@ -30,7 +30,7 @@ public:
 protected:
 	bool OnUserCreate() override
 	{
-		scale = def::Vector2f(ScreenWidth(), ScreenHeight());
+		scale = def::Vector2f(GetWindow()->GetScreenWidth(), GetWindow()->GetScreenHeight());
 
 		auto randf = [](float min, float max)
 		{
@@ -40,9 +40,7 @@ protected:
 		data.resize(100);
 
 		for (int i = 0; i < data.size(); i++)
-		{
 			data[i] = def::Vector2f(i, 1.0f + sin(i));
-		}
 
 		return true;
 	}
@@ -152,11 +150,11 @@ protected:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetMouse(def::Button::LEFT).pressed) panStart = offset + def::Vector2f(GetMousePos());
-		if (GetMouse(def::Button::LEFT).held) offset = panStart - GetMousePos();
+		if (GetInput()->GetButtonState(def::Button::LEFT).pressed) panStart = offset + GetInput()->GetMousePosition();
+		if (GetInput()->GetButtonState(def::Button::LEFT).held) offset = panStart - GetInput()->GetMousePosition();
 
-		if (GetKey(def::Key::UP).held) scale *= 1.01f;
-		if (GetKey(def::Key::DOWN).held) scale *= 0.99f;
+		if (GetInput()->GetKeyState(def::Key::UP).held) scale *= 1.01f;
+		if (GetInput()->GetKeyState(def::Key::DOWN).held) scale *= 0.99f;
 
 		Clear(def::WHITE);
 		//Bar<float>({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.5f, 2.0f, 20.0f, 31.0f, 10.0f, 15.0f }, def::BLACK);

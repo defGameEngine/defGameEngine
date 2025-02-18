@@ -5,7 +5,7 @@ class Mode7 : public def::GameEngine
 public:
 	Mode7()
 	{
-		SetTitle("Mode7");
+		GetWindow()->SetTitle("Mode7");
 	}
 
 private:
@@ -23,28 +23,28 @@ public:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetKey(def::Key::UP).held) scale += 10.0f * deltaTime;
-		if (GetKey(def::Key::DOWN).held) scale -= 10.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::UP).held) scale += 10.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::DOWN).held) scale -= 10.0f * deltaTime;
 
-		if (GetKey(def::Key::LEFT).held) theta -= deltaTime;
-		if (GetKey(def::Key::RIGHT).held) theta += deltaTime;
+		if (GetInput()->GetKeyState(def::Key::LEFT).held) theta -= deltaTime;
+		if (GetInput()->GetKeyState(def::Key::RIGHT).held) theta += deltaTime;
 
 		def::Vector2f velocity = { 0.0f, 0.0f };
 
-		if (GetKey(def::Key::W).held) velocity += def::Vector2f(-sin(theta), cos(theta));
-		if (GetKey(def::Key::A).held) velocity += def::Vector2f(cos(theta), sin(theta));
-		if (GetKey(def::Key::S).held) velocity += def::Vector2f(sin(theta), -cos(theta));
-		if (GetKey(def::Key::D).held) velocity += def::Vector2f(-cos(theta), -sin(theta));
+		if (GetInput()->GetKeyState(def::Key::W).held) velocity += def::Vector2f(-sin(theta), cos(theta));
+		if (GetInput()->GetKeyState(def::Key::A).held) velocity += def::Vector2f(cos(theta), sin(theta));
+		if (GetInput()->GetKeyState(def::Key::S).held) velocity += def::Vector2f(sin(theta), -cos(theta));
+		if (GetInput()->GetKeyState(def::Key::D).held) velocity += def::Vector2f(-cos(theta), -sin(theta));
 
 		camera += velocity * deltaTime;
 
 		def::Vector2f screen;
-		for (screen.x = 0; screen.x < ScreenWidth(); screen.x++)
+		for (screen.x = 0; screen.x < GetWindow()->GetScreenWidth(); screen.x++)
 		{
-			for (screen.y = ScreenHeight() / 2; screen.y < ScreenHeight(); screen.y++)
+			for (screen.y = GetWindow()->GetScreenHeight() / 2; screen.y < GetWindow()->GetScreenHeight(); screen.y++)
 			{
-				def::Vector2f window = def::Vector2f(GetScreenSize()) / 2.0f + screen * def::Vector2f(-1.0f, 1.0f);
-				float windowZ = screen.y - ScreenHeight() / 2;
+				def::Vector2f window = def::Vector2f(GetWindow()->GetScreenSize()) / 2.0f + screen * def::Vector2f(-1.0f, 1.0f);
+				float windowZ = screen.y - GetWindow()->GetScreenHeight() / 2;
 
 				float rotatedX = window.x * cos(theta) - window.y * sin(theta);
 				float rotatedY = window.x * sin(theta) + window.y * cos(theta);
@@ -55,11 +55,12 @@ public:
 				def::Pixel skyCol = sky->GetPixel(vPixel.x % sky->size.x, vPixel.y % sky->size.y);
 
 				Draw(screen, kartCol);
-				Draw(def::Vector2f(screen.x, ScreenHeight() - screen.y - 1), skyCol);
+				Draw(def::Vector2f(screen.x, GetWindow()->GetScreenHeight() - screen.y - 1), skyCol);
 			}
 		}
 
-		for (int x = 0; x < ScreenWidth(); x++) Draw(x, ScreenHeight() / 2, def::CYAN);
+		for (int x = 0; x < GetWindow()->GetScreenWidth(); x++)
+			Draw(x, GetWindow()->GetScreenHeight() / 2, def::CYAN);
 
 		return true;
 	}

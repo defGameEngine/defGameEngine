@@ -10,7 +10,7 @@ class Yahtzee : public def::GameEngine
 public:
 	Yahtzee()
 	{
-		SetTitle("Yahtzee");
+		GetWindow()->SetTitle("Yahtzee");
 	}
 
 private:
@@ -71,12 +71,12 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		if (GetKey(def::Key::SPACE).pressed)
+		if (GetInput()->GetKeyState(def::Key::SPACE).pressed)
 		{
 			std::generate(
 				dices.begin(),
 				dices.end(),
-				[]() { return (rand() % 6) + 1; }
+				[]() { return rand() % 6 + 1; }
 			);
 
 			std::sort(dices.begin(), dices.end());

@@ -7,7 +7,7 @@ class AxisKiller : public def::GameEngine
 public:
 	AxisKiller()
 	{
-		SetTitle("Axis Killer");
+		GetWindow()->SetTitle("Axis Killer");
 	}
 
 	int border1_start;
@@ -52,14 +52,14 @@ protected:
 
 	bool OnUserCreate() override
 	{
-		border1_start = ScreenWidth() * 0.15f;
-		border1_end = ScreenWidth() * 0.95f;
+		border1_start = GetWindow()->GetScreenWidth() * 0.15f;
+		border1_end = GetWindow()->GetScreenWidth() * 0.95f;
 
-		border2_start = ScreenHeight() * 0.15f;
-		border2_end = ScreenHeight() * 0.9f;
+		border2_start = GetWindow()->GetScreenHeight() * 0.15f;
+		border2_end = GetWindow()->GetScreenHeight() * 0.9f;
 
-		pos1 = { (float)border1_start, ScreenHeight() * 0.85f };
-		pos2 = { ScreenWidth() * 0.9f, (float)border2_start };
+		pos1 = { (float)border1_start, GetWindow()->GetScreenHeight() * 0.85f };
+		pos2 = { GetWindow()->GetScreenWidth() * 0.9f, (float)border2_start };
 
 		NewEnemy();
 
@@ -69,17 +69,17 @@ protected:
 	bool OnUserUpdate(float dt) override
 	{
 		// Change position of players
-		if (GetMouse(def::Button::LEFT).held)
+		if (GetInput()->GetButtonState(def::Button::LEFT).held)
 		{
-			if (PointVsCircle(GetMousePos(), pos1, objRadius))
-				pos1.x = std::max(border1_start, std::min(border1_end, GetMouseX()));
+			if (PointVsCircle(GetInput()->GetMousePosition(), pos1, objRadius))
+				pos1.x = std::max(border1_start, std::min(border1_end, GetInput()->GetMouseX()));
 
-			if (PointVsCircle(GetMousePos(), pos2, objRadius))
-				pos2.y = std::max(border2_start, std::min(border2_end, GetMouseY()));
+			if (PointVsCircle(GetInput()->GetMousePosition(), pos2, objRadius))
+				pos2.y = std::max(border2_start, std::min(border2_end, GetInput()->GetMouseY()));
 		}
 
 		// Shoot
-		if (GetKey(def::Key::SPACE).pressed)
+		if (GetInput()->GetKeyState(def::Key::SPACE).pressed)
 		{
 			bullets.push_back({ { 0.0f, -1.0f }, { pos1.x, pos1.y - objRadius - 1 } });
 			bullets.push_back({ { -1.0f, 0.0f }, { pos2.x - objRadius - 1, pos2.y } });

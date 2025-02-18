@@ -36,15 +36,11 @@
 */
 #endif
 
-#include "Constants.hpp"
-
 #ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
 #endif
 
-#include "KeyState.hpp"
 #include "Pixel.hpp"
-	
 #include "Sprite.hpp"
 #include "Texture.hpp"
 #include "Graphic.hpp"
@@ -62,10 +58,14 @@
 #endif
 
 #include "Layer.hpp"
+#include "Window.hpp"
+#include "InputHandler.hpp"
+#include "Console.hpp"
 
 namespace def
 {
 	class Platform;
+	class Console;
 
 	class GameEngine
 	{
@@ -81,30 +81,12 @@ namespace def
 		friend class PlatformEmscripten;
 	#endif
 
+		friend class Console;
+		friend class InputHandler;
+
 	private:
-		std::string m_AppName;
-
-		Vector2i m_WindowSize;
-		Vector2i m_ScreenSize;
-		Vector2f m_InvScreenSize;
-		Vector2i m_PixelSize;
-
 		bool m_IsAppRunning;
-		bool m_IsFullScreen;
-		bool m_IsDirtyPixel;
-		bool m_IsVSync;
 		bool m_OnlyTextures;
-
-		KeyState m_Keys[(size_t)Key::KEYS_COUNT];
-		KeyState m_Mouse[8];
-
-		bool m_KeyOldState[(size_t)Key::KEYS_COUNT];
-		bool m_KeyNewState[(size_t)Key::KEYS_COUNT];
-
-		bool m_MouseOldState[8];
-		bool m_MouseNewState[8];
-
-		Vector2i m_MousePos;
 
 		Graphic m_Font;
 		int m_TabSize;
@@ -113,36 +95,19 @@ namespace def
 		size_t m_PickedLayer;
 		size_t m_ConsoleLayer;
 
-		Pixel m_ConsoleBackgroundColour;
 		Pixel m_BackgroundColour;
-
-		std::vector<std::string> m_DropCache;
-		int m_ScrollDelta;
-
-		std::string m_TextInput;
-		size_t m_CursorPos;
-
-		bool m_CaptureText;
-		bool m_Caps;
-
-		struct ConsoleEntry
-		{
-			std::string command;
-			std::string output;
-
-			Pixel outputColour;
-		};
-
-		std::vector<ConsoleEntry> m_ConsoleHistory;
-		size_t m_PickedConsoleHistoryCommand;
 
 		float m_DeltaTime;
 		float m_TickTimer;
 
-		Platform* m_Platform;
+		std::unique_ptr<Platform> m_Platform;
 
 		std::chrono::system_clock::time_point m_TimeStart;
 		std::chrono::system_clock::time_point m_TimeEnd;
+
+		std::unique_ptr<InputHandler> m_Input;
+		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<Console> m_Console;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
@@ -150,8 +115,6 @@ namespace def
 
 	public:
 		static GameEngine* s_Engine;
-		static std::unordered_map<Key, std::pair<char, char>> s_KeyboardUS;
-		static std::unordered_map<int, Key> s_KeysTable;
 		inline static std::vector<Vector2f> s_UnitCircle;
 
 		virtual bool OnUserCreate() = 0;
@@ -166,7 +129,6 @@ namespace def
 
 	private:
 		void Destroy();
-		void ScanHardware(KeyState* data, bool* newState, bool* oldState, size_t count);
 		void MainLoop();
 
 		static void MakeUnitCircle(std::vector<Vector2f>& circle, size_t verts);
@@ -245,33 +207,8 @@ namespace def
 
 		void DrawTextureString(const Vector2i& pos, std::string_view text, const Pixel& col = WHITE, const Vector2f& scale = { 1.0f, 1.0f });
 
-		KeyState GetKey(Key key) const;
-		KeyState GetMouse(Button button) const;
-
-		const Vector2i& GetMousePos() const;
-		int GetMouseWheelDelta() const;
-
-		int GetMouseX() const;
-		int GetMouseY() const;
-
-		void SetTitle(std::string_view title);
-
-		const Vector2i& GetScreenSize() const;
-		const Vector2i& GetWindowSize() const;
-
-		int ScreenWidth() const;
-		int ScreenHeight() const;
-
-		bool IsFullScreen() const;
-		bool IsVSync() const;
-		bool IsFocused() const;
-
-		void SetIcon(std::string_view fileName);
-
 		void SetDrawTarget(Graphic* target);
 		Graphic* GetDrawTarget();
-
-		std::vector<std::string>& GetDropped();
 
 		void SetPixelMode(Pixel::Mode pixelMode);
 		Pixel::Mode GetPixelMode() const;
@@ -281,28 +218,15 @@ namespace def
 
 		void SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&));
 
-		void CaptureText(bool enable);
-		bool IsCapturingText() const;
-
-		const std::string& GetCapturedText() const;
-		size_t GetCursorPos() const;
-
-		void SetConsoleBackgroundColour(const Pixel& col);
-		void ShowConsole(bool enable);
-		bool IsConsoleEnabled() const;
-		void ClearCapturedText();
-		void ClearConsole();
-		bool IsCaps() const;
-
 		void UseOnlyTextures(bool enable);
 		float GetDeltaTime() const;
 
-		auto GetWindow()
+		auto GetNativeWindow()
 		{
 		#if defined(DGE_PLATFORM_GLFW3)
-			return ((PlatformGLFW3*)m_Platform)->m_Window;
+			return ((PlatformGLFW3*)m_Platform.get())->m_Window;
 		#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-			return ((PlatformEmscripten*)m_Platform)->m_Display;
+			return ((PlatformEmscripten*)m_Platform.get())->m_Display;
 		#endif
 		}
 
@@ -310,6 +234,10 @@ namespace def
 		void PickLayer(size_t layer);
 		size_t GetPickedLayer() const;
 		Layer* GetLayerByIndex(size_t index);
+
+		Window *const GetWindow();
+		InputHandler *const GetInput();
+		Console *const GetConsole();
 
 	};
 }

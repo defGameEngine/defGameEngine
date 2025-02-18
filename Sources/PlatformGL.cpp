@@ -1,5 +1,4 @@
-#include "../Include/PlatformGL.hpp"
-
+#include "PlatformGL.hpp"
 #include "GLFW/glfw3.h"
 
 namespace def

@@ -20,7 +20,7 @@ class RayCasting : public def::GameEngine
 public:
 	RayCasting()
 	{
-		SetTitle("Ray Casting");
+		GetWindow()->SetTitle("Ray Casting");
 	}
 
 	virtual ~RayCasting()
@@ -116,7 +116,7 @@ protected:
 		objects.push_back({ {7.5f, 7.5f}, {0.0f, 0.0f}, 0.0f, Objects::BARREL });
 		objects.push_back({ {10.0f, 3.0f}, {0.0f, 0.0f}, 0.0f, Objects::BARREL });
 
-		depthBuffer = new float[ScreenWidth()];
+		depthBuffer = new float[GetWindow()->GetScreenWidth()];
 
 		return true;
 	}
@@ -132,7 +132,7 @@ protected:
 		auto removeIter = std::remove_if(objects.begin(), objects.end(), [](const Object& o) { return o.toRemove; });
 		if (removeIter != objects.end()) objects.erase(removeIter);
 
-		if (GetKey(def::Key::W).held)
+		if (GetInput()->GetKeyState(def::Key::W).held)
 		{
 			def::Vector2f vel = playerVel * moveSpeed * deltaTime;
 
@@ -143,7 +143,7 @@ protected:
 				playerPos.y += vel.y;
 		}
 
-		if (GetKey(def::Key::S).held)
+		if (GetInput()->GetKeyState(def::Key::S).held)
 		{
 			def::Vector2f vel = playerVel * moveSpeed * deltaTime;
 
@@ -154,7 +154,7 @@ protected:
 				playerPos.y -= vel.y;
 		}
 
-		if (GetKey(def::Key::A).held)
+		if (GetInput()->GetKeyState(def::Key::A).held)
 		{
 			float oldVelX = playerVel.x;
 			float oldPlaneX = playerPlane.x;
@@ -166,7 +166,7 @@ protected:
 			playerPlane.y = oldPlaneX * sin(rotSpeed * deltaTime) + playerPlane.y * cos(rotSpeed * deltaTime);
 		}
 
-		if (GetKey(def::Key::D).held)
+		if (GetInput()->GetKeyState(def::Key::D).held)
 		{
 			float oldVelX = playerVel.x;
 			float oldPlaneX = playerPlane.x;
@@ -200,9 +200,9 @@ protected:
 		Clear(def::BLACK);
 
 		// Perform DDA raycast algorithm
-		for (int x = 0; x < ScreenWidth(); x++)
+		for (int x = 0; x < GetWindow()->GetScreenWidth(); x++)
 		{
-			float playerAngle = 2.0f * (float)x / (float)ScreenWidth() - 1.0f;
+			float playerAngle = 2.0f * (float)x / (float)GetWindow()->GetScreenWidth() - 1.0f;
 
 			def::Vector2f rayDir = playerVel + playerPlane * playerAngle;
 			def::Vector2f distance = (1.0f / rayDir).Abs();
@@ -269,10 +269,10 @@ protected:
 			else
 				distanceToWall = fromCurrentDistance.y - distance.y;
 
-			int lineHeight = int((float)ScreenHeight() / distanceToWall);
+			int lineHeight = int((float)GetWindow()->GetScreenHeight() / distanceToWall);
 
-			int ceilingPos = std::max(-lineHeight + ScreenHeight() / 2, 0);
-			int floorPos = std::min(lineHeight + ScreenHeight() / 2, ScreenHeight() - 1);
+			int ceilingPos = std::max(-lineHeight + GetWindow()->GetScreenHeight() / 2, 0);
+			int floorPos = std::min(lineHeight + GetWindow()->GetScreenHeight() / 2, GetWindow()->GetScreenHeight() - 1);
 
 			float testPoint;
 			float texStep, texPos;
@@ -290,13 +290,13 @@ protected:
 				tex.x = texSize.x - tex.x - 1;
 
 			texStep = (float)texSize.y / (float)lineHeight / 2;
-			texPos = float(ceilingPos - ScreenHeight() / 2 + lineHeight) * texStep;
+			texPos = float(ceilingPos - GetWindow()->GetScreenHeight() / 2 + lineHeight) * texStep;
 
 			for (int y = 0; y <= floorPos; y++)
 			{
 				if (y <= ceilingPos) // ceiling and floor
 				{
-					float planeZ = float(ScreenHeight() / 2) / float(ScreenHeight() / 2 - y);
+					float planeZ = float(GetWindow()->GetScreenHeight() / 2) / float(GetWindow()->GetScreenHeight() / 2 - y);
 
 					def::Vector2f planePoint = playerPos + 2.0f * rayDir * planeZ;
 					def::Vector2f planeSample = planePoint - planePoint.Floor();
@@ -304,7 +304,7 @@ protected:
 					def::Vector2i texPos = (planeSample * texSize).Min(texSize);
 
 					Draw(x, y, tiles->GetPixel(ceilingId * texSize.x + texPos.x, texPos.y)); // ceiling
-					Draw(x, ScreenHeight() - y, tiles->GetPixel(floorId * texSize.x + texPos.x, texPos.y)); // floor
+					Draw(x, GetWindow()->GetScreenHeight() - y, tiles->GetPixel(floorId * texSize.x + texPos.x, texPos.y)); // floor
 				}
 				else if (y > ceilingPos && !noWall) // wall
 				{
@@ -337,27 +337,27 @@ protected:
 
 				float aspectRatio = transform.x / transform.y;
 
-				def::Vector2i objectScreenPos = { int(float(ScreenWidth() / 2) * (1.0f + aspectRatio)), ScreenHeight() / 2 };
-				int objectScreenSize = int((float)ScreenHeight() / transform.y);
+				def::Vector2i objectScreenPos = { int(float(GetWindow()->GetScreenWidth() / 2) * (1.0f + aspectRatio)), GetWindow()->GetScreenHeight() / 2 };
+				int objectScreenSize = int((float)GetWindow()->GetScreenHeight() / transform.y);
 
 				def::Vector2i ceilingPos = def::Vector2i(objectScreenSize, objectScreenSize) / -2 + objectScreenPos;
 				def::Vector2i floorPos = def::Vector2i(objectScreenSize, objectScreenSize) / 2 + objectScreenPos;
 
-				ceilingPos = ceilingPos.Max(def::Vector2i(0, 0)).Min(GetScreenSize());
-				floorPos = floorPos.Max(def::Vector2i(0, 0)).Min(GetScreenSize());
+				ceilingPos = ceilingPos.Max(def::Vector2i(0, 0)).Min(GetWindow()->GetScreenSize());
+				floorPos = floorPos.Max(def::Vector2i(0, 0)).Min(GetWindow()->GetScreenSize());
 
 				SetPixelMode(def::Pixel::Mode::MASK);
 
 				for (int x = ceilingPos.x; x < floorPos.x; x++)
 				{
-					int texX = (ScreenWidth() * (x - (-objectScreenSize / 2 + objectScreenPos.x)) * texSize.x / objectScreenSize) / ScreenWidth();
+					int texX = (GetWindow()->GetScreenWidth() * (x - (-objectScreenSize / 2 + objectScreenPos.x)) * texSize.x / objectScreenSize) / GetWindow()->GetScreenWidth();
 
-					if (transform.y >= 0 && x >= 0 && x < ScreenWidth() && transform.y < depthBuffer[x])
+					if (transform.y >= 0 && x >= 0 && x < GetWindow()->GetScreenWidth() && transform.y < depthBuffer[x])
 					{
 						for (int y = ceilingPos.y; y < floorPos.y; y++)
 						{
-							int d = y * ScreenWidth() - ScreenHeight() * ScreenWidth() / 2 + objectScreenSize * ScreenWidth() / 2;
-							int texY = (d * texSize.y / objectScreenSize) / ScreenWidth();
+							int d = y * GetWindow()->GetScreenWidth() - GetWindow()->GetScreenHeight() * GetWindow()->GetScreenWidth() / 2 + objectScreenSize * GetWindow()->GetScreenWidth() / 2;
+							int texY = (d * texSize.y / objectScreenSize) / GetWindow()->GetScreenWidth();
 
 							Draw(x, y, tiles->GetPixel((int)o.type * texSize.x + texX, texY));
 							depthBuffer[x] = transform.y;
@@ -383,7 +383,7 @@ protected:
 
 		FillRectangle((int)playerPos.x * 2, (int)playerPos.y * 2, 2, 2, def::YELLOW);
 
-		if (GetMouse(def::Button::LEFT).pressed)
+		if (GetInput()->GetButtonState(def::Button::LEFT).pressed)
 		{
 			Object o;
 			o.pos = playerPos;

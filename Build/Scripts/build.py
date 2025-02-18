@@ -10,6 +10,8 @@ OS = platform.system()
 
 TARGETS = [
     'Tetris',
+    'ConsoleExample',
+    'Yahtzee',
     'Asteroids',
     'AxisKiller',
     'BreakOut',
@@ -17,7 +19,6 @@ TARGETS = [
     'Camera2D',
     'Checkers',
     'ColorPalette',
-    'ConsoleExample',
     'Cube3D',
     'DDA_Raycaster2D',
     'DDA_Raycaster3D',
@@ -36,8 +37,7 @@ TARGETS = [
     'Snow',
     'Splines',
     'StarField',
-    'Timer',
-    'Yahtzee'
+    'Timer'
 ]
 
 if OS == 'Windows':

@@ -36,7 +36,7 @@ class Fireworks : public def::GameEngine
 public:
 	Fireworks()
 	{
-		SetTitle("Fireworks");
+		GetWindow()->SetTitle("Fireworks");
 	}
 
 private:
@@ -56,8 +56,8 @@ private:
 	{
 		Firework f;
 
-		f.pos.x = ((rand() + int(float(ScreenWidth() - 1) * 0.25f)) % int(float(ScreenWidth() - 1) * 0.75f));
-		f.pos.y = ScreenHeight() - 1;
+		f.pos.x = ((rand() + int(float(GetWindow()->GetScreenWidth() - 1) * 0.25f)) % int(float(GetWindow()->GetScreenWidth() - 1) * 0.75f));
+		f.pos.y = GetWindow()->GetScreenHeight() - 1;
 
 		f.explodedPos = { -1.0f, -1.0f };
 

@@ -7,7 +7,7 @@ class Jackpot : public def::GameEngine
 public:
 	Jackpot()
 	{
-		SetTitle("Jackpot");
+		GetWindow()->SetTitle("Jackpot");
 	}
 
 	def::Vector2i machinePos = { 30, 60 };
@@ -63,7 +63,7 @@ protected:
 		// Spin wheels again if they stopped
 		if (lines.back().offset >= lines.back().maxOffset)
 		{
-			if (GetKey(def::Key::SPACE).pressed)
+			if (GetInput()->GetKeyState(def::Key::SPACE).pressed)
 			{
 				for (auto& l : lines)
 				{
@@ -118,7 +118,7 @@ protected:
 			DrawRectangle({ machineCellSize.x * i, machineCellSize.y }, machineCellSize, def::YELLOW);
 
 		SetDrawTarget(nullptr);
-		yBorder = ScreenHeight();
+		yBorder = GetWindow()->GetScreenHeight();
 
 		if (lines.back().offset >= lines.back().maxOffset)
 		{

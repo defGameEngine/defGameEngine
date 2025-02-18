@@ -1,5 +1,5 @@
-#include "../Include/PlatformGLFW3.hpp"
-#include "../Include/defGameEngine.hpp"
+#include "PlatformGLFW3.hpp"
+#include "defGameEngine.hpp"
 
 #include <iostream>
 
@@ -30,7 +30,7 @@ namespace def
 
 	void PlatformGLFW3::DropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 	{
-		auto& cache = GameEngine::s_Engine->GetDropped();
+		auto& cache = GameEngine::s_Engine->m_Window->GetDroppedFiles();
 
 		cache.clear();
 		cache.reserve(pathCount);
@@ -41,23 +41,24 @@ namespace def
 
 	void PlatformGLFW3::ScrollCallback(GLFWwindow* window, double x, double y)
 	{
-		GameEngine::s_Engine->m_ScrollDelta = y;
+		GameEngine::s_Engine->m_Input->SetScrollDelta(y);
 	}
 
 	void PlatformGLFW3::MousePosCallback(GLFWwindow* window, double x, double y)
 	{
-		GameEngine::s_Engine->m_MousePos.x = (int)x / GameEngine::s_Engine->m_PixelSize.x;
-		GameEngine::s_Engine->m_MousePos.y = (int)y / GameEngine::s_Engine->m_PixelSize.y;
+		const Vector2i& pixelSize = GameEngine::s_Engine->m_Window->GetPixelSize();
+
+		GameEngine::s_Engine->m_Input->SetMousePosition((int)x / pixelSize.x, (int)y / pixelSize.y);
 	}
 
 	void PlatformGLFW3::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		GameEngine::s_Engine->m_KeyNewState[size_t(GameEngine::s_KeysTable[key])] = (action == GLFW_PRESS || action == GLFW_REPEAT);
+		GameEngine::s_Engine->m_Input->UpdateKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
 	}
 
 	void PlatformGLFW3::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
-		GameEngine::s_Engine->m_MouseNewState[button] = (action == GLFW_PRESS || action == GLFW_REPEAT);
+		GameEngine::s_Engine->m_Input->UpdateButton(button, action == GLFW_PRESS || action == GLFW_REPEAT);
 	}
 
 	void PlatformGLFW3::Destroy() const
@@ -92,6 +93,7 @@ namespace def
 	void PlatformGLFW3::PollEvents() const
 	{
 		glfwPollEvents();
+		//glfwWaitEvents();
 	}
 
 	bool PlatformGLFW3::ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel)
@@ -145,7 +147,6 @@ namespace def
 		}
 
 		glfwSetDropCallback(m_Window, DropCallback);
-
 		glfwSetScrollCallback(m_Window, ScrollCallback);
 		glfwSetCursorPosCallback(m_Window, MousePosCallback);
 		glfwSetMouseButtonCallback(m_Window, MouseButtonCallback);

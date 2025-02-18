@@ -45,7 +45,7 @@ class Sample : public def::GameEngine
 public:
 	Sample()
 	{
-		SetTitle("Sample");
+		GetWindow()->SetTitle("Sample");
 	}
 
 protected:
@@ -75,7 +75,7 @@ protected:
 				Mat_MultiplyVec(matRotated, vScaled, vRotated);
 
 				def::Vector2f vTranslated;
-				vTranslated = vRotated + def::Vector2f(ScreenWidth() * 0.5f, ScreenHeight() * 0.5f);
+				vTranslated = vRotated + def::Vector2f(GetWindow()->GetScreenWidth() * 0.5f, GetWindow()->GetScreenHeight() * 0.5f);
 
 				Draw(vTranslated, sprDemo->GetPixel(vPos.x, vPos.y));
 			}

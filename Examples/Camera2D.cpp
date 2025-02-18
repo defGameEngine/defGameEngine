@@ -11,7 +11,7 @@ class AffineTransforms : public def::GameEngine
 public:
 	AffineTransforms()
 	{
-		SetTitle("Affine Transforms");
+		GetWindow()->SetTitle("Affine Transforms");
 	}
 
 	def::AffineTransforms at;
@@ -25,7 +25,7 @@ public:
 protected:
 	bool OnUserCreate() override
 	{
-		camera.Initialise({ 0, 0 }, GetScreenSize(), def::Camera2D::Mode::LazyLock);
+		camera.Initialise({ 0, 0 }, GetWindow()->GetScreenSize(), def::Camera2D::Mode::LazyLock);
 
 		size = { 20, 20 };
 
@@ -36,17 +36,17 @@ protected:
 
 	bool OnUserUpdate(float deltaTime) override
 	{
-		if (GetMouseWheelDelta() > 0) at.Zoom(1.1f, pos);
-		if (GetMouseWheelDelta() < 0) at.Zoom(0.9f, pos);
+		if (GetInput()->GetScrollDelta() > 0) at.Zoom(1.1f, pos);
+		if (GetInput()->GetScrollDelta() < 0) at.Zoom(0.9f, pos);
 
 		Clear(def::DARK_BLUE);
 
 		//pos += (at.ScreenToWorld(GetMousePos()) - pos) * deltaTime;
 
-		if (GetKey(def::Key::A).held) pos.x -= 500.0f * deltaTime;
-		if (GetKey(def::Key::D).held) pos.x += 500.0f * deltaTime;
-		if (GetKey(def::Key::W).held) pos.y -= 500.0f * deltaTime;
-		if (GetKey(def::Key::S).held) pos.y += 500.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::A).held) pos.x -= 500.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::D).held) pos.x += 500.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::W).held) pos.y -= 500.0f * deltaTime;
+		if (GetInput()->GetKeyState(def::Key::S).held) pos.y += 500.0f * deltaTime;
 
 		at.SetOffset(camera.Update(pos, deltaTime));
 		
