@@ -68,8 +68,8 @@ namespace def
 
         GameEngine* e = GameEngine::s_Engine;
 
-        int currentLayer = GameEngine::s_Engine->m_PickedLayer;
-        e->PickLayer(m_LayerIndex);
+        int currentLayer = e->m_PickedLayer;
+        e->PickLayer(0);
 
         e->FillTextureRectangle({ 0, 0 }, e->m_Window->GetScreenSize(), m_BackgroundColour);
 
@@ -80,8 +80,8 @@ namespace def
         {
             auto& entry = m_History[i];
 
-            e->DrawTextureString({ 10, 10 + int(i - start) * 20 }, "> " + entry.command);
-            e->DrawTextureString({ 10, 20 + int(i - start) * 20 }, entry.output, entry.outputColour);
+            e->DrawTextureString({ 10, 10 + (int(i) - start) * 20 }, "> " + entry.command);
+            e->DrawTextureString({ 10, 20 + (int(i) - start) * 20 }, entry.output, entry.outputColour);
         }
 
         int x = e->m_Input->GetCapturedTextCursorPosition() * 8 + 36;
@@ -93,16 +93,13 @@ namespace def
         e->PickLayer(currentLayer);
     }
 
-    void Console::SetLayer(Layer* layer, size_t index)
-    {
-        m_Layer = layer;
-        m_LayerIndex = index;
-    }
-
     void Console::Show(bool show)
     {
-        m_Layer->visible = show;
-        m_Layer->update = show;
+        Layer& layer = GameEngine::s_Engine->m_Layers[0];
+
+        layer.visible = show;
+        layer.update = show;
+
         GameEngine::s_Engine->m_Input->CaptureText(show);
     }
 
@@ -113,6 +110,6 @@ namespace def
 
     bool Console::IsShown() const
     {
-        return m_Layer->visible;
+        return GameEngine::s_Engine->m_Layers[0].visible;
     }
 }

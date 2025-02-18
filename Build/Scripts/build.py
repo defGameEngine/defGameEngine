@@ -9,8 +9,9 @@ import platform
 OS = platform.system()
 
 TARGETS = [
-    'ConsoleExample',
     'Tetris',
+    'ConsoleExample',
+    'Yahtzee',
     'Asteroids',
     'AxisKiller',
     'BreakOut',
@@ -36,8 +37,7 @@ TARGETS = [
     'Snow',
     'Splines',
     'StarField',
-    'Timer',
-    'Yahtzee'
+    'Timer'
 ]
 
 if OS == 'Windows':
@@ -55,7 +55,7 @@ def build():
 
     create_dir_if_not_exists('../Target')
 
-    for target in TARGETS[:1]:
+    for target in TARGETS:
         c = Command('g++')
 
         c.add_flag('I"../../Include"')

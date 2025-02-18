@@ -39,16 +39,11 @@ namespace def
         void HandleHistoryBrowsing();
         void Draw();
 
-        void SetLayer(Layer* layer, size_t index);
-
     private:
         Pixel m_BackgroundColour;
 
         std::vector<Entry> m_History;
 		size_t m_PickedHistoryCommand;
-
-        Layer* m_Layer;
-        size_t m_LayerIndex;
 
     };
 }

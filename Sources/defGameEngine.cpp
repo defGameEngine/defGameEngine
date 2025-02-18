@@ -173,9 +173,9 @@ namespace def
 		if (!m_Window->Construct(screenWidth, screenHeight, pixelWidth, pixelHeight, fullScreen, vsync, dirtyPixel))
 			return false;
 
-		size_t consoleLayer = CreateLayer({ 0, 0 }, m_Window->GetScreenSize(), false, false);
-		m_Console->SetLayer(&m_Layers.back(), consoleLayer);
-
+		// Console layer, always create it as 0'th layer
+		CreateLayer({ 0, 0 }, m_Window->GetScreenSize(), false, false);
+		
 		m_PickedLayer = CreateLayer({ 0, 0 }, m_Window->GetScreenSize());
 
 		std::string data =
