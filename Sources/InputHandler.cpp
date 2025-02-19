@@ -334,6 +334,11 @@ namespace def
         return m_CapturedTextCursorPos;
     }
 
+    bool InputHandler::IsCaps() const
+    {
+        return m_Caps;
+    }
+
     void InputHandler::UpdateState(KeyState* data, bool* newState, bool* oldState, uint8_t count)
     {
         for (uint8_t i = 0; i < count; i++)

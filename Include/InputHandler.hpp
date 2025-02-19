@@ -91,6 +91,8 @@ namespace def
 		const std::string& GetCapturedText() const;
 		size_t GetCapturedTextCursorPosition() const;
 
+		bool IsCaps() const;
+
     public:
         static std::unordered_map<Key, std::pair<char, char>> s_KeyboardUS;
 		static std::unordered_map<int, Key> s_KeysTable;
