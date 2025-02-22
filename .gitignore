@@ -1,2 +1,5 @@
-Build/Target
-Build/Scripts/__pycache__
+Build/*
+Engine/*.vcxproj*
+Sandbox/*.vcxproj*
+*.sln
+.vs

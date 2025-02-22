@@ -34,7 +34,3 @@ To use this game engine in your project, follow the [install instructions](/READ
 ## Documentation
 
 [defGameEngine](Docs/GameEngine_Doc.md)
-
-## Optional
-
-[puff](https://github.com/smokingplaya/puff/tree/master)

@@ -6,20 +6,20 @@ from helpers import *
 
 
 EMSDK_PATH = 'C:/SDK/emsdk'
-STB_PATH = 'C:/SDK/stb'
-ASSETS_FOLDER = '../../Examples/Assets'
-ENGINE_INCLUDE_PATH = '../../Include'
-ENGINE_SOURCES_PATH = '../../Sources'
+STB_PATH = '../../Engine/Vendor/stb'
+ASSETS_FOLDER = None
+ENGINE_INCLUDE_PATH = '../../Engine/Include'
+ENGINE_SOURCES_PATH = '../../Engine/Sources'
 
 
 def construct_engine_sources() -> list[str]:
-    return [file_name for file_name in get_files('../../Sources/')]
+    return [file_name for file_name in get_files(ENGINE_SOURCES_PATH)]
 
 
 def build(targets):
     builder = Builder()
 
-    create_dir_if_not_exists('../Target')
+    create_dir_if_not_exists('../Target/Web')
 
     command_initialise = Command(f'{EMSDK_PATH}/emsdk')
 
@@ -27,7 +27,7 @@ def build(targets):
     command_initialise.add_argument('latest')
 
     for target in targets:
-        create_dir_if_not_exists(f'../Target/{target}')
+        create_dir_if_not_exists(f'../Target/Web/{target}')
 
         c = Command('em++')
 
@@ -47,20 +47,21 @@ def build(targets):
             if source != 'PlatformGLFW3.cpp':
                 c.add_argument(f'{ENGINE_SOURCES_PATH}/{source}')
 
+        # !!!!!! CHANGE A PATH TO YOUR SOURCE FILES !!!!!!
         c.add_argument(f'../../Examples/{target}.cpp')
 
         c.add_flag('o')
-        c.add_argument(f'../Target/{target}/index.js')
+        c.add_argument(f'../Target/Web/{target}/index.js')
 
-        if is_dir(ASSETS_FOLDER):
+        if ASSETS_FOLDER and is_dir(ASSETS_FOLDER):
             c.add_argument('--preload-file')
             c.add_argument(ASSETS_FOLDER)
 
         builder.add_command(command_initialise.combine(c))
 
     builder.execute(True, True, True)
-    copy_file('Emscripten/template.html', f'../Target/{target}/index.html')
+    copy_file('Emscripten/template.html', f'../Target/Web/{target}/index.html')
 
 
 if __name__ == '__main__':
-    build([]) # provide target here
+    build([]) # provide targets here

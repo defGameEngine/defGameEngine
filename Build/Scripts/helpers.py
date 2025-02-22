@@ -60,23 +60,15 @@ def is_dir(path: str) -> bool:
     return os.path.isdir(path)
 
 
-def get_cwd() -> str:
-    return os.getcwd()
-
-
-def make_dir(path: str):
-    os.mkdir(path)
-
-
 def fix_path(path: str, is_local=True):
-    return f'{get_cwd()}/{path}' if is_local else path
+    return f'{os.getcwd()}/{path}' if is_local else path
 
 
 def create_dir_if_not_exists(path: str, is_local=True):
     full_path = fix_path(path, is_local)
 
     if not is_dir(full_path):
-        make_dir(full_path)
+        os.mkdir(full_path)
 
 
 def is_file(path: str, is_local=True):
@@ -96,10 +88,6 @@ def get_files(path, is_local=True) -> list[str] | None:
             files.append(entry)
 
     return files
-
-
-def get_path_base(path: str):
-    return os.path.basename(path)
 
 
 def _copy(source: str, dest: str, is_source_local=True, is_dest_local=True, func=None):
