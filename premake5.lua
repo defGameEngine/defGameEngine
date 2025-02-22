@@ -9,7 +9,9 @@ workspace "defGameEngine"
         "Release"
     }
 
-local OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+include "Engine/Vendor/glfw"
 
 project "Engine"
     location "Engine"
@@ -17,8 +19,12 @@ project "Engine"
     language "C++"
     cppdialect "C++20"
 
-    targetdir ("Build/Target/" .. OUTPUT_DIR .. "/%{prj.name}")
-    objdir ("Build/Obj/" .. OUTPUT_DIR .. "/%{prj.name}")
+    targetdir ("%{wks.location}/Build/Target/" .. OUTPUT_DIR .. "/%{prj.name}")
+    objdir ("%{wks.location}/Build/Obj/" .. OUTPUT_DIR .. "/%{prj.name}")
+
+    -- Linking with GLFW3
+
+    links { "GLFW3" }
 
     -- Setting up precompiled headers
 
@@ -30,7 +36,8 @@ project "Engine"
     files
     {
         "%{prj.name}/Include/*.hpp",
-        "%{prj.name}/Sources/*.cpp"
+        "%{prj.name}/Sources/*.cpp",
+        "%{prj.name}/Sources/*.inl"
     }
 
     filter { "system:windows or system:linux" }
@@ -53,22 +60,21 @@ project "Engine"
 
     includedirs
     {
-        "%{prj.name}/Vendor/glfw3/include",
+        "%{prj.name}/Vendor/glfw/include",
         "%{prj.name}/Vendor/stb",
-        "%{prj.name}/Include"
+        "%{prj.name}/Include",
+        "%{prj.name}/Sources",
     }
 
     -- Linking with libraries
-    
-    libdirs { "%{prj.name}/Vendor/glfw3/%{cfg.architecture}" }
 
     filter "system:windows"
-        links { "gdi32", "user32", "kernel32", "opengl32", "glfw3dll", "glu32" }
+        links { "gdi32", "user32", "kernel32", "opengl32", "glu32" }
 
     filter "system:linux"
         links
         {
-            "GL", "GLU", "glut", "GLEW", "glfw", "X11",
+            "GL", "GLU", "glut", "GLEW", "X11",
             "Xxf86vm", "Xrandr", "pthread", "Xi", "dl",
             "Xinerama", "Xcursor"
         }
@@ -86,7 +92,7 @@ project "Engine"
 
     postbuildcommands
     {
-        "{COPY} %{cfg.buildtarget.relpath} \"../Build/Target/" .. OUTPUT_DIR .. "/Sandbox/\""
+        "{COPY} %{cfg.buildtarget.relpath} \"%{wks.location}/Build/Target/" .. OUTPUT_DIR .. "/Sandbox/\""
     }
 
     -- Build configurations
@@ -107,12 +113,12 @@ project "Sandbox"
     staticruntime "On"
     systemversion "latest"
 
-    targetdir ("Build/Target/" .. OUTPUT_DIR .. "/%{prj.name}")
-    objdir ("Build/Obj/" .. OUTPUT_DIR .. "/%{prj.name}")
+    targetdir ("%{wks.location}/Build/Target/" .. OUTPUT_DIR .. "/%{prj.name}")
+    objdir ("%{wks.location}/Build/Obj/" .. OUTPUT_DIR .. "/%{prj.name}")
 
-    -- Links
+    -- Link projects
 
-    links { "Engine" }
+    links { "GLFW3", "Engine" }
 
     -- Including all source and header files of the engine
 
@@ -134,22 +140,22 @@ project "Sandbox"
 
     includedirs
     {
-        "Engine/Vendor/glfw3/include",
+        "Engine/Vendor/glfw/include",
         "Engine/Vendor/stb",
-        "Engine/Include",
+        "Engine/Include"
     }
 
     -- Linking with libraries
 
-    libdirs { "Engine/Vendor/glfw3/%{cfg.architecture}" }
+    libdirs { "Engine/Vendor/glfw/%{cfg.architecture}" }
 
     filter "system:windows"
-        links { "gdi32", "user32", "kernel32", "opengl32", "glfw3dll", "glu32" }
+        links { "gdi32", "user32", "kernel32", "opengl32", "GLFW3", "glu32" }
 
     filter "system:linux"
         links
         {
-            "GL", "GLU", "glut", "GLEW", "glfw", "X11",
+            "GL", "GLU", "glut", "GLEW", "GLFW3", "X11",
             "Xxf86vm", "Xrandr", "pthread", "Xi", "dl",
             "Xinerama", "Xcursor"
         }
@@ -160,13 +166,6 @@ project "Sandbox"
         warnings "Extra"
 
     filter {}
-
-    -- Puts glfw3.dll near the Sandbox.exe
-
-    postbuildcommands
-    {
-        "{COPY} ../Engine/Vendor/glfw3/x86_64/glfw3.dll \"../Build/Target/" .. OUTPUT_DIR .. "/Sandbox/\""
-    }
 
     -- Build configurations
 

@@ -1,4 +1,6 @@
+#include "Pch.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
-#include "../Include/StbImage.hpp"
+#include "StbImage.hpp"

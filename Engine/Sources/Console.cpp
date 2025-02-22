@@ -1,3 +1,4 @@
+#include "Pch.hpp"
 #include "Console.hpp"
 
 namespace def

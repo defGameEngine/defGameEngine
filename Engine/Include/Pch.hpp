@@ -15,6 +15,4 @@
 #include <algorithm>
 #include <cmath>
 
-#include "StbImage.hpp"
-
 #endif
