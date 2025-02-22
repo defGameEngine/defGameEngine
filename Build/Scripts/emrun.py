@@ -4,6 +4,7 @@ import subprocess
 
 EMSDK_PATH = 'C:/SDK/emsdk'
 
+
 def run(target):
     run = subprocess.run(f'{EMSDK_PATH}/emsdk activate latest & emrun ../Target/{target}/index.html', capture_output=True, shell=True)
 
