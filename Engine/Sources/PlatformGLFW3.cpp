@@ -1,13 +1,12 @@
+#include "Pch.hpp"
 #include "PlatformGLFW3.hpp"
 #include "defGameEngine.hpp"
-
-#include <iostream>
 
 namespace def
 {
 	PlatformGLFW3::PlatformGLFW3()
 	{
-		m_Window = nullptr;
+		m_NativeWindow = nullptr;
 		m_Monitor = nullptr;
 
 		glfwSetErrorCallback(ErrorCallback);
@@ -30,7 +29,9 @@ namespace def
 
 	void PlatformGLFW3::DropCallback(GLFWwindow* window, int pathCount, const char* paths[])
 	{
-		auto& cache = GameEngine::s_Engine->m_Window->GetDroppedFiles();
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+
+		auto& cache = platform->m_Window->GetDroppedFiles();
 
 		cache.clear();
 		cache.reserve(pathCount);
@@ -41,51 +42,56 @@ namespace def
 
 	void PlatformGLFW3::ScrollCallback(GLFWwindow* window, double x, double y)
 	{
-		GameEngine::s_Engine->m_Input->SetScrollDelta(y);
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		platform->m_Input->m_ScrollDelta = (int)y;
 	}
 
 	void PlatformGLFW3::MousePosCallback(GLFWwindow* window, double x, double y)
 	{
-		const Vector2i& pixelSize = GameEngine::s_Engine->m_Window->GetPixelSize();
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		const Vector2i& pixelSize = platform->m_Window->m_PixelSize;
 
-		GameEngine::s_Engine->m_Input->SetMousePosition((int)x / pixelSize.x, (int)y / pixelSize.y);
+		platform->m_Input->m_MousePos.x = (int)x / pixelSize.x;
+		platform->m_Input->m_MousePos.y = (int)y / pixelSize.y;
 	}
 
 	void PlatformGLFW3::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		GameEngine::s_Engine->m_Input->UpdateKey(key, action == GLFW_PRESS || action == GLFW_REPEAT);
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		platform->m_Input->m_KeyNewState[key] = action == GLFW_PRESS || action == GLFW_REPEAT;
 	}
 
 	void PlatformGLFW3::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
-		GameEngine::s_Engine->m_Input->UpdateButton(button, action == GLFW_PRESS || action == GLFW_REPEAT);
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		platform->m_Input->m_MouseNewState[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
 	}
 
 	void PlatformGLFW3::Destroy() const
 	{
-		glfwDestroyWindow(m_Window);
+		glfwDestroyWindow(m_NativeWindow);
 		glfwTerminate();
 	}
 
 	void PlatformGLFW3::SetTitle(const std::string& text) const
 	{
-		glfwSetWindowTitle(m_Window, text.c_str());
+		glfwSetWindowTitle(m_NativeWindow, text.c_str());
 	}
 
 	bool PlatformGLFW3::IsWindowClose() const
 	{
-		return glfwWindowShouldClose(m_Window);
+		return glfwWindowShouldClose(m_NativeWindow);
 	}
 
 	bool PlatformGLFW3::IsWindowFocused() const
 	{
-		return glfwGetWindowAttrib(m_Window, GLFW_FOCUSED) == GLFW_TRUE;
+		return glfwGetWindowAttrib(m_NativeWindow, GLFW_FOCUSED) == GLFW_TRUE;
 	}
 
 	void PlatformGLFW3::FlushScreen(bool vsync) const
 	{
 		if (vsync)
-			glfwSwapBuffers(m_Window);
+			glfwSwapBuffers(m_NativeWindow);
 		else
 			glFlush();
 	}
@@ -106,18 +112,22 @@ namespace def
 		glfwWindowHint(GLFW_DOUBLEBUFFER, vsync ? GLFW_TRUE : GLFW_FALSE);
 
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
-		if (!videoMode) return false;
+
+		if (!videoMode)
+			return false;
 
 		if (fullscreen)
 		{
 			windowSize = { videoMode->width, videoMode->height };
 			screenSize = windowSize / pixelSize;
 
-			m_Window = glfwCreateWindow(windowSize.x, windowSize.y, "", m_Monitor, NULL);
-			if (!m_Window) return false;
+			m_NativeWindow = glfwCreateWindow(windowSize.x, windowSize.y, "", m_Monitor, NULL);
+
+			if (!m_NativeWindow)
+				return false;
 
 			glfwSetWindowMonitor(
-				m_Window,
+				m_NativeWindow,
 				m_Monitor,
 				0, 0,
 				windowSize.x, windowSize.y,
@@ -126,13 +136,13 @@ namespace def
 		}
 		else
 		{
-			m_Window = glfwCreateWindow(windowSize.x, windowSize.y, "", NULL, NULL);
+			m_NativeWindow = glfwCreateWindow(windowSize.x, windowSize.y, "", NULL, NULL);
 
-			if (!m_Window)
+			if (!m_NativeWindow)
 				return false;
 		}
 
-		glfwMakeContextCurrent(m_Window);
+		glfwMakeContextCurrent(m_NativeWindow);
 		glViewport(0, 0, windowSize.x, windowSize.y);
 
 		glEnable(GL_TEXTURE_2D);
@@ -146,11 +156,13 @@ namespace def
 			glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		}
 
-		glfwSetDropCallback(m_Window, DropCallback);
-		glfwSetScrollCallback(m_Window, ScrollCallback);
-		glfwSetCursorPosCallback(m_Window, MousePosCallback);
-		glfwSetMouseButtonCallback(m_Window, MouseButtonCallback);
-		glfwSetKeyCallback(m_Window, KeyboardCallback);
+		glfwSetWindowUserPointer(m_NativeWindow, this);
+
+		glfwSetDropCallback(m_NativeWindow, DropCallback);
+		glfwSetScrollCallback(m_NativeWindow, ScrollCallback);
+		glfwSetCursorPosCallback(m_NativeWindow, MousePosCallback);
+		glfwSetMouseButtonCallback(m_NativeWindow, MouseButtonCallback);
+		glfwSetKeyCallback(m_NativeWindow, KeyboardCallback);
 
 		return true;
 	}
@@ -162,6 +174,6 @@ namespace def
 		img.height = icon.size.y;
 		img.pixels = (uint8_t*)icon.pixels.data();
 
-		glfwSetWindowIcon(m_Window, 1, &img);
+		glfwSetWindowIcon(m_NativeWindow, 1, &img);
 	}
 }

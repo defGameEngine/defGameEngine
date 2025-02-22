@@ -3,17 +3,14 @@
 #ifndef DGE_PIXEL_HPP
 #define DGE_PIXEL_HPP
 
-typedef unsigned int Uint32;
-typedef unsigned char Uint8;
-
-#include <string>
+#include "Pch.hpp"
 
 namespace def
 {
 	struct Pixel
 	{
-		Pixel(Uint32 rgba = 0x000000FF);
-		Pixel(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF);
+		Pixel(uint32_t rgba = 0x000000FF);
+		Pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF);
 
 		enum class Mode
 		{
@@ -25,9 +22,9 @@ namespace def
 
 		union
 		{
-			struct { Uint8 r, g, b, a; };
-			Uint32 rgba_n;
-			Uint8 rgba_v[4];
+			struct { uint8_t r, g, b, a; };
+			uint32_t rgba_n;
+			uint8_t rgba_v[4];
 		};
 
 		Pixel Lerp(const Pixel& rhs, float factor) const;

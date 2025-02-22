@@ -1,8 +1,13 @@
+#include "Pch.hpp"
 #include "PlatformGL.hpp"
 #include "GLFW/glfw3.h"
 
 namespace def
 {
+	PlatformGL::PlatformGL()
+	{
+	}
+
 	void PlatformGL::ClearBuffer(const Pixel& col) const
 	{
 		glClearColor((float)col.r / 255.0f, (float)col.g / 255.0f, (float)col.b / 255.0f, (float)col.a / 255.0f);

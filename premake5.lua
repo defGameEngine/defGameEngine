@@ -20,6 +20,11 @@ project "Engine"
     targetdir ("Build/Target/" .. OUTPUT_DIR .. "/%{prj.name}")
     objdir ("Build/Obj/" .. OUTPUT_DIR .. "/%{prj.name}")
 
+    -- Setting up precompiled headers
+
+    pchheader "Pch.hpp"
+    pchsource "%{prj.name}/Sources/Pch.cpp"
+
     -- Including all source and header files of the engine
 
     files

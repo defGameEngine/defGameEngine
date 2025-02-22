@@ -3,6 +3,7 @@
 #ifndef DGE_PLATFORM_GL_HPP
 #define DGE_PLATFORM_GL_HPP
 
+#include "Pch.hpp"
 #include "Platform.hpp"
 
 namespace def
@@ -10,6 +11,7 @@ namespace def
 	class PlatformGL : public Platform
 	{
 	public:
+		PlatformGL();
 		void ClearBuffer(const Pixel& col) const override;
 
 		void OnBeforeDraw() override;

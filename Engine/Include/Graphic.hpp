@@ -3,6 +3,7 @@
 #ifndef DGE_GRAPHIC_HPP
 #define DGE_GRAPHIC_HPP
 
+#include "Pch.hpp"
 #include "Texture.hpp"
 
 namespace def

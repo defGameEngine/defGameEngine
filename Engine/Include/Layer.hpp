@@ -3,6 +3,7 @@
 #ifndef DGE_LAYER_HPP
 #define DGE_LAYER_HPP
 
+#include "Pch.hpp"
 #include "Texture.hpp"
 #include "Graphic.hpp"
 
@@ -25,7 +26,7 @@ namespace def
 
 		Pixel tint = WHITE;
 
-		Pixel(*shader)(const Vector2i&, const Pixel&, const Pixel&) = nullptr;
+		Pixel (*shader)(const Vector2i&, const Pixel&, const Pixel&) = nullptr;
 	};
 }
 

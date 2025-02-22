@@ -3,9 +3,7 @@
 #ifndef DGE_VECTOR2D_HPP
 #define DGE_VECTOR2D_HPP
 
-#include <string>
-#include <algorithm>
-#include <cmath>
+#include "Pch.hpp"
 
 namespace def
 {

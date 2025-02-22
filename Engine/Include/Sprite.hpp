@@ -3,8 +3,7 @@
 #ifndef DGE_SPRITE_HPP
 #define DGE_SPRITE_HPP
 
-#include <string_view>
-#include <vector>
+#include "Pch.hpp"
 
 #ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"

@@ -1,3 +1,4 @@
+#include "Pch.hpp"
 #include "defGameEngine.hpp"
 
 namespace def
@@ -26,12 +27,15 @@ namespace def
 	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
 		m_Platform = std::make_unique<PlatformEmscripten>();
 	#else
-	#error No platform has been selected
+		#error No platform has been selected
 	#endif
 
 		m_Input = std::make_unique<InputHandler>(m_Platform.get());
 		m_Window = std::make_unique<def::Window>(m_Platform.get());
 		m_Console = std::make_unique<def::Console>();
+
+		m_Platform->SetInputHandler(m_Input.get());
+		m_Platform->SetWindow(m_Window.get());
 	}
 
 	GameEngine::~GameEngine()

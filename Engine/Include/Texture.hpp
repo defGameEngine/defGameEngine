@@ -3,6 +3,8 @@
 #ifndef DGE_TEXTURE_HPP
 #define DGE_TEXTURE_HPP
 
+#include "Pch.hpp"
+
 #ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
 #endif
@@ -26,7 +28,7 @@ namespace def
 		Texture(Sprite* sprite);
 		Texture(std::string_view fileName);
 
-		Uint32 id;
+		uint32_t id;
 
 		Vector2f uvScale;
 		Vector2i size;
@@ -46,7 +48,7 @@ namespace def
 		const Texture* texture;
 
 		Texture::Structure structure;
-		Uint32 points;
+		uint32_t points;
 
 		std::vector<Pixel> tint;
 		std::vector<Vector2f> vertices;

@@ -3,9 +3,7 @@
 #ifndef DGE_INPUT_HANDLER_HPP
 #define DGE_INPUT_HANDLER_HPP
 
-#include <unordered_map>
-#include <cstdint>
-
+#include "Pch.hpp"
 #include "Vector2D.hpp"
 #include "Platform.hpp"
 
@@ -61,8 +59,12 @@ namespace def
     class InputHandler
     {
 	public:
-		friend class GameEngine;
+		friend class Platform;
+		friend class PlatformGL;
+		friend class PlatformGLFW3;
+		friend class PlatformEmscripten;
 		friend class Console;
+		friend class GameEngine;
 
     public:
         explicit InputHandler(Platform* platform);
@@ -71,12 +73,6 @@ namespace def
 
         const KeyState& GetKeyState(Key key) const;
         const KeyState& GetButtonState(Button button) const;
-
-		void SetScrollDelta(int value);
-		void SetMousePosition(int x, int y);
-
-		void UpdateKey(int rawKey, bool pressed);
-		void UpdateButton(int rawButton, bool pressed);
 
 		void CaptureText(bool enable);
 		bool IsCapturingText() const;

@@ -16,7 +16,7 @@ protected:
 
     bool OnUserUpdate(float deltaTime) override
     {
-        DrawString(10, 10, "Hello, premake5!", def::PINK, 2, 2);
+        DrawString(10, 10, "Hello, premake5!", def::PINK, 1, 1);
 
         return true;
     }

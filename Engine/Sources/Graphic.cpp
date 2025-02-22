@@ -1,3 +1,4 @@
+#include "Pch.hpp"
 #include "Graphic.hpp"
 
 namespace def

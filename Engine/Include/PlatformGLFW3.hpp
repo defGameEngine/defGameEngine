@@ -3,6 +3,7 @@
 #ifndef DGE_PLATFORM_GLFW3_HPP
 #define DGE_PLATFORM_GLFW3_HPP
 
+#include "Pch.hpp"
 #include "PlatformGL.hpp"
 #include "GLFW/glfw3.h"
 
@@ -17,7 +18,7 @@ namespace def
 
 	private:
 		GLFWmonitor* m_Monitor;
-		GLFWwindow* m_Window;
+		GLFWwindow* m_NativeWindow;
 
 	public:
 		static void ErrorCallback(int errorCode, const char* description);

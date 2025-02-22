@@ -5,9 +5,6 @@
 
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-#include <chrono>
-#include <unordered_map>
-
 #ifdef __EMSCRIPTEN__
 #define DGE_PLATFORM_EMSCRIPTEN
 #else
@@ -35,6 +32,8 @@
 * to your project
 */
 #endif
+
+#include "Pch.hpp"
 
 #ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"

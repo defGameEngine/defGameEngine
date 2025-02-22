@@ -3,13 +3,20 @@
 #ifndef DGE_PLATFORM_HPP
 #define DGE_PLATFORM_HPP
 
+#include "Pch.hpp"
 #include "Texture.hpp"
+#include "Window.hpp"
+#include "InputHandler.hpp"
 
 namespace def
 {
+	class InputHandler;
+	class Window;
+
 	class Platform
 	{
 	public:
+		Platform();
 		virtual ~Platform() = default;
 
 		virtual void Destroy() const = 0;
@@ -34,6 +41,14 @@ namespace def
 		virtual bool ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel) = 0;
 
 		virtual void SetIcon(Sprite& icon) const = 0;
+
+		void SetWindow(Window* window);
+		void SetInputHandler(InputHandler* input);
+
+	protected:
+		Window* m_Window = nullptr;
+		InputHandler* m_Input = nullptr;
+
 	};
 }
 

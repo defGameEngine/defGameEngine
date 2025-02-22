@@ -1,6 +1,7 @@
-#include "../Include/Sprite.hpp"
-#include "../Include/StbImage.hpp"
-#include "../Include/Utils.hpp"
+#include "Pch.hpp"
+#include "Sprite.hpp"
+#include "StbImage.hpp"
+#include "Utils.hpp"
 
 #include <algorithm>
 
@@ -33,11 +34,9 @@ namespace def
 
 	void Sprite::Load(std::string_view fileName)
 	{
-		Uint8* data;
-
 		Assert(!stbi_is_hdr(fileName.data()), "[stb_image Error] can't load an HDR file");
 
-		data = stbi_load(fileName.data(), &size.x, &size.y, NULL, 4);
+		uint8_t* data = stbi_load(fileName.data(), &size.x, &size.y, NULL, 4);
 		Assert(data, "[stb_image Error] ", SAFE_STBI_FAILURE_REASON());
 
 		pixels.clear();
@@ -210,17 +209,17 @@ namespace def
 
 			Pixelf splineY[4];
 
-			for (size_t s = 0; s < 4; s++)
-				for (size_t i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
 				{
-					splineY[s].r += splineX[s][i].r * q[i].x;
-					splineY[s].g += splineX[s][i].g * q[i].x;
-					splineY[s].b += splineX[s][i].b * q[i].x;
-					splineY[s].a += splineX[s][i].a * q[i].x;
+					splineY[i].r += splineX[i][j].r * q[j].x;
+					splineY[i].g += splineX[i][j].g * q[j].x;
+					splineY[i].b += splineX[i][j].b * q[j].x;
+					splineY[i].a += splineX[i][j].a * q[j].x;
 				}
 
 			Pixelf pix;
-			for (size_t i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				pix.r += splineY[i].r * q[i].y;
 				pix.g += splineY[i].g * q[i].y;
@@ -229,10 +228,10 @@ namespace def
 			}
 
 			return Pixel(
-				(Uint8)std::clamp(pix.r, 0.0f, 255.0f),
-				(Uint8)std::clamp(pix.g, 0.0f, 255.0f),
-				(Uint8)std::clamp(pix.b, 0.0f, 255.0f),
-				(Uint8)std::clamp(pix.a, 0.0f, 255.0f)
+				ClampFloatToUint8(pix.r),
+				ClampFloatToUint8(pix.g),
+				ClampFloatToUint8(pix.b),
+				ClampFloatToUint8(pix.a)
 			);
 		}
 

@@ -1,3 +1,4 @@
+#include "Pch.hpp"
 #include "InputHandler.hpp"
 #include "defGameEngine.hpp"
 
@@ -271,27 +272,6 @@ namespace def
     const KeyState& InputHandler::GetButtonState(Button button) const
     {
         return m_Mouse[static_cast<uint8_t>(button)];
-    }
-
-    void InputHandler::SetScrollDelta(int value)
-    {
-        m_ScrollDelta = value;
-    }
-
-    void InputHandler::SetMousePosition(int x, int y)
-    {
-        m_MousePos.x = x;
-        m_MousePos.y = y;
-    }
-
-    void InputHandler::UpdateKey(int rawKey, bool pressed)
-    {
-        m_KeyNewState[static_cast<uint8_t>(s_KeysTable[rawKey])] = pressed;
-    }
-
-    void InputHandler::UpdateButton(int rawButton, bool pressed)
-    {
-        m_MouseNewState[static_cast<uint8_t>(s_KeysTable[rawButton])] = pressed;
     }
 
     void InputHandler::CaptureText(bool enable)

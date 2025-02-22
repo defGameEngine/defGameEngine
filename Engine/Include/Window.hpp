@@ -3,9 +3,7 @@
 #ifndef DGE_WINDOW_HPP
 #define DGE_WINDOW_HPP
 
-#include <string>
-#include <vector>
-
+#include "Pch.hpp"
 #include "Vector2D.hpp"
 #include "Platform.hpp"
 
@@ -21,6 +19,10 @@ namespace def
     class Window
     {
     public:
+        friend class Platform;
+        friend class PlatformGL;
+        friend class PlatformGLFW3;
+        friend class PlatformEmscripten;
         friend class GameEngine;
 
     public:
