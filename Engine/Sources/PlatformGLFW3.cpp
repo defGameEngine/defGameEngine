@@ -58,7 +58,9 @@ namespace def
 	void PlatformGLFW3::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
-		platform->m_Input->m_KeyNewState[key] = action == GLFW_PRESS || action == GLFW_REPEAT;
+
+		int mappedKey = static_cast<int>(InputHandler::s_KeysTable[key]);
+		platform->m_Input->m_KeyNewState[mappedKey] = action == GLFW_PRESS || action == GLFW_REPEAT;
 	}
 
 	void PlatformGLFW3::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
