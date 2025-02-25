@@ -31,42 +31,59 @@ namespace def
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
 
-		auto& cache = platform->m_Window->GetDroppedFiles();
+		if (auto window = platform->m_Window.lock())
+		{
+			auto& cache = window->GetDroppedFiles();
 
-		cache.clear();
-		cache.reserve(pathCount);
+			cache.clear();
+			cache.reserve(pathCount);
 
-		for (int i = 0; i < pathCount; i++)
-			cache[i] = paths[i];
+			for (int i = 0; i < pathCount; i++)
+				cache[i] = paths[i];
+		}	
 	}
 
 	void PlatformGLFW3::ScrollCallback(GLFWwindow* window, double x, double y)
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
-		platform->m_Input->m_ScrollDelta = (int)y;
+
+		if (auto input = platform->m_Input.lock())
+			input->m_ScrollDelta = (int)y;
 	}
 
-	void PlatformGLFW3::MousePosCallback(GLFWwindow* window, double x, double y)
+	void PlatformGLFW3::MousePosCallback(GLFWwindow* nativeWindow, double x, double y)
 	{
-		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
-		const Vector2i& pixelSize = platform->m_Window->m_PixelSize;
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(nativeWindow));
 
-		platform->m_Input->m_MousePos.x = (int)x / pixelSize.x;
-		platform->m_Input->m_MousePos.y = (int)y / pixelSize.y;
+		auto input = platform->m_Input.lock();
+		auto window = platform->m_Window.lock();
+
+		if (input && window)
+		{
+			const Vector2i& pixelSize = window->m_PixelSize;
+
+			input->m_MousePos.x = (int)x / pixelSize.x;
+			input->m_MousePos.y = (int)y / pixelSize.y;
+		}
 	}
 
 	void PlatformGLFW3::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
 
-		int mappedKey = static_cast<int>(InputHandler::s_KeysTable[key]);
-		platform->m_Input->m_KeyNewState[mappedKey] = action == GLFW_PRESS || action == GLFW_REPEAT;
+		if (auto input = platform->m_Input.lock())
+		{
+			uint8_t mappedKey = static_cast<uint8_t>(InputHandler::s_KeysTable[key]);
+			input->m_KeyNewState[mappedKey] = action == GLFW_PRESS || action == GLFW_REPEAT;
+		}
 	}
 
 	void PlatformGLFW3::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
-		platform->m_Input->m_MouseNewState[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
+
+		if (auto input = platform->m_Input.lock())
+			input->m_MouseNewState[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
 	}
 
 	void PlatformGLFW3::Destroy() const

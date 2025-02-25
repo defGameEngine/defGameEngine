@@ -102,14 +102,14 @@ namespace def
 		float m_DeltaTime;
 		float m_TickTimer;
 
-		Platform* m_Platform;
+		std::shared_ptr<Platform> m_Platform;
 
 		TimePoint m_TimeStart;
 		TimePoint m_TimeEnd;
 
-		InputHandler* m_Input;
-		Window* m_Window;
-		Console* m_Console;
+		std::shared_ptr<InputHandler> m_Input;
+		std::shared_ptr<Window> m_Window;
+		std::unique_ptr<Console> m_Console;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;

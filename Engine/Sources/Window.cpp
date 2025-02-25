@@ -3,7 +3,7 @@
 
 namespace def
 {
-    Window::Window(Platform* platform) : m_Title("Undefined"), m_Platform(platform)
+    Window::Window(std::shared_ptr<Platform> platform) : m_Title("Undefined"), m_Platform(platform)
     {
     }
 

@@ -5,12 +5,12 @@ def::Platform::Platform()
 {
 }
 
-void def::Platform::SetWindow(Window* window)
+void def::Platform::SetWindow(std::shared_ptr<Window> window)
 {
     m_Window = window;
 }
 
-void def::Platform::SetInputHandler(InputHandler* input)
+void def::Platform::SetInputHandler(std::shared_ptr<InputHandler> input)
 {
     m_Input = input;
 }

@@ -69,7 +69,7 @@ namespace def
 		friend class GameEngine;
 
     public:
-        explicit InputHandler(Platform* platform);
+        explicit InputHandler(std::shared_ptr<Platform> platform);
 
 		void ClearCapturedText();
 
@@ -126,7 +126,7 @@ namespace def
 		std::string m_CapturedText;
 		size_t m_CapturedTextCursorPos;
 
-		Platform* m_Platform;
+		std::shared_ptr<Platform> m_Platform;
 
     };
 }

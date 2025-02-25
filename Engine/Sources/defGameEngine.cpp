@@ -31,16 +31,16 @@ namespace def
 		m_OnlyTextures = false;
 
 	#if defined(DGE_PLATFORM_GLFW3)
-		m_Platform = new PlatformGLFW3();
+		m_Platform = std::make_shared<PlatformGLFW3>();
 	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-		m_Platform = new PlatformEmscripten();
+		m_Platform = std::make_shared<PlatformEmscripten>();
 	#else
 		#error No platform has been selected
 	#endif
 
-		m_Input = new InputHandler(m_Platform);
-		m_Window = new Window(m_Platform);
-		m_Console = new Console();
+		m_Input = std::make_shared<InputHandler>(m_Platform);
+		m_Window = std::make_shared<Window>(m_Platform);
+		m_Console = std::make_unique<Console>();
 
 		m_Platform->SetInputHandler(m_Input);
 		m_Platform->SetWindow(m_Window);
@@ -1457,7 +1457,7 @@ namespace def
 
 	GLFWwindow* GameEngine::GetNativeWindow()
 	{
-		return ((PlatformGLFW3*)m_Platform)->m_NativeWindow;
+		return ((PlatformGLFW3*)m_Platform.get())->m_NativeWindow;
 	}
 
 #elif defined(DGE_PLATFORM_EMSCRIPTEN)
@@ -1513,17 +1513,17 @@ namespace def
 
 	Window *const GameEngine::GetWindow()
 	{
-		return m_Window;
+		return m_Window.get();
 	}
 
 	InputHandler *const GameEngine::GetInput()
 	{
-		return m_Input;
+		return m_Input.get();
 	}
 
 	Console *const GameEngine::GetConsole()
 	{
-		return m_Console;
+		return m_Console.get();
 	}
 
 #pragma endregion

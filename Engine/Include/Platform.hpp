@@ -42,12 +42,12 @@ namespace def
 
 		virtual void SetIcon(Sprite& icon) const = 0;
 
-		void SetWindow(Window* window);
-		void SetInputHandler(InputHandler* input);
+		void SetWindow(std::shared_ptr<Window> window);
+		void SetInputHandler(std::shared_ptr<InputHandler> input);
 
 	protected:
-		Window* m_Window = nullptr;
-		InputHandler* m_Input = nullptr;
+		std::weak_ptr<Window> m_Window;
+		std::weak_ptr<InputHandler> m_Input;
 
 	};
 }

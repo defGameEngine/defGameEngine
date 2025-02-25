@@ -26,7 +26,7 @@ namespace def
         friend class GameEngine;
 
     public:
-        Window(Platform* platform);
+        Window(std::shared_ptr<Platform> platform);
 
         int GetScreenWidth() const;
         int GetScreenHeight() const;
@@ -68,7 +68,7 @@ namespace def
 
         std::vector<std::string> m_DropCache;
 
-        Platform* m_Platform;
+        std::shared_ptr<Platform> m_Platform;
 
     };
 }
