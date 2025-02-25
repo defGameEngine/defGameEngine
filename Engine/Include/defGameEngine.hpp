@@ -63,6 +63,8 @@
 
 namespace def
 {
+	using TimePoint = std::chrono::system_clock::time_point;
+
 	class Platform;
 	class Console;
 
@@ -91,6 +93,7 @@ namespace def
 		int m_TabSize;
 
 		std::vector<Layer> m_Layers;
+
 		size_t m_PickedLayer;
 		size_t m_ConsoleLayer;
 
@@ -99,40 +102,61 @@ namespace def
 		float m_DeltaTime;
 		float m_TickTimer;
 
-		std::unique_ptr<Platform> m_Platform;
+		Platform* m_Platform;
 
-		std::chrono::system_clock::time_point m_TimeStart;
-		std::chrono::system_clock::time_point m_TimeEnd;
+		TimePoint m_TimeStart;
+		TimePoint m_TimeEnd;
 
-		std::unique_ptr<InputHandler> m_Input;
-		std::unique_ptr<Window> m_Window;
-		std::unique_ptr<Console> m_Console;
+		InputHandler* m_Input;
+		Window* m_Window;
+		Console* m_Console;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
 	#endif
 
-	public:
-		static GameEngine* s_Engine;
-		inline static std::vector<Vector2f> s_UnitCircle;
+		static constexpr size_t CIRCLE_VERTICES_COUNT = 64;
+		static std::vector<Vector2f> sm_UnitCircle;
 
+	public:
+		// Is used internally
+		static GameEngine* s_Engine;
+
+		// Is called before the main loop
 		virtual bool OnUserCreate() = 0;
+
+		// Is being called on every frame
 		virtual bool OnUserUpdate(float deltaTime) = 0;
+
+		// Is being called after clearing the screen buffer and sending
+		// all textures to the pipeline and before flushing the screen
 		virtual bool OnAfterDraw();
 
+		// Is executed when a user presses an ENTER key
 		virtual void OnTextCapturingComplete(const std::string& text);
+
+		// Is executed when a user presses the ENTER key when a console is opened
 		virtual bool OnConsoleCommand(const std::string& command, std::stringstream& output, Pixel& colour);
 
+		// Constructs a window
 		bool Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen = false, bool vsync = false, bool dirtyPixel = true);
+		
+		// Must be called only after Construct method, basically starts the main loop
 		void Run();
 
 	private:
+		// Frees memory
 		void Destroy();
+
+		// The main loop of a program (handles input, draws to the screen)
 		void MainLoop();
 
+		// Constructs a unit circle using trigonometry functions
 		static void MakeUnitCircle(std::vector<Vector2f>& circle, size_t verts);
 
 	public:
+		// Drawing routines
+
 		bool Draw(const Vector2i& pos, const Pixel& col = WHITE);
 		virtual bool Draw(int x, int y, const Pixel& col = WHITE);
 
@@ -206,33 +230,46 @@ namespace def
 
 		void DrawTextureString(const Vector2i& pos, std::string_view text, const Pixel& col = WHITE, const Vector2f& scale = { 1.0f, 1.0f });
 
+		// Drawing targets
+
 		void SetDrawTarget(Graphic* target);
 		Graphic* GetDrawTarget();
+
+		// Pixel modes
 
 		void SetPixelMode(Pixel::Mode pixelMode);
 		Pixel::Mode GetPixelMode() const;
 
+		// Texture stuff
+
 		void SetTextureStructure(Texture::Structure textureStructure);
 		Texture::Structure GetTextureStructure() const;
+		void UseOnlyTextures(bool enable);
+
+		// Shaders
 
 		void SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&));
 
-		void UseOnlyTextures(bool enable);
+		// Timings
+
 		float GetDeltaTime() const;
 
-		auto GetNativeWindow()
-		{
-		#if defined(DGE_PLATFORM_GLFW3)
-			return ((PlatformGLFW3*)m_Platform.get())->m_Window;
-		#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-			return ((PlatformEmscripten*)m_Platform.get())->m_Display;
-		#endif
-		}
+		// Window's stuff
+
+	#if defined(DGE_PLATFORM_GLFW3)
+		GLFWwindow* GetNativeWindow();
+	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
+		EGLDisplay& GetNativeWindow();
+	#endif
+
+		// Layers' stuff
 
 		size_t CreateLayer(const Vector2i& offset, const Vector2i& size, bool update = true, bool visible = true, const Pixel& tint = WHITE);
 		void PickLayer(size_t layer);
 		size_t GetPickedLayer() const;
 		Layer* GetLayerByIndex(size_t index);
+
+		// Window, input and console stuff
 
 		Window *const GetWindow();
 		InputHandler *const GetInput();

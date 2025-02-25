@@ -6,6 +6,7 @@ public:
     Example()
     {
         GetWindow()->SetTitle("Example");
+        UseOnlyTextures(true);
     }
 
 protected:
@@ -16,7 +17,8 @@ protected:
 
     bool OnUserUpdate(float deltaTime) override
     {
-        DrawString(10, 10, "Hello, premake5!", def::PINK, 1, 1);
+        ClearTexture(def::BLACK);
+        DrawTextureString(GetInput()->GetMousePosition(), "Hello, premake5!", def::PINK);
 
         return true;
     }

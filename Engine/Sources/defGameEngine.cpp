@@ -3,7 +3,15 @@
 
 namespace def
 {
+
+#pragma region dge_static
+
 	GameEngine* GameEngine::s_Engine = nullptr;
+	std::vector<Vector2f> GameEngine::sm_UnitCircle;
+
+#pragma endregion
+
+#pragma region dge_init
 
 	GameEngine::GameEngine()
 	{
@@ -18,30 +26,34 @@ namespace def
 
 		m_PickedLayer = 0;
 
-		MakeUnitCircle(s_UnitCircle, 64); // TODO: Make 64 (vertices count) as constant
+		MakeUnitCircle(sm_UnitCircle, CIRCLE_VERTICES_COUNT);
 
 		m_OnlyTextures = false;
 
 	#if defined(DGE_PLATFORM_GLFW3)
-		m_Platform = std::make_unique<PlatformGLFW3>();
+		m_Platform = new PlatformGLFW3();
 	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-		m_Platform = std::make_unique<PlatformEmscripten>();
+		m_Platform = new PlatformEmscripten();
 	#else
 		#error No platform has been selected
 	#endif
 
-		m_Input = std::make_unique<InputHandler>(m_Platform.get());
-		m_Window = std::make_unique<def::Window>(m_Platform.get());
-		m_Console = std::make_unique<def::Console>();
+		m_Input = new InputHandler(m_Platform);
+		m_Window = new Window(m_Platform);
+		m_Console = new Console();
 
-		m_Platform->SetInputHandler(m_Input.get());
-		m_Platform->SetWindow(m_Window.get());
+		m_Platform->SetInputHandler(m_Input);
+		m_Platform->SetWindow(m_Window);
 	}
 
 	GameEngine::~GameEngine()
 	{
 		Destroy();
 	}
+
+#pragma endregion
+
+#pragma region dge_internal
 
 	void GameEngine::Destroy()
 	{
@@ -137,40 +149,9 @@ namespace def
 		}
 	}
 
-	void GameEngine::Run()
-	{
-		m_IsAppRunning = OnUserCreate();
+#pragma endregion
 
-		m_TimeStart = std::chrono::system_clock::now();
-		m_TimeEnd = m_TimeStart;
-
-	#ifdef DGE_PLATFORM_EMSCRIPTEN
-		m_Window->UpdateCaption(-1);
-		
-		emscripten_set_main_loop(&PlatformEmscripten::MainLoop, 0, 1);
-	#else
-		m_Window->UpdateCaption(0);
-		m_FramesCount = 0;
-
-		while (m_IsAppRunning)
-			MainLoop();
-	#endif
-	}
-
-	bool GameEngine::OnAfterDraw()
-	{
-		return true;
-	}
-
-	void GameEngine::OnTextCapturingComplete(const std::string& text)
-	{
-
-	}
-
-	bool GameEngine::OnConsoleCommand(const std::string& command, std::stringstream& output, Pixel& colour)
-	{
-		return false;
-	}
+#pragma region dge_running
 
 	bool GameEngine::Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen, bool vsync, bool dirtyPixel)
 	{
@@ -179,7 +160,7 @@ namespace def
 
 		// Console layer, always create it as 0'th layer
 		CreateLayer({ 0, 0 }, m_Window->GetScreenSize(), false, false);
-		
+
 		m_PickedLayer = CreateLayer({ 0, 0 }, m_Window->GetScreenSize());
 
 		std::string data =
@@ -231,6 +212,51 @@ namespace def
 
 		return true;
 	}
+
+	void GameEngine::Run()
+	{
+		m_IsAppRunning = OnUserCreate();
+
+		m_TimeStart = std::chrono::system_clock::now();
+		m_TimeEnd = m_TimeStart;
+
+	#ifdef DGE_PLATFORM_EMSCRIPTEN
+		m_Window->UpdateCaption(-1);
+		
+		emscripten_set_main_loop(&PlatformEmscripten::MainLoop, 0, 1);
+	#else
+		m_Window->UpdateCaption(0);
+		m_FramesCount = 0;
+
+		while (m_IsAppRunning)
+			MainLoop();
+	#endif
+	}
+
+#pragma endregion
+
+#pragma region dge_user_callbacks
+
+	bool GameEngine::OnAfterDraw()
+	{
+		return true;
+	}
+
+	void GameEngine::OnTextCapturingComplete(const std::string& text)
+	{
+
+	}
+
+	bool GameEngine::OnConsoleCommand(const std::string& command, std::stringstream& output, Pixel& colour)
+	{
+		return false;
+	}
+
+#pragma endregion
+
+#pragma region dge_drawing
+
+#pragma region dge_drawing_canvas
 
 	bool GameEngine::Draw(int x, int y, const Pixel& col)
 	{
@@ -850,50 +876,6 @@ namespace def
 				Draw(x + x1, y + y1, sprite->GetPixel(fileX + i, fileY + j));
 	}
 
-	void GameEngine::DrawWarpedTexture(const std::vector<Vector2f>& points, const Texture* tex, const Pixel& tint)
-	{
-		auto& layer = m_Layers[m_PickedLayer];
-
-		TextureInstance texInst;
-
-		texInst.texture = tex;
-		texInst.structure = layer.textureStructure;
-		texInst.points = 4;
-		texInst.tint = { tint, tint, tint, tint };
-		texInst.vertices.resize(texInst.points);
-		texInst.uv = { { 0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f} };
-
-		float rd = ((points[2].x - points[0].x) * (points[3].y - points[1].y) - (points[3].x - points[1].x) * (points[2].y - points[0].y));
-
-		if (rd != 0.0f)
-		{
-			rd = 1.0f / rd;
-
-			float rn = ((points[3].x - points[1].x) * (points[0].y - points[1].y) - (points[3].y - points[1].y) * (points[0].x - points[1].x)) * rd;
-			float sn = ((points[2].x - points[0].x) * (points[0].y - points[1].y) - (points[2].y - points[0].y) * (points[0].x - points[1].x)) * rd;
-
-			Vector2f center;
-			if (!(rn < 0.0f || rn > 1.0f || sn < 0.0f || sn > 1.0f))
-				center = points[0] + rn * (points[2] - points[0]);
-
-			float d[4];
-
-			for (int i = 0; i < 4; i++)
-				d[i] = (points[i] - center).Length();
-
-			const Vector2f& inv = m_Window->GetInvertedScreenSize();
-
-			for (int i = 0; i < 4; i++)
-			{
-				float q = d[i] == 0.0f ? 1.0f : (d[i] + d[(i + 2) & 3]) / d[(i + 2) & 3];
-				texInst.uv[i] *= q;
-				texInst.vertices[i] = { (points[i].x * inv.x) * 2.0f - 1.0f, ((points[i].y * inv.y) * 2.0f - 1.0f) * -1.0f };
-			}
-
-			layer.textures.push_back(texInst);
-		}
-	}
-
 	void GameEngine::DrawWireFrameModel(const std::vector<Vector2f>& modelCoordinates, float x, float y, float rotation, float scale, const Pixel& col)
 	{
 		size_t verts = modelCoordinates.size();
@@ -1015,37 +997,6 @@ namespace def
 		m_Layers[m_PickedLayer].target->sprite->SetPixelData(col);
 	}
 
-	void GameEngine::SetDrawTarget(Graphic* target)
-	{
-		m_Layers[m_PickedLayer].target = target ? target : m_Layers[m_PickedLayer].pixels;
-		m_Layers[m_PickedLayer].target->UpdateTexture();
-	}
-
-	Graphic* GameEngine::GetDrawTarget()
-	{
-		return m_Layers[m_PickedLayer].target;
-	}
-
-	void GameEngine::SetPixelMode(Pixel::Mode pixelMode)
-	{
-		m_Layers[m_PickedLayer].pixelMode = pixelMode;
-	}
-
-	Pixel::Mode GameEngine::GetPixelMode() const
-	{
-		return m_Layers[m_PickedLayer].pixelMode;
-	}
-
-	void GameEngine::SetTextureStructure(Texture::Structure textureStructure)
-	{
-		m_Layers[m_PickedLayer].textureStructure = textureStructure;
-	}
-
-	Texture::Structure GameEngine::GetTextureStructure() const
-	{
-		return m_Layers[m_PickedLayer].textureStructure;
-	}
-
 	bool GameEngine::Draw(const Vector2i& pos, const Pixel& p)
 	{
 		return Draw(pos.x, pos.y, p);
@@ -1055,6 +1006,75 @@ namespace def
 	{
 		DrawLine(pos1.x, pos1.y, pos2.x, pos2.y, col);
 	}
+
+	void GameEngine::DrawTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
+	{
+		DrawTriangle(pos1.x, pos1.y, pos2.x, pos2.y, pos3.x, pos3.y, col);
+	}
+
+	void GameEngine::FillTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
+	{
+		FillTriangle(pos1.x, pos1.y, pos2.x, pos2.y, pos3.x, pos3.y, col);
+	}
+
+	void GameEngine::DrawRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
+	{
+		DrawRectangle(pos.x, pos.y, size.x, size.y, col);
+	}
+
+	void GameEngine::FillRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
+	{
+		FillRectangle(pos.x, pos.y, size.x, size.y, col);
+	}
+
+	void GameEngine::DrawCircle(const Vector2i& pos, int radius, const Pixel& col)
+	{
+		DrawCircle(pos.x, pos.y, radius, col);
+	}
+
+	void GameEngine::FillCircle(const Vector2i& pos, int radius, const Pixel& col)
+	{
+		FillCircle(pos.x, pos.y, radius, col);
+	}
+
+	void GameEngine::DrawEllipse(const Vector2i& pos, const Vector2i& size, const Pixel& col)
+	{
+		DrawEllipse(pos.x, pos.y, size.x, size.y, col);
+	}
+
+	void GameEngine::FillEllipse(const Vector2i& pos, const Vector2i& size, const Pixel& col)
+	{
+		FillEllipse(pos.x, pos.y, size.x, size.y, col);
+	}
+
+	void GameEngine::DrawSprite(const Vector2i& pos, const Sprite* spr)
+	{
+		DrawSprite(pos.x, pos.y, spr);
+	}
+
+	void GameEngine::DrawPartialSprite(const Vector2i& pos, const Vector2i& filePos, const Vector2i& fileSize, const Sprite* spr)
+	{
+		DrawPartialSprite(pos.x, pos.y, filePos.x, filePos.y, fileSize.x, fileSize.y, spr);
+	}
+
+	void GameEngine::DrawWireFrameModel(const std::vector<Vector2f>& modelCoordinates, const Vector2f& pos, float rotation, float scale, const Pixel& col)
+	{
+		DrawWireFrameModel(modelCoordinates, pos.x, pos.y, rotation, scale, col);
+	}
+
+	void GameEngine::FillWireFrameModel(const std::vector<Vector2f>& modelCoordinates, const Vector2f& pos, float rotation, float scale, const Pixel& col)
+	{
+		FillWireFrameModel(modelCoordinates, pos.x, pos.y, rotation, scale, col);
+	}
+
+	void GameEngine::DrawString(const Vector2i& pos, std::string_view text, const Pixel& col, const Vector2i& scale)
+	{
+		DrawString(pos.x, pos.y, text, col, scale.x, scale.y);
+	}
+
+#pragma endregion
+
+#pragma region dge_drawing_gpu
 
 	void GameEngine::DrawTexturePolygon(const std::vector<Vector2f>& verts, const std::vector<Pixel>& cols, Texture::Structure structure)
 	{
@@ -1112,7 +1132,8 @@ namespace def
 
 	void GameEngine::DrawTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
 	{
-		// Adding 0.25 is a fix for now, I don't know if that can lead to problems on different configurations
+		// Adding 0.25 to fix a displacement of a rectangle.
+		// I don't know if that can lead to any problems on different configurations
 		DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) + 0.25f } }, { col }, Texture::Structure::WIREFRAME);
 	}
 
@@ -1123,20 +1144,20 @@ namespace def
 
 	void GameEngine::DrawTextureCircle(const Vector2i& pos, int radius, const Pixel& col)
 	{
-		std::vector<Vector2f> verts(s_UnitCircle.size());
+		std::vector<Vector2f> verts(sm_UnitCircle.size());
 
 		for (size_t i = 0; i < verts.size(); i++)
-			verts[i] = s_UnitCircle[i] * (float)radius + pos;
+			verts[i] = sm_UnitCircle[i] * (float)radius + pos;
 
 		DrawTexturePolygon(verts, { col }, Texture::Structure::WIREFRAME);
 	}
 
 	void GameEngine::FillTextureCircle(const Vector2i& pos, int radius, const Pixel& col)
 	{
-		std::vector<Vector2f> verts(s_UnitCircle.size());
+		std::vector<Vector2f> verts(sm_UnitCircle.size());
 
 		for (size_t i = 0; i < verts.size(); i++)
-			verts[i] = s_UnitCircle[i] * (float)radius + pos;
+			verts[i] = sm_UnitCircle[i] * (float)radius + pos;
 
 		DrawTexturePolygon(verts, { col }, Texture::Structure::TRIANGLE_FAN);
 	}
@@ -1174,56 +1195,6 @@ namespace def
 				p.x += 8.0f * scale.x;
 			}
 		}
-	}
-
-	void GameEngine::DrawTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
-	{
-		DrawTriangle(pos1.x, pos1.y, pos2.x, pos2.y, pos3.x, pos3.y, col);
-	}
-
-	void GameEngine::FillTriangle(const Vector2i& pos1, const Vector2i& pos2, const Vector2i& pos3, const Pixel& col)
-	{
-		FillTriangle(pos1.x, pos1.y, pos2.x, pos2.y, pos3.x, pos3.y, col);
-	}
-
-	void GameEngine::DrawRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
-	{
-		DrawRectangle(pos.x, pos.y, size.x, size.y, col);
-	}
-
-	void GameEngine::FillRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
-	{
-		FillRectangle(pos.x, pos.y, size.x, size.y, col);
-	}
-
-	void GameEngine::DrawCircle(const Vector2i& pos, int radius, const Pixel& col)
-	{
-		DrawCircle(pos.x, pos.y, radius, col);
-	}
-
-	void GameEngine::FillCircle(const Vector2i& pos, int radius, const Pixel& col)
-	{
-		FillCircle(pos.x, pos.y, radius, col);
-	}
-
-	void GameEngine::DrawEllipse(const Vector2i& pos, const Vector2i& size, const Pixel& col)
-	{
-		DrawEllipse(pos.x, pos.y, size.x, size.y, col);
-	}
-
-	void GameEngine::FillEllipse(const Vector2i& pos, const Vector2i& size, const Pixel& col)
-	{
-		FillEllipse(pos.x, pos.y, size.x, size.y, col);
-	}
-
-	void GameEngine::DrawSprite(const Vector2i& pos, const Sprite* spr)
-	{
-		DrawSprite(pos.x, pos.y, spr);
-	}
-
-	void GameEngine::DrawPartialSprite(const Vector2i& pos, const Vector2i& filePos, const Vector2i& fileSize, const Sprite* spr)
-	{
-		DrawPartialSprite(pos.x, pos.y, filePos.x, filePos.y, fileSize.x, fileSize.y, spr);
 	}
 
 	void GameEngine::DrawTexture(const Vector2f& pos, const Texture* tex, const Vector2f& scale, const Pixel& tint)
@@ -1358,25 +1329,108 @@ namespace def
 		layer.textures.push_back(texInst);
 	}
 
-	void GameEngine::DrawWireFrameModel(const std::vector<Vector2f>& modelCoordinates, const Vector2f& pos, float rotation, float scale, const Pixel& col)
+	void GameEngine::DrawWarpedTexture(const std::vector<Vector2f>& points, const Texture* tex, const Pixel& tint)
 	{
-		DrawWireFrameModel(modelCoordinates, pos.x, pos.y, rotation, scale, col);
-	}
+		auto& layer = m_Layers[m_PickedLayer];
 
-	void GameEngine::FillWireFrameModel(const std::vector<Vector2f>& modelCoordinates, const Vector2f& pos, float rotation, float scale, const Pixel& col)
-	{
-		FillWireFrameModel(modelCoordinates, pos.x, pos.y, rotation, scale, col);
-	}
+		TextureInstance texInst;
 
-	void GameEngine::DrawString(const Vector2i& pos, std::string_view text, const Pixel& col, const Vector2i& scale)
-	{
-		DrawString(pos.x, pos.y, text, col, scale.x, scale.y);
+		texInst.texture = tex;
+		texInst.structure = layer.textureStructure;
+		texInst.points = 4;
+		texInst.tint = { tint, tint, tint, tint };
+		texInst.vertices.resize(texInst.points);
+		texInst.uv = { { 0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f} };
+
+		float rd = ((points[2].x - points[0].x) * (points[3].y - points[1].y) - (points[3].x - points[1].x) * (points[2].y - points[0].y));
+
+		if (rd != 0.0f)
+		{
+			rd = 1.0f / rd;
+
+			float rn = ((points[3].x - points[1].x) * (points[0].y - points[1].y) - (points[3].y - points[1].y) * (points[0].x - points[1].x)) * rd;
+			float sn = ((points[2].x - points[0].x) * (points[0].y - points[1].y) - (points[2].y - points[0].y) * (points[0].x - points[1].x)) * rd;
+
+			Vector2f center;
+			if (!(rn < 0.0f || rn > 1.0f || sn < 0.0f || sn > 1.0f))
+				center = points[0] + rn * (points[2] - points[0]);
+
+			float d[4];
+
+			for (int i = 0; i < 4; i++)
+				d[i] = (points[i] - center).Length();
+
+			const Vector2f& inv = m_Window->GetInvertedScreenSize();
+
+			for (int i = 0; i < 4; i++)
+			{
+				float q = d[i] == 0.0f ? 1.0f : (d[i] + d[(i + 2) & 3]) / d[(i + 2) & 3];
+				texInst.uv[i] *= q;
+				texInst.vertices[i] = { (points[i].x * inv.x) * 2.0f - 1.0f, ((points[i].y * inv.y) * 2.0f - 1.0f) * -1.0f };
+			}
+
+			layer.textures.push_back(texInst);
+		}
 	}
 
 	void GameEngine::ClearTexture(const Pixel& col)
 	{
 		m_BackgroundColour = col;
 	}
+
+#pragma endregion
+
+#pragma endregion
+
+#pragma region dge_draw_targets
+
+	void GameEngine::SetDrawTarget(Graphic* target)
+	{
+		m_Layers[m_PickedLayer].target = target ? target : m_Layers[m_PickedLayer].pixels;
+		m_Layers[m_PickedLayer].target->UpdateTexture();
+	}
+
+	Graphic* GameEngine::GetDrawTarget()
+	{
+		return m_Layers[m_PickedLayer].target;
+	}
+
+#pragma endregion
+
+#pragma region dge_pixels
+
+	void GameEngine::SetPixelMode(Pixel::Mode pixelMode)
+	{
+		m_Layers[m_PickedLayer].pixelMode = pixelMode;
+	}
+
+	Pixel::Mode GameEngine::GetPixelMode() const
+	{
+		return m_Layers[m_PickedLayer].pixelMode;
+	}
+
+#pragma endregion
+
+#pragma region dge_textures
+
+	void GameEngine::SetTextureStructure(Texture::Structure textureStructure)
+	{
+		m_Layers[m_PickedLayer].textureStructure = textureStructure;
+	}
+
+	Texture::Structure GameEngine::GetTextureStructure() const
+	{
+		return m_Layers[m_PickedLayer].textureStructure;
+	}
+
+	void GameEngine::UseOnlyTextures(bool enable)
+	{
+		m_OnlyTextures = enable;
+	}
+
+#pragma endregion
+
+#pragma region dge_shaders
 
 	void GameEngine::SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&))
 	{
@@ -1386,15 +1440,38 @@ namespace def
 		layer.pixelMode = func ? Pixel::Mode::CUSTOM : Pixel::Mode::DEFAULT;
 	}
 
-	void GameEngine::UseOnlyTextures(bool enable)
-	{
-		m_OnlyTextures = enable;
-	}
+#pragma endregion
+
+#pragma region dge_timings
 
 	float GameEngine::GetDeltaTime() const
 	{
 		return m_DeltaTime;
 	}
+
+#pragma endregion
+
+#pragma region dge_window
+
+#if defined(DGE_PLATFORM_GLFW3)
+
+	GLFWwindow* GameEngine::GetNativeWindow()
+	{
+		return ((PlatformGLFW3*)m_Platform)->m_NativeWindow;
+	}
+
+#elif defined(DGE_PLATFORM_EMSCRIPTEN)
+
+	EGLDisplay& GameEngine::GetNativeWindow()
+	{
+		return ((PlatformEmscripten*)m_Platform.get())->m_Display;
+	}
+
+#endif
+
+#pragma endregion
+
+#pragma region dge_layers
 
 	size_t GameEngine::CreateLayer(const Vector2i& offset, const Vector2i& size, bool update, bool visible, const Pixel& tint)
 	{
@@ -1430,19 +1507,25 @@ namespace def
 		return &m_Layers[index];
 	}
 
+#pragma endregion
+
+#pragma region dge_window_input_console
+
 	Window *const GameEngine::GetWindow()
 	{
-		return m_Window.get();
+		return m_Window;
 	}
 
 	InputHandler *const GameEngine::GetInput()
 	{
-		return m_Input.get();
+		return m_Input;
 	}
 
 	Console *const GameEngine::GetConsole()
 	{
-		return m_Console.get();
+		return m_Console;
 	}
+
+#pragma endregion
 
 }

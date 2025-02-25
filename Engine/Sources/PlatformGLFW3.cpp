@@ -101,7 +101,6 @@ namespace def
 	void PlatformGLFW3::PollEvents() const
 	{
 		glfwPollEvents();
-		//glfwWaitEvents();
 	}
 
 	bool PlatformGLFW3::ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel)

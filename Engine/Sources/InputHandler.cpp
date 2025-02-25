@@ -157,7 +157,7 @@ namespace def
     InputHandler::InputHandler(Platform* platform)
         : m_MousePos(-1, -1), m_Platform(platform), m_CaptureText(false), m_Caps(false), m_CapturedTextCursorPos(0)
     {
-        uint8_t keysCount = static_cast<uint8_t>(Key::KEYS_COUNT);
+        uint8_t keysCount = static_cast<uint8_t>(KEYS_COUNT);
 
         for (uint8_t i = 0; i < keysCount; i++)
         {
@@ -182,7 +182,7 @@ namespace def
 
     void InputHandler::FlushBuffers()
     {
-        UpdateState(m_Keys, m_KeyNewState, m_KeyOldState, static_cast<uint8_t>(Key::KEYS_COUNT));
+        UpdateState(m_Keys, m_KeyNewState, m_KeyOldState, static_cast<uint8_t>(KEYS_COUNT));
 		UpdateState(m_Mouse, m_MouseNewState, m_MouseOldState, 8);
     }
 

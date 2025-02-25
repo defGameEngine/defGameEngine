@@ -36,8 +36,10 @@ namespace def
 		LEFT_SHIFT, LEFT_CONTROL, LEFT_ALT, LEFT_SUPER, RIGHT_SHIFT,
 		RIGHT_CONTROL, RIGHT_ALT, RIGHT_SUPER, MENU,
 
-		KEYS_COUNT
+		COUNT
 	};
+
+	inline static constexpr uint8_t KEYS_COUNT = static_cast<uint8_t>(Key::COUNT);
     
 	enum class Button
 	{
@@ -106,11 +108,11 @@ namespace def
         static void UpdateState(KeyState* data, bool* newState, bool* oldState, uint8_t count);
 
     private:
-        KeyState m_Keys[static_cast<uint8_t>(Key::KEYS_COUNT)];
+        KeyState m_Keys[KEYS_COUNT];
         KeyState m_Mouse[8];
 
-        bool m_KeyOldState[static_cast<uint8_t>(Key::KEYS_COUNT)];
-        bool m_KeyNewState[static_cast<uint8_t>(Key::KEYS_COUNT)];
+        bool m_KeyOldState[KEYS_COUNT];
+        bool m_KeyNewState[KEYS_COUNT];
 
         bool m_MouseOldState[8];
         bool m_MouseNewState[8];
