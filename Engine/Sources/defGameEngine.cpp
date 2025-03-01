@@ -1352,7 +1352,8 @@ namespace def
 			float sn = ((points[2].x - points[0].x) * (points[0].y - points[1].y) - (points[2].y - points[0].y) * (points[0].x - points[1].x)) * rd;
 
 			Vector2f center;
-			if (!(rn < 0.0f || rn > 1.0f || sn < 0.0f || sn > 1.0f))
+
+			if (rn >= 0.0f && rn <= 1.0f && sn >= 0.0f && sn <= 1.0f)
 				center = points[0] + rn * (points[2] - points[0]);
 
 			float d[4];
@@ -1366,7 +1367,7 @@ namespace def
 			{
 				float q = d[i] == 0.0f ? 1.0f : (d[i] + d[(i + 2) & 3]) / d[(i + 2) & 3];
 				texInst.uv[i] *= q;
-				texInst.vertices[i] = { (points[i].x * inv.x) * 2.0f - 1.0f, ((points[i].y * inv.y) * 2.0f - 1.0f) * -1.0f };
+				texInst.vertices[i] = { points[i].x * inv.x * 2.0f - 1.0f, 1.0f - points[i].y * inv.y * 2.0f };
 			}
 
 			layer.textures.push_back(texInst);
