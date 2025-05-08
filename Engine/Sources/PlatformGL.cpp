@@ -27,11 +27,11 @@ namespace def
 	void PlatformGL::DrawQuad(const Pixel& tint) const
 	{
 		glBegin(GL_QUADS);
-		glColor4ub(tint.r, tint.g, tint.b, tint.a);
-		glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f);
-		glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, 1.0f);
-		glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 1.0f);
-		glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, -1.0f);
+			glColor4ub(tint.r, tint.g, tint.b, tint.a);
+			glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f);
+			glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, 1.0f);
+			glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 1.0f);
+			glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, -1.0f);
 		glEnd();
 	}
 
