@@ -1,6 +1,5 @@
 ---@diagnostic disable: undefined-global
 workspace "defGameEngine"
-    architecture "x64"
     startproject "Sandbox"
 
     configurations
@@ -9,13 +8,19 @@ workspace "defGameEngine"
         "Release"
     }
 
+    filter "system:windows or system:linux"
+        architecture "x64"
+
+    filter "system:macosx"
+        architecture "ARM64"
+
 OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "Engine/Vendor/glfw"
 
 project "Engine"
     location "Engine"
-    kind "StaticLib"
+    kind "StaticLib"a
     language "C++"
     cppdialect "C++20"
 
@@ -40,7 +45,7 @@ project "Engine"
         "%{prj.name}/Sources/*.inl"
     }
 
-    filter { "system:windows or system:linux" }
+    filter { "system:windows or system:linux or system:macosx" }
         removefiles
         {
             "%{prj.name}/Include/PlatformEmscripten.hpp",
@@ -79,6 +84,14 @@ project "Engine"
             "Xinerama", "Xcursor"
         }
 
+    filter "system:macosx"
+        links
+        {
+            "Metal.framework", "QuartzCore.framework",
+            "Cocoa.framework", "OpenGL.framework",
+            "IOKit.framework", "CoreVideo.framework"
+        }
+
     -- Platform specific flags
 
     filter "system:windows"
@@ -111,7 +124,6 @@ project "Sandbox"
     language "C++"
     cppdialect "C++20"
     staticruntime "On"
-    systemversion "latest"
 
     targetdir ("%{wks.location}/Build/Target/" .. OUTPUT_DIR .. "/%{prj.name}")
     objdir ("%{wks.location}/Build/Obj/" .. OUTPUT_DIR .. "/%{prj.name}")
@@ -128,7 +140,7 @@ project "Sandbox"
         "%{prj.name}/Sources/*.cpp"
     }
 
-    filter { "system:windows or system:linux" }
+    filter { "system:windows or system:linux or system:macosx" }
         removefiles { "Engine/Include/PlatformEmscripten.hpp" }
 
     filter "system:emscripten"
@@ -147,7 +159,7 @@ project "Sandbox"
 
     -- Linking with libraries
 
-    libdirs { "Engine/Vendor/glfw/%{cfg.architecture}" }
+    libdirs { "Build/Target/" .. OUTPUT_DIR .. "/GLFW3" }
 
     filter "system:windows"
         links { "gdi32", "user32", "kernel32", "opengl32", "GLFW3", "glu32" }
@@ -158,6 +170,14 @@ project "Sandbox"
             "GL", "GLU", "glut", "GLEW", "GLFW3", "X11",
             "Xxf86vm", "Xrandr", "pthread", "Xi", "dl",
             "Xinerama", "Xcursor"
+        }
+
+    filter "system:macosx"
+        links
+        {
+            "Metal.framework", "QuartzCore.framework",
+            "Cocoa.framework", "OpenGL.framework",
+            "IOKit.framework", "CoreVideo.framework"
         }
 
     -- Platform specific flags

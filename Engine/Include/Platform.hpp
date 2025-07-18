@@ -5,8 +5,6 @@
 
 #include "Pch.hpp"
 #include "Texture.hpp"
-#include "Window.hpp"
-#include "InputHandler.hpp"
 
 namespace def
 {
