@@ -17,7 +17,7 @@ protected:
     bool OnUserUpdate(float deltaTime) override
     {
         Clear(def::BLACK);
-        DrawString(GetInput()->GetMousePosition(), "Hello, premake5!", def::PINK);
+        DrawString(GetInput()->GetMousePosition(), "Hello!", def::PINK);
 
         return true;
     }
