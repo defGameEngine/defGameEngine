@@ -20,7 +20,7 @@ include "Engine/Vendor/glfw"
 
 project "Engine"
     location "Engine"
-    kind "StaticLib"a
+    kind "StaticLib"
     language "C++"
     cppdialect "C++20"
 

@@ -129,6 +129,11 @@ namespace def
 
 		glfwWindowHint(GLFW_DOUBLEBUFFER, vsync ? GLFW_TRUE : GLFW_FALSE);
 
+		#ifdef __APPLE__
+		// Disable stupid auto-scaling
+		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+		#endif
+
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
 
 		if (!videoMode)
@@ -161,6 +166,7 @@ namespace def
 		}
 
 		glfwMakeContextCurrent(m_NativeWindow);
+
 		glViewport(0, 0, windowSize.x, windowSize.y);
 
 		glEnable(GL_TEXTURE_2D);
