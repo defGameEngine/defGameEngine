@@ -41,9 +41,10 @@ project "Engine"
     files
     {
         "%{prj.name}/Include/*.hpp",
-        "%{prj.name}/Sources/*.cpp",
-        "%{prj.name}/Sources/*.inl"
+        "%{prj.name}/Sources/*.cpp"
     }
+
+    removefiles { "%{prj.name}/Sources/Utils.cpp" }
 
     filter { "system:windows or system:linux or system:macosx" }
         removefiles

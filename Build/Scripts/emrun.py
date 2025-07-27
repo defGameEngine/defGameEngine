@@ -6,7 +6,7 @@ EMSDK_PATH = 'C:/SDK/emsdk'
 
 
 def run(target):
-    run = subprocess.run(f'{EMSDK_PATH}/emsdk activate latest & emrun ../Target/{target}/index.html', capture_output=True, shell=True)
+    run = subprocess.run(f'{EMSDK_PATH}/emsdk activate latest & emrun ../Target/Web/{target}/index.html', capture_output=True, shell=True)
 
     if len(run.stdout) > 0:
         print(run.stdout.decode(errors='ignore'))
