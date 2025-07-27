@@ -14,6 +14,6 @@ namespace def
 	inline uint8_t ClampIntToUint8(int value);
 }
 
-#include "Utils.inl"
+#include "../Sources/Utils.cpp"
 
 #endif

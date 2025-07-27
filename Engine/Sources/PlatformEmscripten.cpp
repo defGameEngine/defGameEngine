@@ -108,8 +108,10 @@ namespace def
 		switch (texInst.structure)
 		{
 		case Texture::Structure::WIREFRAME: glDrawArrays(GL_LINE_LOOP, 0, texInst.points); break;
-		case Texture::Structure::FAN: glDrawArrays(GL_TRIANGLE_FAN, 0, texInst.points); break;
-		case Texture::Structure::STRIP: glDrawArrays(GL_TRIANGLE_STRIP, 0, texInst.points); break;
+		case Texture::Structure::TRIANGLE_FAN: glDrawArrays(GL_TRIANGLE_FAN, 0, texInst.points); break;
+		case Texture::Structure::TRIANGLE_STRIP: glDrawArrays(GL_TRIANGLE_STRIP, 0, texInst.points); break;
+		case Texture::Structure::LINE_STRIP: glDrawArrays(GL_LINE_STRIP, 0, texInst.points); break;
+		case Texture::Structure::LINES: glDrawArrays(GL_LINES, 0, texInst.points); break;
 		case Texture::Structure::DEFAULT: glDrawArrays(GL_TRIANGLES, 0, texInst.points); break;
 		}
 	}
@@ -238,12 +240,12 @@ namespace def
 
 	EM_BOOL PlatformEmscripten::KeyboardCallback(int eventType, const EmscriptenKeyboardEvent* event, void* userData)
 	{
-		GameEngine* e = GameEngine::s_Engine;
+		auto e = GameEngine::s_Engine->GetInput();
 
 		switch (eventType)
 		{
-		case EMSCRIPTEN_EVENT_KEYDOWN: e->m_KeyNewState[size_t(GameEngine::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = true; break;
-		case EMSCRIPTEN_EVENT_KEYUP: e->m_KeyNewState[size_t(GameEngine::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = false; break;
+		case EMSCRIPTEN_EVENT_KEYDOWN: e->m_KeyNewState[size_t(InputHandler::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = true; break;
+		case EMSCRIPTEN_EVENT_KEYUP: e->m_KeyNewState[size_t(InputHandler::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = false; break;
 		}
 
 		return EM_TRUE;
@@ -252,35 +254,36 @@ namespace def
 	EM_BOOL PlatformEmscripten::WheelCallback(int eventType, const EmscriptenWheelEvent* event, void* userData)
 	{
 		if (eventType == EMSCRIPTEN_EVENT_WHEEL)
-			GameEngine::s_Engine->m_ScrollDelta = -int(event->deltaY);
+			GameEngine::s_Engine->GetInput()->m_ScrollDelta = -int(event->deltaY);
 
 		return EM_TRUE;
 	}
 
 	EM_BOOL PlatformEmscripten::TouchCallback(int eventType, const EmscriptenTouchEvent* event, void* userData)
 	{
-		GameEngine* e = GameEngine::s_Engine;
+		auto i = GameEngine::s_Engine->GetInput();
+		auto w = GameEngine::s_Engine->GetWindow();
 
 		switch (eventType)
 		{
 		case EMSCRIPTEN_EVENT_TOUCHMOVE:
 		{
-			e->m_MousePos.x = event->touches->targetX / e->m_PixelSize.x;
-			e->m_MousePos.y = event->touches->targetY / e->m_PixelSize.y;
+			i->m_MousePos.x = event->touches->targetX / w->m_PixelSize.x;
+			i->m_MousePos.y = event->touches->targetY / w->m_PixelSize.y;
 		}
 		break;
 
 		case EMSCRIPTEN_EVENT_TOUCHSTART:
 		{
-			e->m_MousePos.x = event->touches->targetX;
-			e->m_MousePos.y = event->touches->targetY;
+			i->m_MousePos.x = event->touches->targetX;
+			i->m_MousePos.y = event->touches->targetY;
 
-			e->m_MouseNewState[0] = true;
+			i->m_MouseNewState[0] = true;
 		}
 		break;
 
 		case EMSCRIPTEN_EVENT_TOUCHEND:
-			e->m_MouseNewState[0] = false;
+			i->m_MouseNewState[0] = false;
 		break;
 
 		}
@@ -290,12 +293,13 @@ namespace def
 
 	EM_BOOL PlatformEmscripten::MouseCallback(int eventType, const EmscriptenMouseEvent* event, void* userData)
 	{
-		GameEngine* e = GameEngine::s_Engine;
+		auto i = GameEngine::s_Engine->GetInput();
+		auto w = GameEngine::s_Engine->GetWindow();
 
 		if (eventType == EMSCRIPTEN_EVENT_MOUSEMOVE)
 		{
-			e->m_MousePos.x = event->targetX / e->m_PixelSize.x;
-			e->m_MousePos.y = event->targetY / e->m_PixelSize.y;
+			i->m_MousePos.x = event->targetX / w->m_PixelSize.x;
+			i->m_MousePos.y = event->targetY / w->m_PixelSize.y;
 		}
 
 		auto check = [&](int button, int index)
@@ -304,8 +308,8 @@ namespace def
 				{
 					switch (eventType)
 					{
-					case EMSCRIPTEN_EVENT_MOUSEDOWN: e->m_MouseNewState[index] = true; break;
-					case EMSCRIPTEN_EVENT_MOUSEUP: e->m_MouseNewState[index] = false; break;
+					case EMSCRIPTEN_EVENT_MOUSEDOWN: i->m_MouseNewState[index] = true; break;
+					case EMSCRIPTEN_EVENT_MOUSEUP: i->m_MouseNewState[index] = false; break;
 					}
 
 					return true;
