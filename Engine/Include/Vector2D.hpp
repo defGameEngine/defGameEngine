@@ -13,6 +13,7 @@ namespace def
 		static_assert(std::is_arithmetic<T>::value, "Vector2D<T> must be numeric");
 
 		Vector2D() = default;
+		Vector2D(const T& xy) : x(xy), y(xy) {}
 		Vector2D(const T& x, const T& y) : x(x), y(y) {}
 
 		Vector2D(const Vector2D&) = default;

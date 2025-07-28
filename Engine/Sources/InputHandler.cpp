@@ -155,7 +155,7 @@ namespace def
     }
 
     InputHandler::InputHandler(std::shared_ptr<Platform> platform)
-        : m_MousePos(-1, -1), m_Platform(platform), m_CaptureText(false), m_Caps(false), m_CapturedTextCursorPos(0), m_ScrollDelta(0)
+        : m_Platform(platform), m_CaptureText(false), m_Caps(false), m_CapturedTextCursorPos(0), m_ScrollDelta(0)
     {
         uint8_t keysCount = static_cast<uint8_t>(KEYS_COUNT);
 
