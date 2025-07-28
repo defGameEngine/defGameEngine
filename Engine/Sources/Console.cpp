@@ -13,6 +13,11 @@ namespace def
         m_History.clear();
     }
 
+    void Console::Print(const std::string& text, const Pixel& colour)
+    {
+        m_History.push_back({ "", text, colour, false });
+    }
+
     void Console::HandleCommand(const std::string& command)
     {
         if (!IsShown())
@@ -23,7 +28,7 @@ namespace def
 
         if (GameEngine::s_Engine->OnConsoleCommand(command, output, colour))
         {
-            m_History.push_back({ command, output.str(), colour });
+            m_History.push_back({ command, output.str(), colour, true });
             m_PickedHistoryCommand = m_History.size();
         }
     }
@@ -37,20 +42,28 @@ namespace def
 
         if (GameEngine::s_Engine->m_Input->GetKeyState(Key::UP).pressed)
         {
-            if (m_PickedHistoryCommand > 0)
+            do
             {
-                m_PickedHistoryCommand--;
-                moved = true;
+                if (m_PickedHistoryCommand > 0)
+                {
+                    m_PickedHistoryCommand--;
+                    moved = m_History[m_PickedHistoryCommand].isCommand;
+                }
             }
+            while (!moved && m_PickedHistoryCommand > 0);
         }
 
         if (GameEngine::s_Engine->m_Input->GetKeyState(Key::DOWN).pressed)
         {
-            if (m_PickedHistoryCommand < m_History.size() - 1)
+            do
             {
-                m_PickedHistoryCommand++;
-                moved = true;
+                if (m_PickedHistoryCommand < m_History.size() - 1)
+                {
+                    m_PickedHistoryCommand++;
+                    moved = m_History[m_PickedHistoryCommand].isCommand;
+                }
             }
+            while (!moved && m_PickedHistoryCommand < m_History.size() - 1);
         }
 
         if (moved)
@@ -75,14 +88,20 @@ namespace def
         e->FillTextureRectangle({ 0, 0 }, e->m_Window->GetScreenSize(), m_BackgroundColour);
 
         int printCount = std::min(e->m_Window->GetScreenHeight() / 22, (int)m_History.size());
-        int start = m_History.size() - printCount;
+        int offset = 10;
 
-        for (size_t i = start; i < m_History.size(); i++)
+        for (int i = m_History.size() - printCount; i < m_History.size(); i++)
         {
             auto& entry = m_History[i];
 
-            e->DrawTextureString({ 10, 10 + (int(i) - start) * 20 }, "> " + entry.command);
-            e->DrawTextureString({ 10, 20 + (int(i) - start) * 20 }, entry.output, entry.outputColour);
+            if (entry.isCommand)
+            {
+                e->DrawTextureString({ 10, offset }, "> " + entry.command);
+                offset += 10;
+            }
+
+            e->DrawTextureString({ 10, offset }, entry.output, entry.outputColour);
+            offset += 10;
         }
 
         int x = e->m_Input->GetCapturedTextCursorPosition() * 8 + 36;
