@@ -19,15 +19,18 @@ namespace def
     public:
         struct Entry
         {
-            std::string command;
+            std::string command; // not used if isCommand = false
             std::string output;
 
             Pixel outputColour;
+
+            bool isCommand = false;
         };
 
         Console();
 
         void Clear();
+        void Print(const std::string& text, const Pixel& colour = def::WHITE);
         void Show(bool show);
         void SetBackgroundColour(const Pixel& colour);
 
