@@ -1,5 +1,7 @@
 #include "Pch.hpp"
 #include "PlatformGL.hpp"
+
+#define GL_SILENCE_DEPRECATION
 #include "GLFW/glfw3.h"
 
 namespace def

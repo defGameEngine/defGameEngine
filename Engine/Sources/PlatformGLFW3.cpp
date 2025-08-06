@@ -88,7 +88,6 @@ namespace def
 
 	void PlatformGLFW3::Destroy() const
 	{
-		glfwDestroyWindow(m_NativeWindow);
 		glfwTerminate();
 	}
 
@@ -129,10 +128,12 @@ namespace def
 
 		glfwWindowHint(GLFW_DOUBLEBUFFER, vsync ? GLFW_TRUE : GLFW_FALSE);
 
-		#ifdef __APPLE__
-		// Disable stupid auto-scaling
-		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-		#endif
+		if (glfwGetPlatform() == GLFW_PLATFORM_COCOA)
+		{
+			// Disable stupid auto-scaling
+			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+			glfwWindowHint(GLFW_COCOA_MENUBAR, GLFW_FALSE);
+		}
 
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
 
