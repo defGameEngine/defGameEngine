@@ -9,6 +9,6 @@
 #include "stb_image_write.h"
 
 // Oh, dear stb_image...
-#define SAFE_STBI_FAILURE_REASON() (stbi_failure_reason() ? stbi_failure_reason() : "")
+#define SAFE_STBI_FAILURE_REASON (stbi_failure_reason() ? stbi_failure_reason() : "")
 
 #endif

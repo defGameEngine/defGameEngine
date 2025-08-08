@@ -11,18 +11,28 @@ namespace def
 	class InputHandler;
 	class Window;
 
+	// An abstract class that uses
+	// platform specific API for capturing input
+	// and for drawing things on the screen
 	class Platform
 	{
 	public:
 		Platform();
 		virtual ~Platform() = default;
 
+		// Terminates the API
 		virtual void Destroy() const = 0;
+
+		// Sets a name for the application
 		virtual void SetTitle(const std::string& text) const = 0;
 
+		// Checks if the window closing event has occured
 		virtual bool IsWindowClose() const = 0;
+
+		// Checks if the window focus event has occured
 		virtual bool IsWindowFocused() const = 0;
 
+		// Clears bo
 		virtual void ClearBuffer(const Pixel& col) const = 0;
 
 		virtual void OnBeforeDraw() = 0;

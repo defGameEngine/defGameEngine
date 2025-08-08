@@ -12,6 +12,7 @@ namespace def
 	{
 	public:
 		PlatformGL();
+		
 		void ClearBuffer(const Pixel& col) const override;
 
 		void OnBeforeDraw() override;

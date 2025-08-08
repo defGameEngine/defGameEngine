@@ -9,6 +9,7 @@ namespace def
 {
 	struct Pixel
 	{
+		// Constructs the pixel using 4 bytes. Order: RGBA
 		Pixel(uint32_t rgba = 0x000000FF);
 		Pixel(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF);
 
@@ -20,15 +21,26 @@ namespace def
 			CUSTOM
 		};
 
+		// You can access RGBA values via ...
 		union
 		{
+			// separate fields
 			struct { uint8_t r, g, b, a; };
+
+			// single 4 byte integer value
 			uint32_t rgba_n;
+			
+			// array of 4 bytes
 			uint8_t rgba_v[4];
 		};
 
+		// Linearly interpolates between this and rhs values with factor
 		Pixel Lerp(const Pixel& rhs, float factor) const;
+
+		// Represents pixel value as a string: (r, g, b, a)
 		std::string ToString() const;
+
+		// Performs component-wise operations on this and rhs
 
 		Pixel operator+(float rhs) const;
 		Pixel operator-(float rhs) const;
@@ -64,9 +76,11 @@ namespace def
 		bool operator>=(float rhs) const;
 		bool operator<=(float rhs) const;
 
+		// Constructs Pixel value from float values (from 0.0f to 1.0f)
 		static Pixel Float(float r, float g, float b, float a = 1.0f);
 	};
 
+	// Useful popular colours
 	inline const Pixel
 		BLACK(0, 0, 0), DARK_BLUE(0, 55, 218), DARK_GREEN(19, 161, 14), DARK_CYAN(59, 120, 255),
 		DARK_RED(197, 15, 31), DARK_MAGENTA(136, 32, 152), DARK_GREY(118, 118, 118),

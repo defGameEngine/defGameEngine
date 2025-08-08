@@ -28,10 +28,12 @@ namespace def
 
     void Window::UpdateCaption(int fps)
     {
-        if (fps < 0)
-            m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_Title);
-        else
-            m_Platform->SetTitle("defini7.github.io - defGameEngine - " + m_Title + " - FPS: " + std::to_string(fps));
+        std::string caption = "defini7.github.io - defGameEngine - " + m_Title;
+
+        if (fps >= 0)
+            caption += " - FPS: " + std::to_string(fps);
+
+        m_Platform->SetTitle(caption);
     }
 
     void Window::Flush()

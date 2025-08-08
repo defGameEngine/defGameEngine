@@ -37,7 +37,7 @@ namespace def
 		Assert(!stbi_is_hdr(fileName.data()), "[stb_image Error] can't load an HDR file");
 
 		uint8_t* data = stbi_load(fileName.data(), &size.x, &size.y, NULL, 4);
-		Assert(data, "[stb_image Error] ", SAFE_STBI_FAILURE_REASON());
+		Assert(data, "[stb_image Error] ", SAFE_STBI_FAILURE_REASON);
 
 		pixels.clear();
 		pixels.resize(size.x * size.y);

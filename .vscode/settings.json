@@ -71,6 +71,23 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "*.gitignore": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "unordered_set": "cpp",
+        "__bit_reference": "cpp",
+        "__hash_table": "cpp",
+        "__node_handle": "cpp",
+        "__split_buffer": "cpp",
+        "string_view": "cpp",
+        "__locale": "cpp",
+        "__verbose_abort": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "execution": "cpp",
+        "mutex": "cpp",
+        "print": "cpp",
+        "queue": "cpp",
+        "variant": "cpp"
     }
 }

@@ -68,6 +68,10 @@ namespace def
 	class Platform;
 	class Console;
 
+	// This is the main class of the engine.
+	// You must inherit from this class and
+	// override OnUserCreate and OnUserUpdate functions
+	// so you can run an application
 	class GameEngine
 	{
 	public:
@@ -89,21 +93,29 @@ namespace def
 		bool m_IsAppRunning;
 		bool m_OnlyTextures;
 
+		// Is used for drawing characters on the screen
+		// as a Sprite via DrawString and as a Texture via DrawTextureString
 		Graphic m_Font;
 		int m_TabSize;
 
+		// Stores all available layers
 		std::vector<Layer> m_Layers;
 
+		// Index of the currently selected layer in m_Layers
 		size_t m_PickedLayer;
-		size_t m_ConsoleLayer;
 
+		// Colour that is used for clearing the screen buffer
 		Pixel m_BackgroundColour;
 
+		// Storing the difference between 2 frames
 		float m_DeltaTime;
+
+		// Is used for updating frames count in the title bar
 		float m_TickTimer;
 
 		std::shared_ptr<Platform> m_Platform;
 
+		// Storing 2 time points: on the start of the main loop iteration and one after
 		TimePoint m_TimeStart;
 		TimePoint m_TimeEnd;
 
@@ -115,6 +127,9 @@ namespace def
 		uint32_t m_FramesCount;
 	#endif
 
+		// This is used for storing circle vertices
+		// that later will be transformed to be drawn
+		// on the screen
 		static constexpr size_t CIRCLE_VERTICES_COUNT = 64;
 		static std::vector<Vector2f> sm_UnitCircle;
 
@@ -254,7 +269,7 @@ namespace def
 
 		float GetDeltaTime() const;
 
-		// Window's stuff
+		// Window stuff
 
 	#if defined(DGE_PLATFORM_GLFW3)
 		GLFWwindow* GetNativeWindow();
@@ -262,7 +277,7 @@ namespace def
 		EGLDisplay& GetNativeWindow();
 	#endif
 
-		// Layers' stuff
+		// Layers stuff
 
 		size_t CreateLayer(const Vector2i& offset, const Vector2i& size, bool update = true, bool visible = true, const Pixel& tint = WHITE);
 		void PickLayer(size_t layer);
