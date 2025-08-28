@@ -41,9 +41,18 @@ namespace def
         // the one you've specified in Construct method call
         const Vector2i& GetPixelSize() const;
 
+        // Returns true if the fullscreen mode is enabled
         bool IsFullScreen() const;
+
+        // Returns true if the pixel correction is disabled
+        // on OpenGL dependent platforms enabling pixel cohesion
+        // is 
         bool IsDirtyPixel() const;
+
+        // Returns true if vertical synchronization is enabled
         bool IsVSync() const;
+
+        // Returns true if the window is focused
         bool IsFocused() const;
 
         // Sets the name of the application that will appear on the caption

@@ -24,7 +24,7 @@ namespace def
 		void BindTexture(int id) const override;
 
 		void Destroy() const override;
-		void SetTitle(const std::string& text) const override;
+		void SetTitle(const std::string_view text) const override;
 
 		bool IsWindowClose() const override;
 		bool IsWindowFocused() const override;

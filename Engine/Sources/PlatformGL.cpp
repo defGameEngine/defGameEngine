@@ -67,7 +67,7 @@ namespace def
 	}
 
 	void PlatformGL::Destroy() const {}
-	void PlatformGL::SetTitle(const std::string& text) const {}
+	void PlatformGL::SetTitle(const std::string_view text) const {}
 
 	bool PlatformGL::IsWindowClose() const { return false; }
 	bool PlatformGL::IsWindowFocused() const { return false; }

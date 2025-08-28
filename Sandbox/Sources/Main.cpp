@@ -16,12 +16,9 @@ protected:
 
     bool OnUserUpdate(float deltaTime) override
     {
-        def::Vector2i size = GetWindow()->GetScreenSize();
+        Clear(def::BLACK);
+        DrawString(GetInput()->GetMousePosition(), "Hello!", def::PINK);
 
-        for (int y = 0; y < size.y; y++)
-            for (int x = 0; x < size.x; x++)
-                Draw(x, y, def::Pixel(rand() % 256, rand() % 256, rand() % 256));
-            
         return true;
     }
 
@@ -33,4 +30,6 @@ int main()
 
     if (demo.Construct(256, 240, 4, 4))
         demo.Run();
+
+    return 0;
 }
