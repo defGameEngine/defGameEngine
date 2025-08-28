@@ -4,3 +4,5 @@ Sandbox/*.vcxproj*
 Sandbox/*
 *.sln
 .vs
+Makefile
+.DS_Store

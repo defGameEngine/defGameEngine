@@ -2,12 +2,11 @@
 
 ## Introduction
 
-You can copy one of the sample games under the `Examples` folder of the repository into `.cpp` file of your project for a quick look and demo.
-Emscripten demo: https://defini7.itch.io/defgameengine-raycaster.
+You can copy one of the demos under the [Examples repository](https://github.com/defGameEngine/Examples) into your project for a quick look and demo.
 
 ## Table of Contents
 
-### Classes and structures
+### Structures & classes
 
 1. [Vector2D](#vector2d)
 2. [KeyState](#keystate)
@@ -15,7 +14,10 @@ Emscripten demo: https://defini7.itch.io/defgameengine-raycaster.
 4. [Sprite](#sprite)
 5. [Texture](#texture)
 6. [Graphic](#graphic)
-7. [GameEngine](#gameengine)
+7. [Console](#console)
+8. [Layer](#layer)
+9. [Window](#window)
+10. [GameEngine](#gameengine)
 
 ## Vector2D
 

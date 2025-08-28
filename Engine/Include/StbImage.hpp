@@ -8,7 +8,8 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 
-// Oh, dear stb_image...
-#define SAFE_STBI_FAILURE_REASON() (stbi_failure_reason() ? stbi_failure_reason() : "")
+// If there is no failure reason then stbi_failure_reason() == nullptr,
+// in order to fix that we will use (const char*)""
+#define SAFE_STBI_FAILURE_REASON (stbi_failure_reason() ? stbi_failure_reason() : "")
 
 #endif

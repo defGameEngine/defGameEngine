@@ -5,6 +5,8 @@
 
 #include "Pch.hpp"
 #include "PlatformGL.hpp"
+
+#define GL_SILENCE_DEPRECATION
 #include "GLFW/glfw3.h"
 
 namespace def
@@ -29,7 +31,7 @@ namespace def
 		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 
 		void Destroy() const override;
-		void SetTitle(const std::string& text) const override;
+		void SetTitle(const std::string_view text) const override;
 
 		bool IsWindowClose() const override;
 		bool IsWindowFocused() const override;

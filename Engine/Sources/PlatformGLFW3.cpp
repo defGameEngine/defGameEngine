@@ -88,13 +88,12 @@ namespace def
 
 	void PlatformGLFW3::Destroy() const
 	{
-		glfwDestroyWindow(m_NativeWindow);
 		glfwTerminate();
 	}
 
-	void PlatformGLFW3::SetTitle(const std::string& text) const
+	void PlatformGLFW3::SetTitle(const std::string_view text) const
 	{
-		glfwSetWindowTitle(m_NativeWindow, text.c_str());
+		glfwSetWindowTitle(m_NativeWindow, text.data());
 	}
 
 	bool PlatformGLFW3::IsWindowClose() const
@@ -129,10 +128,13 @@ namespace def
 
 		glfwWindowHint(GLFW_DOUBLEBUFFER, vsync ? GLFW_TRUE : GLFW_FALSE);
 
-		#ifdef __APPLE__
-		// Disable stupid auto-scaling
-		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-		#endif
+		if (glfwGetPlatform() == GLFW_PLATFORM_COCOA)
+		{
+			// Disabling window resizing fixes all scaling
+			// problems on Apple Retina displays
+			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+		}
 
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
 
@@ -154,8 +156,7 @@ namespace def
 				m_Monitor,
 				0, 0,
 				windowSize.x, windowSize.y,
-				videoMode->refreshRate
-			);
+				videoMode->refreshRate);
 		}
 		else
 		{
@@ -166,8 +167,6 @@ namespace def
 		}
 
 		glfwMakeContextCurrent(m_NativeWindow);
-
-		glViewport(0, 0, windowSize.x, windowSize.y);
 
 		glEnable(GL_TEXTURE_2D);
 
@@ -197,7 +196,6 @@ namespace def
 		img.width = icon.size.x;
 		img.height = icon.size.y;
 		img.pixels = (uint8_t*)icon.pixels.data();
-
 		glfwSetWindowIcon(m_NativeWindow, 1, &img);
 	}
 }

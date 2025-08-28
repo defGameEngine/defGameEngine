@@ -7,6 +7,7 @@
 
 namespace def
 {
+	// Prints an error to the console and terminates an application
 	template <class... T>
 	inline void Assert(bool expr, T&&... args);
 
