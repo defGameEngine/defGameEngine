@@ -44,10 +44,6 @@
 #include "Texture.hpp"
 #include "Graphic.hpp"
 
-#ifdef DGE_PLATFORM_GL
-#include "PlatformGL.hpp"
-#endif
-
 #ifdef DGE_PLATFORM_GLFW3
 #include "PlatformGLFW3.hpp"
 #endif

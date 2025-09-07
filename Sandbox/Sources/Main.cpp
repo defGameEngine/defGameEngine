@@ -8,7 +8,7 @@ public:
         GetWindow()->SetTitle("Example");
     }
 
-protected:
+private:
     bool OnUserCreate() override
     {
         return true;
@@ -16,9 +16,6 @@ protected:
 
     bool OnUserUpdate(float deltaTime) override
     {
-        Clear(def::BLACK);
-        DrawString(GetInput()->GetMousePosition(), "Hello!", def::PINK);
-
         return true;
     }
 
@@ -30,6 +27,4 @@ int main()
 
     if (demo.Construct(256, 240, 4, 4))
         demo.Run();
-
-    return 0;
 }
