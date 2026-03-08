@@ -181,6 +181,9 @@ project "Sandbox"
             "IOKit.framework", "CoreVideo.framework"
         }
 
+        buildoptions { "-ObjC++" }
+        toolset "clang"
+
     -- Platform specific flags
 
     filter "system:windows"

@@ -178,6 +178,8 @@ namespace def
 			glfwSwapInterval(1);
 			glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 		}
+		else
+			glfwSwapInterval(0);
 
 		glfwSetWindowUserPointer(m_NativeWindow, this);
 
