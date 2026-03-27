@@ -42,7 +42,7 @@ namespace def
 		COUNT
 	};
 
-	// Key::COUNT casted to uint8_t
+	// Key::COUNT
 	inline static constexpr uint8_t KEYS_COUNT = static_cast<uint8_t>(Key::COUNT);
     
 	// You can get a state of each button specified here using GetButtonState method
@@ -53,7 +53,7 @@ namespace def
 		MOUSE7, MOUSE8, COUNT
 	};
 
-	// Button::COUNT casted to uint8_t
+	// Button::COUNT
 	inline static constexpr uint8_t BUTTONS_COUNT = static_cast<uint8_t>(Button::COUNT);
 
 	// Holds a state of each key or button (held, released, or pressed)

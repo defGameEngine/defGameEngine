@@ -85,50 +85,6 @@ namespace def
 		friend class Console;
 		friend class InputHandler;
 
-	private:
-		bool m_IsAppRunning;
-		bool m_OnlyTextures;
-
-		// Is used for drawing characters on the screen
-		// as a Sprite via DrawString and as a Texture via DrawTextureString
-		Graphic m_Font;
-		int m_TabSize;
-
-		// Stores all available layers
-		std::vector<Layer> m_Layers;
-
-		// Index of the currently selected layer in m_Layers
-		size_t m_PickedLayer;
-
-		// Colour that is used for clearing the screen buffer
-		Pixel m_BackgroundColour;
-
-		// Storing the difference between 2 frames
-		float m_DeltaTime;
-
-		// Is used for updating frames count in the title bar
-		float m_TickTimer;
-
-		std::shared_ptr<Platform> m_Platform;
-
-		// Storing 2 time points: on the start of the main loop iteration and one after
-		TimePoint m_TimeStart;
-		TimePoint m_TimeEnd;
-
-		std::shared_ptr<InputHandler> m_Input;
-		std::shared_ptr<Window> m_Window;
-		std::unique_ptr<Console> m_Console;
-
-	#ifndef PLATFORM_EMSCRIPTEN
-		uint32_t m_FramesCount;
-	#endif
-
-		// This is used for storing circle vertices
-		// that later will be transformed to be drawn
-		// on the screen
-		static constexpr size_t CIRCLE_VERTICES_COUNT = 64;
-		static std::vector<Vector2f> sm_UnitCircle;
-
 	public:
 		// Is used internally
 		static GameEngine* s_Engine;
@@ -282,9 +238,53 @@ namespace def
 
 		// Window, input and console stuff
 
-		Window *const GetWindow();
-		InputHandler *const GetInput();
-		Console *const GetConsole();
+		Window& Window();
+		InputHandler& Input();
+		Console& Console();
+
+	private:
+		bool m_IsAppRunning;
+		bool m_OnlyTextures;
+
+		// Is used for drawing characters on the screen
+		// as a Sprite via DrawString and as a Texture via DrawTextureString
+		Graphic m_Font;
+		int m_TabSize;
+
+		// Stores all available layers
+		std::vector<Layer> m_Layers;
+
+		// Index of the currently selected layer in m_Layers
+		size_t m_PickedLayer;
+
+		// Colour that is used for clearing the screen buffer
+		Pixel m_BackgroundColour;
+
+		// Storing the difference between 2 frames
+		float m_DeltaTime;
+
+		// Is used for updating frames count in the title bar
+		float m_TickTimer;
+
+		std::shared_ptr<Platform> m_Platform;
+
+		// Storing 2 time points: on the start of the main loop iteration and one after
+		TimePoint m_TimeStart;
+		TimePoint m_TimeEnd;
+
+		std::shared_ptr<InputHandler> m_Input;
+		std::shared_ptr<def::Window> m_Window;
+		std::unique_ptr<def::Console> m_Console;
+
+	#ifndef PLATFORM_EMSCRIPTEN
+		uint32_t m_FramesCount;
+	#endif
+
+		// This is used for storing circle vertices
+		// that later will be transformed to be drawn
+		// on the screen
+		static constexpr size_t CIRCLE_VERTICES_COUNT = 64;
+		static std::vector<Vector2f> sm_UnitCircle;
 
 	};
 }

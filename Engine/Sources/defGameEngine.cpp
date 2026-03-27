@@ -39,8 +39,8 @@ namespace def
 	#endif
 
 		m_Input = std::make_shared<InputHandler>(m_Platform);
-		m_Window = std::make_shared<Window>(m_Platform);
-		m_Console = std::make_unique<Console>();
+		m_Window = std::make_shared<def::Window>(m_Platform);
+		m_Console = std::make_unique<def::Console>();
 
 		m_Platform->SetInputHandler(m_Input);
 		m_Platform->SetWindow(m_Window);
@@ -91,7 +91,7 @@ namespace def
 			m_Platform->ClearBuffer(m_BackgroundColour);
 			m_Platform->OnBeforeDraw();
 
-			for (auto iter = m_Layers.rbegin(); iter != m_Layers.rend(); iter++)
+			auto DrawLayer = [&](std::vector<Layer>::iterator iter)
 			{
 				if (!m_OnlyTextures)
 				{
@@ -100,8 +100,20 @@ namespace def
 
 					if (iter->visible)
 					{
-						m_Platform->BindTexture(iter->pixels->texture->id);
-						m_Platform->DrawQuad(iter->tint);
+						// Draw layer pixels as a positioned texture
+						const Vector2f& inv = m_Window->GetInvertedScreenSize();
+
+						Vector2f pos1 = (Vector2f(iter->offset) * inv * 2.0f - 1.0f) * Vector2f(1.0f, -1.0f);
+						Vector2f pos2 = pos1 + 2.0f * Vector2f(iter->size) * inv * Vector2f(1.0f, -1.0f);
+
+						TextureInstance texInst;
+						texInst.texture = iter->pixels->texture;
+						texInst.points = 4;
+						texInst.structure = Texture::Structure::TRIANGLE_FAN;
+						texInst.tint = { iter->tint, iter->tint, iter->tint, iter->tint };
+						texInst.vertices = { pos1, { pos1.x, pos2.y }, pos2, { pos2.x, pos1.y } };
+
+						m_Platform->DrawTexture(texInst);
 					}
 				}
 
@@ -112,7 +124,12 @@ namespace def
 				}
 
 				iter->textures.clear();
-			}
+			};
+
+			for (auto iter = m_Layers.begin() + 1; iter != m_Layers.end(); ++iter)
+				DrawLayer(iter);
+
+			DrawLayer(m_Layers.begin());
 
 			if (!OnAfterDraw())
 				m_IsAppRunning = false;
@@ -1489,6 +1506,7 @@ namespace def
 		layer.target = layer.pixels;
 
 		m_Layers.push_back(std::move(layer));
+
 		return m_Layers.size() - 1;
 	}
 
@@ -1512,19 +1530,19 @@ namespace def
 
 #pragma region dge_window_input_console
 
-	Window *const GameEngine::GetWindow()
+	Window& GameEngine::Window()
 	{
-		return m_Window.get();
+		return *m_Window.get();
 	}
 
-	InputHandler *const GameEngine::GetInput()
+	InputHandler& GameEngine::Input()
 	{
-		return m_Input.get();
+		return *m_Input.get();
 	}
 
-	Console *const GameEngine::GetConsole()
+	Console& GameEngine::Console()
 	{
-		return m_Console.get();
+		return *m_Console.get();
 	}
 
 #pragma endregion

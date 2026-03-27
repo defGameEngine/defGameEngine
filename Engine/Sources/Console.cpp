@@ -28,8 +28,11 @@ namespace def
 
         if (GameEngine::s_Engine->OnConsoleCommand(command, output, colour))
         {
-            m_History.push_back({ command, output.str(), colour, true });
-            m_PickedHistoryCommand = m_History.size();
+            if (!command.empty())
+            {
+                m_History.push_back({ command, output.str(), colour, true });
+                m_PickedHistoryCommand = m_History.size();
+            }
         }
     }
 
@@ -105,10 +108,9 @@ namespace def
         }
 
         int x = e->m_Input->GetCapturedTextCursorPosition() * 8 + 36;
-        int y = e->m_Window->GetScreenHeight() - 18;
 
-        e->DrawTextureString({ 20, y }, "> " + e->m_Input->GetCapturedText(), YELLOW);
-        e->DrawTextureLine({ x, y }, { x, y + 8 }, RED);
+        e->DrawTextureString({ 20, offset }, "> " + e->m_Input->GetCapturedText(), YELLOW);
+        e->DrawTextureLine({ x, offset }, { x, offset + 8 }, RED);
 
         e->PickLayer(currentLayer);
     }
