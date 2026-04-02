@@ -63,6 +63,7 @@ namespace def
 
 	class Platform;
 	class Console;
+	class Layer;
 
 	// This is the main class of the engine.
 	// You must inherit from this class and
@@ -72,7 +73,7 @@ namespace def
 	{
 	public:
 		GameEngine();
-		virtual ~GameEngine();
+		~GameEngine();
 
 	#ifdef DGE_PLATFORM_GLFW3
 		friend class PlatformGLFW3;
@@ -232,6 +233,7 @@ namespace def
 		// Layers stuff
 
 		size_t CreateLayer(const Vector2i& offset, const Vector2i& size, bool update = true, bool visible = true, const Pixel& tint = WHITE);
+		size_t CreateLayer(Layer* layer);
 		void PickLayer(size_t layer);
 		size_t GetPickedLayer() const;
 		Layer* GetLayerByIndex(size_t index);
@@ -252,13 +254,10 @@ namespace def
 		int m_TabSize;
 
 		// Stores all available layers
-		std::vector<Layer> m_Layers;
+		std::vector<std::unique_ptr<Layer>> m_Layers;
 
 		// Index of the currently selected layer in m_Layers
 		size_t m_PickedLayer;
-
-		// Colour that is used for clearing the screen buffer
-		Pixel m_BackgroundColour;
 
 		// Storing the difference between 2 frames
 		float m_DeltaTime;

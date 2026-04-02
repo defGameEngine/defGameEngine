@@ -6,11 +6,25 @@
 #include "Pch.hpp"
 #include "Texture.hpp"
 #include "Graphic.hpp"
+#include "defGameEngine.hpp"
 
 namespace def
 {
+	class GameEngine;
+
 	struct Layer
 	{
+		~Layer();
+
+		virtual bool OnCreate();
+		virtual bool OnUpdate(float deltaTime);
+
+		GameEngine& Context();
+
+		friend class GameEngine;
+		friend class Console;
+
+	protected:
 		// All textures on the current layer
 		std::vector<TextureInstance> textures;
 

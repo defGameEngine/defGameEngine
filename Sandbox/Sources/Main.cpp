@@ -1,10 +1,26 @@
 #include "defGameEngine.hpp"
 
+struct CustomLayer : def::Layer
+{
+    CustomLayer()
+    {
+        size = { 100, 100 };
+    }
+
+    bool OnUpdate(float deltaTime) override
+    {
+        Context().ClearTexture(def::CYAN);
+        Context().DrawTextureRectangle({ 25, 25 }, { 50, 50 }, def::RED);
+        return true;
+    }
+};
+
 class Example : public def::GameEngine
 {
 public:
     Example()
     {
+        UseOnlyTextures(true);
         Window().SetTitle("Example");
     }
 
@@ -13,7 +29,7 @@ public:
 private:
     bool OnUserCreate() override
     {
-        id = CreateLayer({ 0, 0 }, { 100, 100 });
+        id = CreateLayer(new CustomLayer());
         return true;
     }
 
@@ -30,12 +46,8 @@ private:
 
     bool OnUserUpdate(float deltaTime) override
     {
-        PickLayer(id);
-        DrawCircle(50, 50, 10, def::RED);
-        PickLayer(1);
-
-        Clear(def::BLACK);
-        DrawLine(0, 0, Input().GetMouseX(), Input().GetMouseY(), def::GREEN);
+        ClearTexture(def::WHITE);
+        DrawTextureLine({ 0, 0 }, Input().GetMousePosition(), def::GREEN);
 
         if (Input().GetKeyState(def::Key::TAB).released)
             Console().Show(!Console().IsShown());

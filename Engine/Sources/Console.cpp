@@ -117,7 +117,7 @@ namespace def
 
     void Console::Show(bool show)
     {
-        Layer& layer = GameEngine::s_Engine->m_Layers[0];
+        Layer& layer = *GameEngine::s_Engine->m_Layers[0];
 
         layer.visible = show;
         layer.update = show;
@@ -132,6 +132,6 @@ namespace def
 
     bool Console::IsShown() const
     {
-        return GameEngine::s_Engine->m_Layers[0].visible;
+        return GameEngine::s_Engine->m_Layers[0]->visible;
     }
 }
