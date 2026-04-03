@@ -16,6 +16,8 @@
 
 namespace def
 {
+	class GameEngine;
+
 	struct Layer
 	{
 		~Layer();
