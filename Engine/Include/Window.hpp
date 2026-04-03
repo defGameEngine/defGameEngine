@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #pragma once
 
 #ifndef DGE_WINDOW_HPP
@@ -6,6 +12,13 @@
 #include "Pch.hpp"
 #include "Vector2D.hpp"
 #include "Platform.hpp"
+
+// Include platform-specific headers to ensure macros and types are available
+#if defined(DGE_PLATFORM_GLFW3)
+    #include "PlatformGLFW3.hpp"
+#elif defined(DGE_PLATFORM_EMSCRIPTEN)
+    #include "PlatformEmscripten.hpp"
+#endif
 
 namespace def
 {
@@ -67,6 +80,28 @@ namespace def
         // Returns the list of paths to files that were dragged & dropped on the screen,
         // values here remains the same until the next dragging & dropping. By default the vector is empty
         std::vector<std::string>& GetDroppedFiles();
+
+		// Enables or disables vertical synchronization, this method does nothing on the Emscripten platform
+		void EnableVSync(bool enable);
+
+		// Enables or disables fullscreen mode, this method does nothing on the Emscripten platform
+		void EnableFullscreen(bool enable);
+
+#if defined(DGE_PLATFORM_GLFW3)
+
+        GLFWwindow* GetNativeWindow()
+        {
+            return ((PlatformGLFW3*)m_Platform.get())->m_NativeWindow;
+        }
+
+#elif defined(DGE_PLATFORM_EMSCRIPTEN)
+
+        EGLDisplay& GetNativeWindow()
+        {
+            return ((PlatformEmscripten*)m_Platform.get())->m_Display;
+        }
+
+#endif
 
     private:
         bool Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen, bool vsync, bool dirtyPixel);

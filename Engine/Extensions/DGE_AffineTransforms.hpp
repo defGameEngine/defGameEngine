@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #ifndef DGE_AFFINE_TRANSFORMS_HPP
 #define DGE_AFFINE_TRANSFORMS_HPP
 
@@ -8,7 +14,7 @@ namespace def
 	class AffineTransforms
 	{
 	public:
-		AffineTransforms() = default;;
+		AffineTransforms() = default;
 		AffineTransforms(const def::Vector2i& viewArea, const def::Vector2f& pixelScale);
 		~AffineTransforms() = default;
 
@@ -320,7 +326,7 @@ namespace def
 			Vector2i spriteEnd = WorldToScreen(pos + sprite->size);
 
 			Vector2i screenStart = spriteStart.Max({ 0, 0 });
-			Vector2i screenEnd = spriteEnd.Min(m_Engine->GetWindow()->GetScreenSize());
+			Vector2i screenEnd = spriteEnd.Min(m_Engine->Window().GetScreenSize());
 
 			Vector2f step = 1.0f / size;
 

@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #pragma once
 
 #ifndef DGE_PLATFORM_HPP
@@ -65,6 +71,12 @@ namespace def
 
 		// Sets the icon of the application
 		virtual void SetIcon(Sprite& icon) const = 0;
+
+		// Enables or disables vertical sync
+		virtual void EnableVSync(bool enable) = 0;
+
+		// Enables or disables fullscreen mode
+		virtual void EnableFullscreen(bool enable) = 0;
 
 		// Sets window pointer for internal usage
 		void SetWindow(std::shared_ptr<Window> window);

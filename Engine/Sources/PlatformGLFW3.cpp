@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #include "Pch.hpp"
 #include "PlatformGLFW3.hpp"
 #include "defGameEngine.hpp"
@@ -17,11 +23,9 @@ namespace def
 	{
 		if (errorCode != GLFW_INVALID_ENUM)
 		{
-			std::cout << "[GLFW Error] Code: "
+			std::cout << "[GLFW Error] "
 				<< "0x000" << std::hex << errorCode
-				<< ", text: " << description << std::endl;
-
-			GameEngine::s_Engine->Destroy();
+				<< ' ' << description << std::endl;
 
 			exit(1);
 		}
@@ -61,9 +65,22 @@ namespace def
 		if (input && window)
 		{
 			const Vector2i& pixelSize = window->m_PixelSize;
+			const Vector2i& screenSize = window->m_ScreenSize;
+			const Vector2i& windowSize = window->m_WindowSize;
 
-			input->m_MousePos.x = (int)x / pixelSize.x;
-			input->m_MousePos.y = (int)y / pixelSize.y;
+			int mouseX = (int)x;
+			int mouseY = (int)y;
+
+			if (window->m_IsFullScreen && platform->m_FullscreenSize.x > 0 && platform->m_FullscreenSize.y > 0)
+			{
+				// Fullscreen -> logical window coords
+				mouseX = int(mouseX * (float)windowSize.x / platform->m_FullscreenSize.x);
+				mouseY = int(mouseY * (float)windowSize.y / platform->m_FullscreenSize.y);
+			}
+
+			// Window -> screen coords
+			input->m_MousePos.x = mouseX / pixelSize.x;
+			input->m_MousePos.y = mouseY / pixelSize.y;
 		}
 	}
 
@@ -84,6 +101,22 @@ namespace def
 
 		if (auto input = platform->m_Input.lock())
 			input->m_MouseNewState[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
+	}
+
+	void PlatformGLFW3::WindowSizeCallback(GLFWwindow* window, int width, int height)
+	{
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		auto windowObj = platform->m_Window.lock();
+
+		if (windowObj)
+		{
+			// When in fullscreen, update the fullscreen dimensions to reflect actual window size
+			if (windowObj->m_IsFullScreen)
+			{
+				platform->m_FullscreenSize.x = width;
+				platform->m_FullscreenSize.y = height;
+			}
+		}
 	}
 
 	void PlatformGLFW3::Destroy() const
@@ -108,10 +141,7 @@ namespace def
 
 	void PlatformGLFW3::FlushScreen(bool vsync) const
 	{
-		if (vsync)
-			glfwSwapBuffers(m_NativeWindow);
-		else
-			glFlush();
+		glfwSwapBuffers(m_NativeWindow);
 	}
 
 	void PlatformGLFW3::PollEvents() const
@@ -126,7 +156,8 @@ namespace def
 		if (!m_Monitor)
 			return false;
 
-		glfwWindowHint(GLFW_DOUBLEBUFFER, vsync ? GLFW_TRUE : GLFW_FALSE);
+		// I guess it is enabled by default but let's be specific
+		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
 		if (glfwGetPlatform() == GLFW_PLATFORM_COCOA)
 		{
@@ -143,10 +174,14 @@ namespace def
 
 		if (fullscreen)
 		{
-			windowSize = { videoMode->width, videoMode->height };
-			screenSize = windowSize / pixelSize;
+			// Store monitor resolution for fullscreen rendering, but keep original logical screen/window sizes
+			m_FullscreenSize.x = videoMode->width;
+			m_FullscreenSize.y = videoMode->height;
 
-			m_NativeWindow = glfwCreateWindow(windowSize.x, windowSize.y, "", m_Monitor, NULL);
+			// In fullscreen mode we can enable VSync by setting a hint
+			glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
+
+			m_NativeWindow = glfwCreateWindow(m_FullscreenSize.x, m_FullscreenSize.y, "", m_Monitor, NULL);
 
 			if (!m_NativeWindow)
 				return false;
@@ -155,7 +190,7 @@ namespace def
 				m_NativeWindow,
 				m_Monitor,
 				0, 0,
-				windowSize.x, windowSize.y,
+				m_FullscreenSize.x, m_FullscreenSize.y,
 				videoMode->refreshRate);
 		}
 		else
@@ -173,13 +208,7 @@ namespace def
 		if (!dirtypixel)
 			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-		if (vsync)
-		{
-			glfwSwapInterval(1);
-			glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
-		}
-		else
-			glfwSwapInterval(0);
+		glfwSwapInterval(vsync ? 1 : 0);
 
 		glfwSetWindowUserPointer(m_NativeWindow, this);
 
@@ -188,6 +217,7 @@ namespace def
 		glfwSetCursorPosCallback(m_NativeWindow, MousePosCallback);
 		glfwSetMouseButtonCallback(m_NativeWindow, MouseButtonCallback);
 		glfwSetKeyCallback(m_NativeWindow, KeyboardCallback);
+		glfwSetWindowSizeCallback(m_NativeWindow, WindowSizeCallback);
 
 		return true;
 	}
@@ -200,4 +230,74 @@ namespace def
 		img.pixels = (uint8_t*)icon.pixels.data();
 		glfwSetWindowIcon(m_NativeWindow, 1, &img);
 	}
+
+	void PlatformGLFW3::EnableVSync(bool enable)
+	{
+		glfwSwapInterval(enable ? 1 : 0);
+	}
+
+	void PlatformGLFW3::EnableFullscreen(bool enable)
+	{
+		auto window = m_Window.lock();
+
+		if (!window)
+			return;
+
+		if (!m_Monitor)
+			m_Monitor = glfwGetPrimaryMonitor();
+
+		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
+
+		if (!videoMode)
+			return;
+
+		if (enable)
+		{
+			// Switch to fullscreen mode
+
+			m_FullscreenSize.x = videoMode->width;
+			m_FullscreenSize.y = videoMode->height;
+
+			glfwSetWindowMonitor(
+				m_NativeWindow,
+				m_Monitor,
+				0, 0,
+				m_FullscreenSize.x, m_FullscreenSize.y,
+				videoMode->refreshRate);
+
+			window->m_IsFullScreen = true;
+
+			glfwMakeContextCurrent(m_NativeWindow);
+		}
+		else
+		{
+			// Get a reasonable centered window position for windowed mode
+
+			const GLFWvidmode* currentMode = glfwGetVideoMode(m_Monitor);
+
+			if (!currentMode)
+				return;
+
+			int xpos = (currentMode->width - window->m_WindowSize.x) / 2;
+			int ypos = (currentMode->height - window->m_WindowSize.y) / 2;
+
+			xpos = (xpos < 0) ? 0 : xpos;
+			ypos = (ypos < 0) ? 0 : ypos;
+
+			glfwSetWindowMonitor(
+				m_NativeWindow,
+				NULL,
+				xpos, ypos,
+				window->m_WindowSize.x, window->m_WindowSize.y,
+				GLFW_DONT_CARE);
+
+			window->m_IsFullScreen = false;
+
+			glfwMakeContextCurrent(m_NativeWindow);
+		}
+
+		// Let GLFW process the window changes
+		glfwPollEvents();
+	}
 }
+

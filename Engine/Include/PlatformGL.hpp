@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #pragma once
 
 #ifndef DGE_PLATFORM_GL_HPP
@@ -35,6 +41,10 @@ namespace def
 		bool ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel) override;
 
 		void SetIcon(Sprite& icon) const override;
+
+		void EnableVSync(bool enable) override;
+
+		void EnableFullscreen(bool enable) override;
 	};
 }
 

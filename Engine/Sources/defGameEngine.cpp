@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #include "Pch.hpp"
 #include "defGameEngine.hpp"
 
@@ -1475,26 +1481,6 @@ namespace def
 	{
 		return m_DeltaTime;
 	}
-
-#pragma endregion
-
-#pragma region dge_window
-
-#if defined(DGE_PLATFORM_GLFW3)
-
-	GLFWwindow* GameEngine::GetNativeWindow()
-	{
-		return ((PlatformGLFW3*)m_Platform.get())->m_NativeWindow;
-	}
-
-#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-
-	EGLDisplay& GameEngine::GetNativeWindow()
-	{
-		return ((PlatformEmscripten*)m_Platform.get())->m_Display;
-	}
-
-#endif
 
 #pragma endregion
 

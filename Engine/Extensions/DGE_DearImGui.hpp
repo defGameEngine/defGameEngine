@@ -1,12 +1,14 @@
-#pragma once
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
 
-#pragma region Includes
+#pragma once
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-
-#pragma endregion
 
 #ifdef IMGUI_HAS_DOCK
 #define DEF_DEARIMGUI_DOCKING

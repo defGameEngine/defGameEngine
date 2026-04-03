@@ -22,6 +22,7 @@ namespace def
 	{
 	public:
 		friend class GameEngine;
+		friend class Window;
 
 		virtual void Destroy() const override;
 		virtual void SetTitle(const std::string& text) const override;

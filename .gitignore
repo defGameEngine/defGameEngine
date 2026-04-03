@@ -3,6 +3,7 @@ Engine/*.vcxproj*
 Sandbox/*.vcxproj*
 Sandbox/*
 *.sln
+*.slnx
 .vs
 Makefile
 .DS_Store

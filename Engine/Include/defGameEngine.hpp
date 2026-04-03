@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #pragma once
 
 #ifndef DEF_GAME_ENGINE_HPP
@@ -63,7 +69,7 @@ namespace def
 
 	class Platform;
 	class Console;
-	class Layer;
+	struct Layer;
 
 	// This is the main class of the engine.
 	// You must inherit from this class and
@@ -221,14 +227,6 @@ namespace def
 		// Timings
 
 		float GetDeltaTime() const;
-
-		// Window stuff
-
-	#if defined(DGE_PLATFORM_GLFW3)
-		GLFWwindow* GetNativeWindow();
-	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-		EGLDisplay& GetNativeWindow();
-	#endif
 
 		// Layers stuff
 

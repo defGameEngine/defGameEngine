@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #include "Pch.hpp"
 #include "Window.hpp"
 
@@ -106,4 +112,15 @@ namespace def
     {
         return m_DropCache;
     }
+
+	void Window::EnableVSync(bool enable)
+	{
+		m_Platform->EnableVSync(enable);
+		m_IsVSync = enable;
+	}
+
+	void Window::EnableFullscreen(bool enable)
+	{
+		m_Platform->EnableFullscreen(enable);
+	}
 }

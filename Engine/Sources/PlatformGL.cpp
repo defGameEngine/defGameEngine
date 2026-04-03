@@ -1,3 +1,9 @@
+/*-----------------------------------------------------------------
+ *  Copyright 2026 defini7. All rights reserved.
+ *  Licensed under the GNU General Public License v3.0.
+ *  See LICENSE file in the project root for license information.
+ *----------------------------------------------------------------*/
+
 #include "Pch.hpp"
 #include "PlatformGL.hpp"
 
@@ -76,4 +82,6 @@ namespace def
 
 	bool PlatformGL::ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel) { return false; }
 	void PlatformGL::SetIcon(Sprite& icon) const {}
+	void PlatformGL::EnableVSync(bool enable) {}
+	void PlatformGL::EnableFullscreen(bool enable) {}
 }
