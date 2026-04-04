@@ -1,34 +1,69 @@
 #include "defGameEngine.hpp"
 
+struct CustomLayer : def::Layer
+{
+    CustomLayer()
+    {
+        size = { 100, 100 };
+    }
+
+    bool OnUpdate(float deltaTime) override
+    {
+        Context().ClearTexture(def::CYAN);
+        Context().DrawTextureRectangle({ 25, 25 }, { 50, 50 }, def::RED);
+        return true;
+    }
+};
+
 class Example : public def::GameEngine
 {
 public:
-	Example()
-	{
-		Window().SetTitle("Hello, DGE!");
-	}
+    Example()
+    {
+        UseOnlyTextures(true);
+        Window().SetTitle("Example");
+    }
 
-protected:
-	bool OnUserCreate() override
-	{
-		return true;
-	}
+    size_t id;
 
-	bool OnUserUpdate(float) override
-	{
-		for (int i = 0; i < Window().GetScreenHeight(); ++i)
-			for (int j = 0; j < Window().GetScreenWidth(); ++j)
-				Draw(j, i, def::Pixel(rand() % 256, rand() % 256, rand() % 256));
+private:
+    bool OnUserCreate() override
+    {
+        id = CreateLayer(new CustomLayer());
+        return true;
+    }
 
-		return true;
-	}
+    bool OnConsoleCommand(const std::string& command, std::stringstream& output, def::Pixel& colour) override
+    {
+        if (command == "rand")
+            output << "Hi!\n\n\nYou've got: " << rand();
+
+        else if (command == "cls")
+            Console().Clear();
+
+        else if (command == "fullscreen")
+            Window().EnableFullscreen(!Window().IsFullScreen());
+
+        return true;
+    }
+
+    bool OnUserUpdate(float deltaTime) override
+    {
+        ClearTexture(def::WHITE);
+        DrawTextureLine({ 0, 0 }, Input().GetMousePosition(), def::GREEN);
+
+        if (Input().GetKeyState(def::Key::TAB).released)
+            Console().Show(!Console().IsShown());
+
+        return true;
+    }
 
 };
 
 int main()
 {
-	Example app;
+    Example demo;
 
-	if (app.Construct(256, 240, 4, 4))
-		app.Run();
+    if (demo.Construct(256, 200, 4, 4))
+        demo.Run();
 }

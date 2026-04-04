@@ -110,7 +110,7 @@ namespace def
             }
 
             e->DrawTextureString({ 10, offset }, entry.output, entry.outputColour);
-            offset += 10;
+            offset += 10 * (std::count(entry.output.begin(), entry.output.end(), '\n') + 1);
         }
 
         int x = e->m_Input->GetCapturedTextCursorPosition() * 8 + 36;

@@ -31,9 +31,9 @@ namespace def
 		}
 	}
 
-	void PlatformGLFW3::DropCallback(GLFWwindow* window, int pathCount, const char* paths[])
+	void PlatformGLFW3::DropCallback(GLFWwindow* _window, int pathCount, const char* paths[])
 	{
-		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(_window));
 
 		if (auto window = platform->m_Window.lock())
 		{
@@ -49,6 +49,8 @@ namespace def
 
 	void PlatformGLFW3::ScrollCallback(GLFWwindow* window, double x, double y)
 	{
+		(void)x;
+
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
 
 		if (auto input = platform->m_Input.lock())
@@ -58,30 +60,24 @@ namespace def
 	void PlatformGLFW3::MousePosCallback(GLFWwindow* nativeWindow, double x, double y)
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(nativeWindow));
-
 		auto input = platform->m_Input.lock();
 		auto window = platform->m_Window.lock();
 
-		if (input && window)
+		if (!input || !window) return;
+
+		Vector2i mouse((int)x, (int)y);
+
+		if (platform->m_ViewSize.x > 0 && platform->m_ViewSize.y > 0)
 		{
-			const Vector2i& pixelSize = window->m_PixelSize;
-			const Vector2i& screenSize = window->m_ScreenSize;
-			const Vector2i& windowSize = window->m_WindowSize;
+			mouse -= platform->m_ViewPos;
+			mouse = mouse.Clamp({ 0, 0 }, platform->m_ViewSize - 1);
 
-			int mouseX = (int)x;
-			int mouseY = (int)y;
+			Vector2f scale = platform->m_ViewSize / Vector2f(window->m_ScreenSize * window->m_PixelSize);
 
-			if (window->m_IsFullScreen && platform->m_FullscreenSize.x > 0 && platform->m_FullscreenSize.y > 0)
-			{
-				// Fullscreen -> logical window coords
-				mouseX = int(mouseX * (float)windowSize.x / platform->m_FullscreenSize.x);
-				mouseY = int(mouseY * (float)windowSize.y / platform->m_FullscreenSize.y);
-			}
-
-			// Window -> screen coords
-			input->m_MousePos.x = mouseX / pixelSize.x;
-			input->m_MousePos.y = mouseY / pixelSize.y;
+			input->m_MousePos = mouse / std::min(scale.x, scale.y) / window->m_PixelSize;
 		}
+		else
+			input->m_MousePos = mouse / window->m_PixelSize;
 	}
 
 	void PlatformGLFW3::KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -103,20 +99,27 @@ namespace def
 			input->m_MouseNewState[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
 	}
 
-	void PlatformGLFW3::WindowSizeCallback(GLFWwindow* window, int width, int height)
+	void PlatformGLFW3::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 	{
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
-		auto windowObj = platform->m_Window.lock();
 
-		if (windowObj)
+		auto win = platform->m_Window.lock();
+
+		if (win)
 		{
-			// When in fullscreen, update the fullscreen dimensions to reflect actual window size
-			if (windowObj->m_IsFullScreen)
+			//win->m_WindowSize.x = width;
+			//win->m_WindowSize.y = height;
+
+			platform->UpdateViewport(width, height);
+
+			if (win->m_IsFullScreen)
 			{
 				platform->m_FullscreenSize.x = width;
 				platform->m_FullscreenSize.y = height;
 			}
 		}
+
+		GameEngine::s_Engine->MainLoop();
 	}
 
 	void PlatformGLFW3::Destroy() const
@@ -217,7 +220,7 @@ namespace def
 		glfwSetCursorPosCallback(m_NativeWindow, MousePosCallback);
 		glfwSetMouseButtonCallback(m_NativeWindow, MouseButtonCallback);
 		glfwSetKeyCallback(m_NativeWindow, KeyboardCallback);
-		glfwSetWindowSizeCallback(m_NativeWindow, WindowSizeCallback);
+		glfwSetFramebufferSizeCallback(m_NativeWindow, FramebufferSizeCallback);
 
 		return true;
 	}
@@ -239,22 +242,16 @@ namespace def
 	void PlatformGLFW3::EnableFullscreen(bool enable)
 	{
 		auto window = m_Window.lock();
-
-		if (!window)
-			return;
+		if (!window) return;
 
 		if (!m_Monitor)
 			m_Monitor = glfwGetPrimaryMonitor();
 
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
-
-		if (!videoMode)
-			return;
+		if (!videoMode) return;
 
 		if (enable)
 		{
-			// Switch to fullscreen mode
-
 			m_FullscreenSize.x = videoMode->width;
 			m_FullscreenSize.y = videoMode->height;
 
@@ -266,38 +263,54 @@ namespace def
 				videoMode->refreshRate);
 
 			window->m_IsFullScreen = true;
-
-			glfwMakeContextCurrent(m_NativeWindow);
 		}
 		else
 		{
-			// Get a reasonable centered window position for windowed mode
-
-			const GLFWvidmode* currentMode = glfwGetVideoMode(m_Monitor);
-
-			if (!currentMode)
-				return;
-
-			int xpos = (currentMode->width - window->m_WindowSize.x) / 2;
-			int ypos = (currentMode->height - window->m_WindowSize.y) / 2;
-
-			xpos = (xpos < 0) ? 0 : xpos;
-			ypos = (ypos < 0) ? 0 : ypos;
-
 			glfwSetWindowMonitor(
 				m_NativeWindow,
-				NULL,
-				xpos, ypos,
+				nullptr,
+				50, 50, // TODO: maybe avoid constants?
 				window->m_WindowSize.x, window->m_WindowSize.y,
 				GLFW_DONT_CARE);
 
 			window->m_IsFullScreen = false;
-
-			glfwMakeContextCurrent(m_NativeWindow);
 		}
 
-		// Let GLFW process the window changes
+		int w, h;
+		glfwGetFramebufferSize(m_NativeWindow, &w, &h);
+
+		UpdateViewport(w, h);
+
 		glfwPollEvents();
+	}
+
+	void PlatformGLFW3::UpdateViewport(int width, int height)
+	{
+		auto win = m_Window.lock();
+
+		if (!win)
+			return;
+
+		float screenAspect = (float)win->m_ScreenSize.x / (float)win->m_ScreenSize.y;
+		float windowAspect = (float)width / (float)height;
+
+		Vector2i viewSize;
+
+		if (windowAspect > screenAspect)
+		{
+			viewSize.y = height;
+			viewSize.x = (int)((float)height * screenAspect);
+		}
+		else
+		{
+			viewSize.x = width;
+			viewSize.y = (int)((float)width / screenAspect);
+		}
+
+		m_ViewPos = { (width - viewSize.x) / 2, (height - viewSize.y) / 2 };
+		m_ViewSize = viewSize;
+
+		glViewport(m_ViewPos.x, m_ViewPos.y, m_ViewSize.x, m_ViewSize.y);
 	}
 }
 

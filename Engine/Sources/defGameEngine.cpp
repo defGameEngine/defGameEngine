@@ -76,7 +76,10 @@ namespace def
 			m_TickTimer += m_DeltaTime;
 
 			if (m_Platform->IsWindowClose())
+			{
 				m_IsAppRunning = false;
+				return;
+			}
 
 			m_Input->FlushBuffers();
 			m_Input->GrabText();
@@ -1163,9 +1166,7 @@ namespace def
 
 	void GameEngine::DrawTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)
 	{
-		// Adding 0.25 to fix a displacement of a rectangle.
-		// I don't know if that can lead to any problems on different configurations
-		DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) + 0.25f } }, { col }, Texture::Structure::WIREFRAME);
+		DrawTexturePolygon({ pos, { float(pos.x + size.x), (float)pos.y }, pos + size, { (float)pos.x, float(pos.y + size.y) } }, { col }, Texture::Structure::WIREFRAME);
 	}
 
 	void GameEngine::FillTextureRectangle(const Vector2i& pos, const Vector2i& size, const Pixel& col)

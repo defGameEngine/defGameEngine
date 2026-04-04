@@ -9,6 +9,9 @@
 #ifndef DEF_GAME_ENGINE_HPP
 #define DEF_GAME_ENGINE_HPP
 
+#pragma warning(disable : 4068) // unknown pragmas
+#pragma warning(disable : 4201) // anonymous structs
+
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
 #ifdef __EMSCRIPTEN__

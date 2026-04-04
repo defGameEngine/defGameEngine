@@ -30,6 +30,9 @@ namespace def
 		GLFWwindow* m_NativeWindow;
 
 		Vector2i m_FullscreenSize;
+		
+		Vector2i m_ViewPos;
+		Vector2i m_ViewSize;
 
 	public:
 		static void ErrorCallback(int errorCode, const char* description);
@@ -38,7 +41,7 @@ namespace def
 		static void MousePosCallback(GLFWwindow* window, double x, double y);
 		static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void WindowSizeCallback(GLFWwindow* window, int width, int height);
+		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 		void Destroy() const override;
 		void SetTitle(const std::string_view text) const override;
@@ -54,8 +57,11 @@ namespace def
 		void SetIcon(Sprite& icon) const override;
 
 		void EnableVSync(bool enable) override;
-
 		void EnableFullscreen(bool enable) override;
+
+	private:
+		void UpdateViewport(int width, int height);
+
 	};
 }
 
