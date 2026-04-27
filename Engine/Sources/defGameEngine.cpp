@@ -1132,7 +1132,7 @@ namespace def
 			std::fill(
 				texInst.tint.begin(),
 				texInst.tint.end(),
-				cols[0]);
+				cols.empty() ? def::WHITE : cols[0]);
 		}
 
 		texInst.uv.resize(verts.size());
@@ -1245,6 +1245,7 @@ namespace def
 		texInst.structure = layer->textureStructure;
 		texInst.tint = { tint, tint, tint, tint };
 		texInst.vertices = { pos1, { pos1.x, pos2.y }, pos2, { pos2.x, pos1.y } };
+		texInst.ConstructUV();
 
 		layer->textures.push_back(texInst);
 	}
@@ -1314,6 +1315,8 @@ namespace def
 			texInst.vertices[i].y *= -1.0f;
 		}
 
+		texInst.ConstructUV();
+
 		layer->textures.push_back(texInst);
 	}
 
@@ -1372,7 +1375,7 @@ namespace def
 		texInst.points = 4;
 		texInst.tint = { tint, tint, tint, tint };
 		texInst.vertices.resize(texInst.points);
-		texInst.uv = { { 0.0f, 0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f} };
+		texInst.ConstructUV();
 
 		float rd = ((points[2].x - points[0].x) * (points[3].y - points[1].y) - (points[3].x - points[1].x) * (points[2].y - points[0].y));
 
@@ -1447,6 +1450,16 @@ namespace def
 
 #pragma region dge_textures
 
+	void GameEngine::SetWrapMethod(Sprite::WrapMethod wrapMethod)
+	{
+		m_Platform->SetWrapMethod(wrapMethod);
+	}
+
+	void GameEngine::SetSampleMethod(Sprite::SampleMethod sampleMethod)
+	{
+		m_Platform->SetSampleMethod(sampleMethod);
+	}
+
 	void GameEngine::SetTextureStructure(Texture::Structure textureStructure)
 	{
 		m_Layers[m_PickedLayer]->textureStructure = textureStructure;
@@ -1474,6 +1487,11 @@ namespace def
 		layer->pixelMode = func ? Pixel::Mode::CUSTOM : Pixel::Mode::DEFAULT;
 	}
 
+	void GameEngine::SetFont(std::string_view fileName)
+	{
+		m_Font.Load(fileName);
+	}
+
 #pragma endregion
 
 #pragma region dge_timings
@@ -1481,6 +1499,11 @@ namespace def
 	float GameEngine::GetDeltaTime() const
 	{
 		return m_DeltaTime;
+	}
+
+	int GameEngine::GetFPS() const
+	{
+		return 1.0f / m_DeltaTime;
 	}
 
 #pragma endregion

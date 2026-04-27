@@ -107,9 +107,6 @@ namespace def
 
 		if (win)
 		{
-			//win->m_WindowSize.x = width;
-			//win->m_WindowSize.y = height;
-
 			platform->UpdateViewport(width, height);
 
 			if (win->m_IsFullScreen)
@@ -119,6 +116,11 @@ namespace def
 			}
 		}
 
+		GameEngine::s_Engine->MainLoop();
+	}
+
+	void PlatformGLFW3::WindowPosCallback(GLFWwindow* window, int x, int y)
+	{
 		GameEngine::s_Engine->MainLoop();
 	}
 
@@ -221,6 +223,7 @@ namespace def
 		glfwSetMouseButtonCallback(m_NativeWindow, MouseButtonCallback);
 		glfwSetKeyCallback(m_NativeWindow, KeyboardCallback);
 		glfwSetFramebufferSizeCallback(m_NativeWindow, FramebufferSizeCallback);
+		glfwSetWindowPosCallback(m_NativeWindow, WindowPosCallback);
 
 		return true;
 	}

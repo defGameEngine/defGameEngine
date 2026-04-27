@@ -35,7 +35,7 @@ namespace def
 		void Save(std::string_view fileName, Sprite::FileType type) const;
 
 		// Transfers data from the RAM (i.e. sprite) to the GPU (i.e. texture)
-		void UpdateTexture();
+		void UpdateTexture(const Vector2i& customSize = { -1, -1 });
 	};
 }
 

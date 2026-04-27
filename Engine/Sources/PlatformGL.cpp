@@ -7,8 +7,43 @@
 #include "Pch.hpp"
 #include "PlatformGL.hpp"
 
-#define GL_SILENCE_DEPRECATION
-#include "GLFW/glfw3.h"
+#if defined(_WIN32)
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+#elif defined(__APPLE__) || defined(__MACH__)
+
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <OpenGL/OpenGL.h>
+
+#elif defined(__linux__) || defined(__unix__)
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glx.h>
+
+#else
+
+#error "Unsupported platform"
+
+#endif
+
+#ifndef GL_MIRRORED_REPEAT
+#define GL_MIRRORED_REPEAT 0x8370
+#endif
+
+#ifndef GL_CLAMP_TO_EDGE
+#define GL_CLAMP_TO_EDGE 0x812F
+#endif
+
+#ifndef GL_CLAMP_TO_BORDER
+#define GL_CLAMP_TO_BORDER 0x812D
+#endif
 
 namespace def
 {
@@ -70,6 +105,49 @@ namespace def
 	void PlatformGL::BindTexture(int id) const
 	{
 		glBindTexture(GL_TEXTURE_2D, id);
+
+		if (id != 0)
+		{
+			switch (m_WrapMethod)
+			{
+			case Sprite::WrapMethod::NONE:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			break;
+
+			case Sprite::WrapMethod::REPEAT:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			break;
+
+			case Sprite::WrapMethod::MIRROR:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+			break;
+
+			case Sprite::WrapMethod::CLAMP:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			break;
+
+			}
+
+			switch (m_SampleMethod)
+			{
+			case Sprite::SampleMethod::LINEAR:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			break;
+
+			// TODO: Implement TRILINEAR (requires mipmaps), for now just fall to BILINEAR
+			case Sprite::SampleMethod::BILINEAR:
+			case Sprite::SampleMethod::TRILINEAR:
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			break;
+
+			}
+		}
 	}
 
 	void PlatformGL::Destroy() const {}

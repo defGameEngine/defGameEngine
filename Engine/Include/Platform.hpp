@@ -78,6 +78,10 @@ namespace def
 		// Enables or disables fullscreen mode
 		virtual void EnableFullscreen(bool enable) = 0;
 
+		// Applies globally wrapping and sampling methods
+		void SetWrapMethod(Sprite::WrapMethod wrapMethod);
+		void SetSampleMethod(Sprite::SampleMethod sampleMethod);
+
 		// Sets window pointer for internal usage
 		void SetWindow(std::shared_ptr<Window> window);
 
@@ -87,6 +91,9 @@ namespace def
 	protected:
 		std::weak_ptr<Window> m_Window;
 		std::weak_ptr<InputHandler> m_Input;
+
+		Sprite::WrapMethod m_WrapMethod = Sprite::WrapMethod::NONE;
+		Sprite::SampleMethod m_SampleMethod = Sprite::SampleMethod::LINEAR;
 
 	};
 }

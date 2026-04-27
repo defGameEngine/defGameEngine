@@ -11,16 +11,12 @@
 
 #include "Pch.hpp"
 
-#ifndef DGE_IGNORE_VECTOR2D
 #include "Vector2D.hpp"
-#endif
-
 #include "Sprite.hpp"
 
 namespace def
 {
-	// Creates a texture, and loads it to a GPU,
-	// and stores its id and size
+	// Creates a texture, loads it to a GPU, stores ID and size
 	struct Texture
 	{
 		// Describes how vertices are related to each other
@@ -34,8 +30,8 @@ namespace def
 			WIREFRAME
 		};
 
-		Texture(Sprite* sprite);
-		Texture(std::string_view fileName);
+		Texture(Sprite* sprite, const Vector2f& pos = { 0.0f, 0.0f }, const Vector2f& size = { -1.0f, -1.0f });
+		Texture(std::string_view fileName, const Vector2f& pos = { 0.0f, 0.0f }, const Vector2f& size = { -1.0f, -1.0f });
 
 		// Is used internally to identify a texture
 		uint32_t id;
@@ -43,17 +39,23 @@ namespace def
 		// Is used internally in drawing routines
 		Vector2f uvScale;
 
+		// Size of an image content in screen coordinates
+		Vector2f imageSize;
+
 		// Size of a texture in screen coordinates
-		Vector2i size;
+		Vector2f size;
+
+		// Position of an image relative to the texture
+		Vector2f pos;
 
 		// Creates a texture from Sprite data and loads it to the GPU
-		void Load(Sprite* sprite);
+		void Load(Sprite* sprite, const Vector2f& pos = { 0.0f, 0.0f }, const Vector2f& customSize = { -1.0f, -1.0f });
 
 		// Updates already existing texture on the GPU with Sprite data
-		void Update(Sprite* sprite);
+		void Update(Sprite* sprite, const Vector2f& pos = { 0.0f, 0.0f }, const Vector2f& customSize = { -1.0f, -1.0f });
 
 	private:
-		void Construct(Sprite* sprite, bool deleteSprite);
+		void Construct(Sprite* sprite, bool deleteSprite, const Vector2f& customPos, const Vector2f& customSize);
 
 	};
 
@@ -62,6 +64,8 @@ namespace def
 	struct TextureInstance
 	{
 		TextureInstance();
+
+		void ConstructUV();
 
 		const Texture* texture;
 

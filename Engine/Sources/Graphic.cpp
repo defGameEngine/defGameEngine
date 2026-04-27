@@ -42,8 +42,8 @@ namespace def
 		return sprite->Save(fileName, type);
 	}
 
-	void Graphic::UpdateTexture()
+	void Graphic::UpdateTexture(const Vector2i& customSize)
 	{
-		texture->Update(sprite);
+		texture->Update(sprite, customSize);
 	}
 }

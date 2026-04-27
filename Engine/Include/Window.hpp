@@ -74,7 +74,7 @@ namespace def
 
         // Sets the icon of the application,
         // this method does nothing on the Emscripten platform so you must
-        // put the favicon.ico file near the .html
+        // put the favicon.ico file near the .html one
         void SetIcon(const std::string& path);
 
         // Returns the list of paths to files that were dragged & dropped on the screen,

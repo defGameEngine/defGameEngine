@@ -13,6 +13,16 @@ namespace def
     {
     }
 
+    void Platform::SetWrapMethod(Sprite::WrapMethod wrapMethod)
+    {
+        m_WrapMethod = wrapMethod;
+    }
+
+    void Platform::SetSampleMethod(Sprite::SampleMethod sampleMethod)
+    {
+        m_SampleMethod = sampleMethod;
+    }
+
     void Platform::SetWindow(std::shared_ptr<Window> window)
     {
         m_Window = window;

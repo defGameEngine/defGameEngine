@@ -219,17 +219,36 @@ namespace def
 
 		// Texture stuff
 
+		// Applies globally wrapping method
+		void SetWrapMethod(Sprite::WrapMethod wrapMethod);
+
+		// Applies globally sampling method
+		void SetSampleMethod(Sprite::SampleMethod sampleMethod);
+
 		void SetTextureStructure(Texture::Structure textureStructure);
 		Texture::Structure GetTextureStructure() const;
 		void UseOnlyTextures(bool enable);
 
 		// Shaders
 
-		void SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&));
+		void SetShader(Pixel (*func)(const Vector2i&, const Pixel&, const Pixel&));
+
+		// Font
+
+		// The file must be 128×48 image with an 8×8 grid.
+		// Each square is one ASCII character.
+		// Fill them in ASCII order starting from space (32), next is !, ", #, and so on.
+		// Use white pixels for the character, black - for background.
+		void SetFont(std::string_view fileName);
 
 		// Timings
 
+		// Returns difference between 2 frames in seconds
 		float GetDeltaTime() const;
+
+		// Returns the number of frames per second
+		// We update frames count in the title bar only every second so the returned value is more precise in here than in the title bar
+		int GetFPS() const;
 
 		// Layers stuff
 

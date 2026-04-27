@@ -18,29 +18,33 @@
 
 namespace def
 {
-	Texture::Texture(Sprite* sprite)
+	Texture::Texture(Sprite* sprite, const Vector2f& pos, const Vector2f& size)
 	{
-		Construct(sprite, false);
+		Construct(sprite, false, pos, size);
 	}
 
-	Texture::Texture(std::string_view fileName)
+	Texture::Texture(std::string_view fileName, const Vector2f& pos, const Vector2f& size)
 	{
-		Construct(new Sprite(fileName), true);
+		Construct(new Sprite(fileName), true, pos, size);
 	}
 
-	void Texture::Construct(Sprite* sprite, bool deleteSprite)
+	void Texture::Construct(Sprite* sprite, bool deleteSprite, const Vector2f& customPos, const Vector2f& customSize)
 	{
-		Load(sprite);
-
-		uvScale = 1.0f / Vector2f(sprite->size);
-		size = sprite->size;
+		Load(sprite, customPos, customSize);
 
 		if (deleteSprite)
 			delete sprite;
 	}
 
-	void Texture::Load(Sprite* sprite)
+	void Texture::Load(Sprite* sprite, const Vector2f& customPos, const Vector2f& customSize)
 	{
+		bool isCustomSize = customSize >= Vector2f(0, 0);
+
+		imageSize = sprite->size;
+		size = isCustomSize ? customSize : Vector2f(sprite->size);
+		uvScale = 1.0f / Vector2f(imageSize);
+		pos = customPos / size;
+
 		glGenTextures(1, &id);
 		glBindTexture(GL_TEXTURE_2D, id);
 
@@ -51,11 +55,12 @@ namespace def
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0, GL_RGBA,
-			sprite->size.x,
-			sprite->size.y,
+			imageSize.x,
+			imageSize.y,
 			0, GL_RGBA,
 			GL_UNSIGNED_BYTE,
 			sprite->pixels.data()
@@ -64,15 +69,20 @@ namespace def
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	void Texture::Update(Sprite* sprite)
+	void Texture::Update(Sprite* sprite, const Vector2f& customPos, const Vector2f& customSize)
 	{
+		imageSize = sprite->size;
+		uvScale = 1.0f / Vector2f(imageSize);
+		size = customSize >= Vector2f(0, 0) ? customSize : Vector2f(sprite->size);
+		pos = customPos / size;
+
 		glBindTexture(GL_TEXTURE_2D, id);
 
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0, GL_RGBA,
-			sprite->size.x,
-			sprite->size.y,
+			size.x,
+			size.y,
 			0, GL_RGBA,
 			GL_UNSIGNED_BYTE,
 			sprite->pixels.data()
@@ -89,5 +99,11 @@ namespace def
 		points = 0;
 
 		uv = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
+	}
+
+	void TextureInstance::ConstructUV()
+	{
+		Vector2f size = texture->size / texture->imageSize;
+		uv = { -texture->pos, { -texture->pos.x, -texture->pos.y + size.y }, -texture->pos + size, { -texture->pos.x + size.x, -texture->pos.y } };
 	}
 }

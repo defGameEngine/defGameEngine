@@ -42,6 +42,7 @@ namespace def
 		static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+		static void WindowPosCallback(GLFWwindow* window, int x, int y);
 
 		void Destroy() const override;
 		void SetTitle(const std::string_view text) const override;
