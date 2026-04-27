@@ -1,5 +1,0 @@
-CompileFlags:
-  Add:
-    - "-IEngine/Include/"
-    - "-IEngine/Vendor/glfw/include"
-    - "-std=c++20"
