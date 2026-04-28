@@ -20,7 +20,7 @@ namespace def
 
 	struct Layer
 	{
-		~Layer();
+		virtual ~Layer();
 
 		virtual bool OnCreate();
 		virtual bool OnUpdate(float deltaTime);

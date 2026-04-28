@@ -28,7 +28,8 @@ namespace def
 
 		s_Engine = this;
 
-		m_PickedLayer = 0;
+		m_CurrentLayer = 0;
+		m_CurrentState = 0;
 
 		MakeUnitCircle(sm_UnitCircle, CIRCLE_VERTICES_COUNT);
 
@@ -84,16 +85,19 @@ namespace def
 			m_Input->FlushBuffers();
 			m_Input->GrabText();
 
+			if (!m_States.empty())
+				m_States[m_CurrentState]->OnUpdate(m_DeltaTime);
+
 			if (!OnUserUpdate(m_DeltaTime))
 				m_IsAppRunning = false;
 
-			size_t layer = m_PickedLayer;
-			m_PickedLayer = 1;
+			size_t layer = m_CurrentLayer;
+			m_CurrentLayer = 1;
 
-			for (auto iter = m_Layers.begin() + 1; iter != m_Layers.end(); ++iter, ++m_PickedLayer)
+			for (auto iter = m_Layers.begin() + 1; iter != m_Layers.end(); ++iter, ++m_CurrentLayer)
 				(*iter)->OnUpdate(m_DeltaTime);
 
-			m_PickedLayer = layer;
+			m_CurrentLayer = layer;
 
 			m_Console->Draw();
 
@@ -187,7 +191,7 @@ namespace def
 		// Console layer, always create it as 0'th layer
 		CreateLayer({ 0, 0 }, m_Window->GetScreenSize(), false, false);
 
-		m_PickedLayer = CreateLayer({ 0, 0 }, m_Window->GetScreenSize());
+		m_CurrentLayer = CreateLayer({ 0, 0 }, m_Window->GetScreenSize());
 
 		std::string data =
 			"?Q`0001oOch0o01o@F40o0<AGD4090LAGD<090@A7ch0?00O7Q`0600>00000000"
@@ -243,13 +247,13 @@ namespace def
 	{
 		m_IsAppRunning = OnUserCreate();
 
-		size_t layer = m_PickedLayer;
-		m_PickedLayer = 1;
+		size_t layer = m_CurrentLayer;
+		m_CurrentLayer = 1;
 
-		for (auto iter = m_Layers.begin() + 1; iter != m_Layers.end(); ++iter, ++m_PickedLayer)
+		for (auto iter = m_Layers.begin() + 1; iter != m_Layers.end(); ++iter, ++m_CurrentLayer)
 			(*iter)->OnCreate();
 
-		m_PickedLayer = layer;
+		m_CurrentLayer = layer;
 
 		m_TimeStart = std::chrono::system_clock::now();
 		m_TimeEnd = m_TimeStart;
@@ -294,7 +298,7 @@ namespace def
 
 	bool GameEngine::Draw(int x, int y, const Pixel& col)
 	{
-		Layer* layer = m_Layers[m_PickedLayer].get();
+		Layer* layer = m_Layers[m_CurrentLayer].get();
 
 		if (!layer->target)
 			return false;
@@ -1028,7 +1032,7 @@ namespace def
 
 	void GameEngine::Clear(const Pixel& col)
 	{
-		m_Layers[m_PickedLayer]->target->sprite->SetPixelData(col);
+		m_Layers[m_CurrentLayer]->target->sprite->SetPixelData(col);
 	}
 
 	bool GameEngine::Draw(const Vector2i& pos, const Pixel& p)
@@ -1146,7 +1150,7 @@ namespace def
 			texInst.vertices[i].y = 1.0f - verts[i].y * inv.y * 2.0f;
 		}
 
-		m_Layers[m_PickedLayer]->textures.push_back(texInst);
+		m_Layers[m_CurrentLayer]->textures.push_back(texInst);
 	}
 
 	void GameEngine::DrawTextureLine(const Vector2i& pos1, const Vector2i& pos2, const Pixel& col)
@@ -1231,7 +1235,7 @@ namespace def
 
 	void GameEngine::DrawTexture(const Vector2f& pos, const Texture* tex, const Vector2f& scale, const Pixel& tint)
 	{
-		auto layer = m_Layers[m_PickedLayer].get();
+		auto layer = m_Layers[m_CurrentLayer].get();
 
 		const Vector2f& inv = m_Window->GetInvertedScreenSize();
 
@@ -1252,7 +1256,7 @@ namespace def
 
 	void GameEngine::DrawPartialTexture(const Vector2f& pos, const Texture* tex, const Vector2f& filePos, const Vector2f& fileSize, const Vector2f& scale, const Pixel& tint)
 	{
-		auto layer = m_Layers[m_PickedLayer].get();
+		auto layer = m_Layers[m_CurrentLayer].get();
 
 		const Vector2f& inv = m_Window->GetInvertedScreenSize();
 
@@ -1281,7 +1285,7 @@ namespace def
 
 	void GameEngine::DrawRotatedTexture(const Vector2f& pos, const Texture* tex, float rotation, const Vector2f& center, const Vector2f& scale, const Pixel& tint)
 	{
-		auto layer = m_Layers[m_PickedLayer].get();
+		auto layer = m_Layers[m_CurrentLayer].get();
 
 		TextureInstance texInst;
 
@@ -1322,7 +1326,7 @@ namespace def
 
 	void GameEngine::DrawPartialRotatedTexture(const Vector2f& pos, const Texture* tex, const Vector2f& filePos, const Vector2f& fileSize, float rotation, const Vector2f& center, const Vector2f& scale, const Pixel& tint)
 	{
-		auto layer = m_Layers[m_PickedLayer].get();
+		auto layer = m_Layers[m_CurrentLayer].get();
 
 		TextureInstance texInst;
 
@@ -1366,7 +1370,7 @@ namespace def
 
 	void GameEngine::DrawWarpedTexture(const std::vector<Vector2f>& points, const Texture* tex, const Pixel& tint)
 	{
-		auto& layer = m_Layers[m_PickedLayer];
+		auto& layer = m_Layers[m_CurrentLayer];
 
 		TextureInstance texInst;
 
@@ -1411,7 +1415,7 @@ namespace def
 
 	void GameEngine::ClearTexture(const Pixel& col)
 	{
-		Layer* layer = m_Layers[m_PickedLayer].get();
+		Layer* layer = m_Layers[m_CurrentLayer].get();
 		FillTextureRectangle({ 0, 0 }, layer->size, col);
 	}
 
@@ -1423,13 +1427,13 @@ namespace def
 
 	void GameEngine::SetDrawTarget(Graphic* target)
 	{
-		m_Layers[m_PickedLayer]->target = target ? target : m_Layers[m_PickedLayer]->pixels;
-		m_Layers[m_PickedLayer]->target->UpdateTexture();
+		m_Layers[m_CurrentLayer]->target = target ? target : m_Layers[m_CurrentLayer]->pixels;
+		m_Layers[m_CurrentLayer]->target->UpdateTexture();
 	}
 
 	Graphic* GameEngine::GetDrawTarget()
 	{
-		return m_Layers[m_PickedLayer]->target;
+		return m_Layers[m_CurrentLayer]->target;
 	}
 
 #pragma endregion
@@ -1438,12 +1442,12 @@ namespace def
 
 	void GameEngine::SetPixelMode(Pixel::Mode pixelMode)
 	{
-		m_Layers[m_PickedLayer]->pixelMode = pixelMode;
+		m_Layers[m_CurrentLayer]->pixelMode = pixelMode;
 	}
 
 	Pixel::Mode GameEngine::GetPixelMode() const
 	{
-		return m_Layers[m_PickedLayer]->pixelMode;
+		return m_Layers[m_CurrentLayer]->pixelMode;
 	}
 
 #pragma endregion
@@ -1462,12 +1466,12 @@ namespace def
 
 	void GameEngine::SetTextureStructure(Texture::Structure textureStructure)
 	{
-		m_Layers[m_PickedLayer]->textureStructure = textureStructure;
+		m_Layers[m_CurrentLayer]->textureStructure = textureStructure;
 	}
 
 	Texture::Structure GameEngine::GetTextureStructure() const
 	{
-		return m_Layers[m_PickedLayer]->textureStructure;
+		return m_Layers[m_CurrentLayer]->textureStructure;
 	}
 
 	void GameEngine::UseOnlyTextures(bool enable)
@@ -1481,7 +1485,7 @@ namespace def
 
 	void GameEngine::SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&))
 	{
-		auto& layer = m_Layers[m_PickedLayer];
+		auto& layer = m_Layers[m_CurrentLayer];
 
 		layer->shader = func;
 		layer->pixelMode = func ? Pixel::Mode::CUSTOM : Pixel::Mode::DEFAULT;
@@ -1531,7 +1535,7 @@ namespace def
 
 	size_t GameEngine::CreateLayer(Layer* layer)
 	{
-		if (layer == nullptr)
+		if (!layer)
 			return -1;
 
 		// Ensure pixels are allocated if needed
@@ -1542,23 +1546,55 @@ namespace def
 		}
 
 		m_Layers.push_back(std::unique_ptr<Layer>(layer));
+
 		return m_Layers.size() - 1;
 	}
 
-	void GameEngine::PickLayer(size_t layer)
+	void GameEngine::SetLayer(size_t layer)
 	{
 		if (layer < m_Layers.size())
-			m_PickedLayer = layer;
+			m_CurrentLayer = layer;
 	}
 
-	size_t GameEngine::GetPickedLayer() const
+	size_t GameEngine::GetCurrentLayer() const
 	{
-		return m_PickedLayer;
+		return m_CurrentLayer;
 	}
 
-	Layer* GameEngine::GetLayerByIndex(size_t index)
+	Layer* GameEngine::GetLayer(size_t index)
 	{
 		return m_Layers[index].get();
+	}
+
+	size_t GameEngine::CreateState(State* state)
+	{
+		if (!state)
+			return -1;
+		
+		state->OnCreate();
+
+		m_States.push_back(std::unique_ptr<State>(state));
+
+		return m_States.size() - 1;
+	}
+
+	void GameEngine::SetState(size_t state)
+	{
+		if (state < m_States.size())
+		{
+			m_CurrentState = state;
+			m_States[state]->OnSet();
+		}
+	}
+
+	size_t GameEngine::GetCurrentState() const
+	{
+		return m_CurrentState;
+	}
+
+	State* GameEngine::GetState(size_t index)
+	{
+		return m_States[m_CurrentState].get();
 	}
 
 #pragma endregion

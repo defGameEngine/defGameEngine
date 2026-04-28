@@ -91,8 +91,8 @@ namespace def
 
         GameEngine* e = GameEngine::s_Engine;
 
-        int currentLayer = e->m_PickedLayer;
-        e->PickLayer(0);
+        int currentLayer = e->m_CurrentLayer;
+        e->SetLayer(0);
 
         e->FillTextureRectangle({ 0, 0 }, e->m_Window->GetScreenSize(), m_BackgroundColour);
 
@@ -118,7 +118,7 @@ namespace def
         e->DrawTextureString({ 20, offset }, "> " + e->m_Input->GetCapturedText(), YELLOW);
         e->DrawTextureLine({ x, offset }, { x, offset + 8 }, RED);
 
-        e->PickLayer(currentLayer);
+        e->SetLayer(currentLayer);
     }
 
     void Console::Show(bool show)

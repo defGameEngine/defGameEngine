@@ -61,6 +61,7 @@
 #include "PlatformEmscripten.hpp"
 #endif
 
+#include "State.hpp"
 #include "Layer.hpp"
 #include "Window.hpp"
 #include "InputHandler.hpp"
@@ -73,6 +74,7 @@ namespace def
 	class Platform;
 	class Console;
 	struct Layer;
+	struct State;
 
 	// This is the main class of the engine.
 	// You must inherit from this class and
@@ -254,9 +256,16 @@ namespace def
 
 		size_t CreateLayer(const Vector2i& offset, const Vector2i& size, bool update = true, bool visible = true, const Pixel& tint = WHITE);
 		size_t CreateLayer(Layer* layer);
-		void PickLayer(size_t layer);
-		size_t GetPickedLayer() const;
-		Layer* GetLayerByIndex(size_t index);
+		void SetLayer(size_t layer);
+		size_t GetCurrentLayer() const;
+		Layer* GetLayer(size_t index);
+
+		// State stuff
+
+		size_t CreateState(State* state);
+		void SetState(size_t layer);
+		size_t GetCurrentState() const;
+		State* GetState(size_t index);
 
 		// Window, input and console stuff
 
@@ -277,7 +286,13 @@ namespace def
 		std::vector<std::unique_ptr<Layer>> m_Layers;
 
 		// Index of the currently selected layer in m_Layers
-		size_t m_PickedLayer;
+		size_t m_CurrentLayer;
+
+		// Stores all available states
+		std::vector<std::unique_ptr<State>> m_States;
+
+		// Index of the current state from m_States
+		size_t m_CurrentState;
 
 		// Storing the difference between 2 frames
 		float m_DeltaTime;
