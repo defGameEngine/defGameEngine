@@ -96,27 +96,74 @@ namespace def
 
         e->FillTextureRectangle({ 0, 0 }, e->m_Window->GetScreenSize(), m_BackgroundColour);
 
-        int printCount = std::min(e->m_Window->GetScreenHeight() / 22, (int)m_History.size());
-        int offset = 10;
+        int lineHeight = 10;
+        int screenHeight = e->m_Window->GetScreenHeight();
 
-        for (int i = m_History.size() - printCount; i < m_History.size(); i++)
+        int inputY = screenHeight - lineHeight - 5;
+        int historyBottomY = inputY - lineHeight;
+
+        int offset = historyBottomY;
+
+        for (int i = (int)m_History.size() - 1; i >= 0; i--)
         {
-            auto& entry = m_History[i];
+            const auto& entry = m_History[i];
+
+            int lines = 1;
+
+            for (char c : entry.output)
+            {
+                if (c == '\n')
+                    lines++;
+            }
 
             if (entry.isCommand)
             {
-                e->DrawTextureString({ 10, offset }, "> " + entry.command);
-                offset += 10;
+                if (offset < 0)
+                    break;
+
+                e->DrawTextureString({ 10, offset }, "> " + entry.command, WHITE);
+                offset -= lineHeight;
             }
 
-            e->DrawTextureString({ 10, offset }, entry.output, entry.outputColour);
-            offset += 10 * (std::count(entry.output.begin(), entry.output.end(), '\n') + 1);
+            for (int l = 0; l < lines; l++)
+            {
+                if (offset < 0) break;
+
+                std::string text;
+
+                if (lines == 1)
+                    text = entry.output;
+                else
+                {
+                    size_t start = 0;
+                    size_t end = entry.output.find('\n');
+
+                    for (int j = 0; j <= l; j++)
+                    {
+                        start = (j == 0 ? 0 : end + 1);
+                        end = entry.output.find('\n', start);
+                    }
+
+                    text = entry.output.substr(
+                        start,
+                        end == std::string::npos ? std::string::npos : end - start
+                    );
+                }
+
+                e->DrawTextureString({ 10, offset }, text, entry.outputColour);
+                offset -= lineHeight;
+            }
         }
 
-        int x = e->m_Input->GetCapturedTextCursorPosition() * 8 + 36;
+        std::string input = e->m_Input->GetCapturedText();
 
-        e->DrawTextureString({ 20, offset }, "> " + e->m_Input->GetCapturedText(), YELLOW);
-        e->DrawTextureLine({ x, offset }, { x, offset + 8 }, RED);
+		// Draw an input prompt
+        e->DrawTextureString({ 10, inputY }, "> " + input, YELLOW);
+
+        int cursorX = 10 + 8 * (2 + (int)input.size());
+
+        // Draw a cursor
+        e->DrawTextureLine({ cursorX, inputY }, { cursorX, inputY + 8 }, RED);
 
         e->SetLayer(currentLayer);
     }

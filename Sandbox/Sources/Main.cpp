@@ -5,14 +5,69 @@ struct CustomLayer : def::Layer
     CustomLayer()
     {
         size = { 100, 100 };
+
+        pos[0] = { 20, 20 };
+        pos[1] = { 100, 100 };
+        pos[2] = { 20, 100 };
     }
 
     bool OnUpdate(float deltaTime) override
     {
-        Context().ClearTexture(def::CYAN);
-        Context().DrawTextureRectangle({ 25, 25 }, { 50, 50 }, def::RED);
+        auto& input = Context().Input();
+
+        if (input.GetButtonState(def::Button::LEFT).held)
+        {
+            def::Vector2f mouse = input.GetMousePosition();
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (def::Vector2f(mouse - pos[i]).Length2() <= 4.0f)
+                    selected = &pos[i];
+            }
+
+            if (selected)
+                *selected = mouse;
+        }
+
+        if (input.GetButtonState(def::Button::LEFT).released)
+            selected = nullptr;
+
+        if (!selected)
+        {
+            int scrolls = input.GetScrollDelta();
+
+            if (scrolls != 0)
+            {
+                float theta = 200.0f * scrolls * Context().GetDeltaTime();
+
+                float c = cosf(theta);
+                float s = sinf(theta);
+
+                def::Vector2f center = (pos[0] + pos[1] + pos[2]) / 3.0f;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    def::Vector2f old = pos[i] - center;
+
+                    pos[i].x = center.x + old.x * c - old.y * s;
+                    pos[i].y = center.y + old.x * s + old.y * c;
+                }
+            }
+        }
+
+        Context().ClearTexture(def::GREY);
+        Context().GradientTextureTriangle(pos[0], pos[1], pos[2], def::RED, def::GREEN, def::BLUE);
+
+        for (int i = 0; i < 3; i++)
+            Context().FillTextureCircle(pos[i], 2, def::YELLOW);
+
         return true;
     }
+
+    def::Vector2f pos[3];
+    def::Vector2f* selected = nullptr;
+
+    float angle = 0.0f;
 };
 
 class Example : public def::GameEngine
