@@ -144,6 +144,6 @@ int main()
 {
     Example demo;
 
-    if (demo.Construct(256, 200, 4, 4))
+    if (demo.Construct(256, 200, 4, 4, false, true))
         demo.Run();
 }

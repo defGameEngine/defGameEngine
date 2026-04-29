@@ -166,9 +166,8 @@ namespace def
 
 		if (glfwGetPlatform() == GLFW_PLATFORM_COCOA)
 		{
-			// Disabling window resizing fixes all scaling
-			// problems on Apple Retina displays
-			glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+			// Disabling retina displays framebuffer
+			// fixes all problems related to scaling
 			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 		}
 
@@ -186,7 +185,7 @@ namespace def
 			// In fullscreen mode we can enable VSync by setting a hint
 			glfwWindowHint(GLFW_REFRESH_RATE, videoMode->refreshRate);
 
-			m_NativeWindow = glfwCreateWindow(m_FullscreenSize.x, m_FullscreenSize.y, "", m_Monitor, NULL);
+			m_NativeWindow = glfwCreateWindow(m_FullscreenSize.x, m_FullscreenSize.y, "", m_Monitor, nullptr);
 
 			if (!m_NativeWindow)
 				return false;
@@ -200,7 +199,7 @@ namespace def
 		}
 		else
 		{
-			m_NativeWindow = glfwCreateWindow(windowSize.x, windowSize.y, "", NULL, NULL);
+			m_NativeWindow = glfwCreateWindow(windowSize.x, windowSize.y, "", nullptr, nullptr);
 
 			if (!m_NativeWindow)
 				return false;
