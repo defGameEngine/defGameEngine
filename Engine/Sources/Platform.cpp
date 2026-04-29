@@ -9,7 +9,7 @@
 
 namespace def
 {
-    Platform::Platform()
+    Platform::Platform(GameEngine* engine) : m_Engine(engine)
     {
     }
 

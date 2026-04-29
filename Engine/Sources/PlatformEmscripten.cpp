@@ -15,14 +15,14 @@ namespace def
 		eglTerminate(m_Display);
 	}
 
-	void PlatformEmscripten::SetTitle(const std::string& text) const
+	void PlatformEmscripten::SetTitle(const std::string_view text) const
 	{
-		emscripten_set_window_title(text.c_str());
+		emscripten_set_window_title(text.data());
 	}
 
 	bool PlatformEmscripten::IsWindowClose() const
 	{
-		return !GameEngine::s_Engine->m_IsAppRunning;
+		return !m_Engine->m_IsAppRunning;
 	}
 
 	bool PlatformEmscripten::IsWindowFocused() const
@@ -224,7 +224,7 @@ namespace def
 
 	void PlatformEmscripten::MainLoop()
 	{
-		GameEngine::s_Engine->MainLoop();
+		m_Engine->MainLoop();
 	}
 
 	EM_BOOL PlatformEmscripten::FocusCallback(int eventType, const EmscriptenFocusEvent* event, void* userData)
@@ -240,7 +240,7 @@ namespace def
 
 	EM_BOOL PlatformEmscripten::KeyboardCallback(int eventType, const EmscriptenKeyboardEvent* event, void* userData)
 	{
-		auto e = GameEngine::s_Engine->GetInput();
+		auto e = m_Engine->GetInput();
 
 		switch (eventType)
 		{
@@ -254,15 +254,15 @@ namespace def
 	EM_BOOL PlatformEmscripten::WheelCallback(int eventType, const EmscriptenWheelEvent* event, void* userData)
 	{
 		if (eventType == EMSCRIPTEN_EVENT_WHEEL)
-			GameEngine::s_Engine->GetInput()->m_ScrollDelta = -int(event->deltaY);
+			m_Engine->GetInput()->m_ScrollDelta = -int(event->deltaY);
 
 		return EM_TRUE;
 	}
 
 	EM_BOOL PlatformEmscripten::TouchCallback(int eventType, const EmscriptenTouchEvent* event, void* userData)
 	{
-		auto i = GameEngine::s_Engine->GetInput();
-		auto w = GameEngine::s_Engine->GetWindow();
+		auto i = m_Engine->GetInput();
+		auto w = m_Engine->GetWindow();
 
 		switch (eventType)
 		{
@@ -293,8 +293,8 @@ namespace def
 
 	EM_BOOL PlatformEmscripten::MouseCallback(int eventType, const EmscriptenMouseEvent* event, void* userData)
 	{
-		auto i = GameEngine::s_Engine->GetInput();
-		auto w = GameEngine::s_Engine->GetWindow();
+		auto i = m_Engine->GetInput();
+		auto w = m_Engine->GetWindow();
 
 		if (eventType == EMSCRIPTEN_EVENT_MOUSEMOVE)
 		{

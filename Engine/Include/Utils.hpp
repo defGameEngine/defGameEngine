@@ -15,12 +15,31 @@ namespace def
 {
 	// Prints an error to the console and terminates an application
 	template <class... T>
-	inline void Assert(bool expr, T&&... args);
+	inline void Assert(bool expr, T&&... args)
+	{
+		if (!expr)
+		{
+			std::list<const char*> values;
+			(values.emplace_back(std::move(args)), ...);
 
-	inline uint8_t ClampFloatToUint8(float value);
-	inline uint8_t ClampIntToUint8(int value);
+			for (const auto& val : values)
+				fprintf(stderr, "%s\n", val);
+
+			fprintf(stderr, "\n");
+
+			exit(1);
+		}
+	}
+
+	inline uint8_t ClampFloatToUint8(float value)
+	{
+		return uint8_t(std::clamp(value, 0.0f, 255.0f));
+	}
+
+	inline uint8_t ClampIntToUint8(int value)
+	{
+		return uint8_t(std::clamp(value, 0, 255));
+	}
 }
-
-#include "../Sources/Utils.cpp"
 
 #endif

@@ -9,8 +9,7 @@
 
 namespace def
 {
-    GameEngine& State::Context()
+    State::State(GameEngine* context) : context(*context)
     {
-        return *GameEngine::s_Engine;
     }
 }

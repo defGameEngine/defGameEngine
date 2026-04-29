@@ -52,6 +52,7 @@
 #include "Sprite.hpp"
 #include "Texture.hpp"
 #include "Graphic.hpp"
+#include "Timer.hpp"
 
 #ifdef DGE_PLATFORM_GLFW3
 #include "PlatformGLFW3.hpp"
@@ -69,8 +70,6 @@
 
 namespace def
 {
-	using TimePoint = std::chrono::system_clock::time_point;
-
 	class Platform;
 	class Console;
 	struct Layer;
@@ -99,7 +98,7 @@ namespace def
 
 	public:
 		// Is used internally
-		static GameEngine* s_Engine;
+		//static GameEngine* s_Engine;
 
 		// Is called before the main loop
 		virtual bool OnUserCreate() = 0;
@@ -243,15 +242,6 @@ namespace def
 		// Use white pixels for the character, black - for background.
 		void SetFont(std::string_view fileName);
 
-		// Timings
-
-		// Returns difference between 2 frames in seconds
-		float GetDeltaTime() const;
-
-		// Returns the number of frames per second
-		// We update frames count in the title bar only every second so the returned value is more precise in here than in the title bar
-		int GetFPS() const;
-
 		// Layers stuff
 
 		size_t CreateLayer(const Vector2i& offset, const Vector2i& size, bool update = true, bool visible = true, const Pixel& tint = WHITE);
@@ -272,6 +262,7 @@ namespace def
 		Window& Window();
 		InputHandler& Input();
 		Console& Console();
+		Timer& Timer();
 
 	private:
 		bool m_IsAppRunning;
@@ -294,21 +285,11 @@ namespace def
 		// Index of the current state from m_States
 		size_t m_CurrentState;
 
-		// Storing the difference between 2 frames
-		float m_DeltaTime;
-
-		// Is used for updating frames count in the title bar
-		float m_TickTimer;
-
 		std::shared_ptr<Platform> m_Platform;
-
-		// Storing 2 time points: on the start of the main loop iteration and one after
-		TimePoint m_TimeStart;
-		TimePoint m_TimeEnd;
-
 		std::shared_ptr<InputHandler> m_Input;
 		std::shared_ptr<def::Window> m_Window;
 		std::unique_ptr<def::Console> m_Console;
+		std::unique_ptr<def::Timer> m_Timer;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
@@ -318,7 +299,7 @@ namespace def
 		// that later will be transformed to be drawn
 		// on the screen
 		static constexpr size_t CIRCLE_VERTICES_COUNT = 64;
-		static std::vector<Vector2f> sm_UnitCircle;
+		static std::vector<Vector2f> s_UnitCircle;
 
 	};
 }

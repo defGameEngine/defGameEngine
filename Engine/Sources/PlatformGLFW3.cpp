@@ -10,7 +10,7 @@
 
 namespace def
 {
-	PlatformGLFW3::PlatformGLFW3()
+	PlatformGLFW3::PlatformGLFW3(GameEngine* engine) : PlatformGL(engine)
 	{
 		m_NativeWindow = nullptr;
 		m_Monitor = nullptr;
@@ -116,12 +116,16 @@ namespace def
 			}
 		}
 
-		GameEngine::s_Engine->MainLoop();
+		platform->m_Engine->MainLoop();
 	}
 
 	void PlatformGLFW3::WindowPosCallback(GLFWwindow* window, int x, int y)
 	{
-		GameEngine::s_Engine->MainLoop();
+		// Lets also update everything when we move a window
+		// because otherwise it won't
+
+		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+		platform->m_Engine->MainLoop();
 	}
 
 	void PlatformGLFW3::Destroy() const

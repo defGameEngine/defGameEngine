@@ -98,7 +98,7 @@ namespace def
 		structure = Texture::Structure::TRIANGLE_FAN;
 		points = 0;
 
-		uv = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
+		//uv = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
 	}
 
 	void TextureInstance::ConstructUV()

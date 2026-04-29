@@ -9,6 +9,10 @@
 
 namespace def
 {
+    Layer::Layer(GameEngine* context) : context(*context)
+    {
+    }
+
     Layer::~Layer()
     {
         if (pixels)
@@ -17,9 +21,4 @@ namespace def
 
     bool Layer::OnCreate() { return true; }
     bool Layer::OnUpdate(float deltaTime) { return true; }
-
-    GameEngine& Layer::Context()
-    {
-        return *GameEngine::s_Engine;
-    }
 }

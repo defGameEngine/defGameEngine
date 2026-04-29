@@ -17,7 +17,7 @@ namespace def
 	class PlatformGL : public Platform
 	{
 	public:
-		PlatformGL();
+		PlatformGL(GameEngine* engine);
 		
 		void ClearBuffer(const Pixel& col) const override;
 

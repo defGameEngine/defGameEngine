@@ -244,14 +244,14 @@ namespace def
 
         if (GetKeyState(Key::ENTER).pressed)
         {
-            GameEngine::s_Engine->OnTextCapturingComplete(m_CapturedText);
-            GameEngine::s_Engine->m_Console->HandleCommand(m_CapturedText);
+            m_Platform->m_Engine->OnTextCapturingComplete(m_CapturedText);
+            m_Platform->m_Engine->m_Console->HandleCommand(m_CapturedText);
 
             m_CapturedText.clear();
             m_CapturedTextCursorPos = 0;
         }
 
-        GameEngine::s_Engine->m_Console->HandleHistoryBrowsing();
+        m_Platform->m_Engine->m_Console->HandleHistoryBrowsing();
     }
 
     void InputHandler::SetCapturedText(const std::string& text)

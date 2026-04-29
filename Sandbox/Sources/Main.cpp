@@ -2,7 +2,7 @@
 
 struct CustomLayer : def::Layer
 {
-    CustomLayer()
+    CustomLayer(def::GameEngine* ctx) : def::Layer(ctx)
     {
         size = { 100, 100 };
 
@@ -13,7 +13,7 @@ struct CustomLayer : def::Layer
 
     bool OnUpdate(float deltaTime) override
     {
-        auto& input = Context().Input();
+        auto& input = context.Input();
 
         if (input.GetButtonState(def::Button::LEFT).held)
         {
@@ -38,7 +38,7 @@ struct CustomLayer : def::Layer
 
             if (scrolls != 0)
             {
-                float theta = 200.0f * scrolls * Context().GetDeltaTime();
+                float theta = 200.0f * scrolls * context.Timer().GetDeltaTime();
 
                 float c = cosf(theta);
                 float s = sinf(theta);
@@ -55,11 +55,11 @@ struct CustomLayer : def::Layer
             }
         }
 
-        Context().ClearTexture(def::GREY);
-        Context().GradientTextureTriangle(pos[0], pos[1], pos[2], def::RED, def::GREEN, def::BLUE);
+        context.ClearTexture(def::GREY);
+        context.GradientTextureTriangle(pos[0], pos[1], pos[2], def::RED, def::GREEN, def::BLUE);
 
         for (int i = 0; i < 3; i++)
-            Context().FillTextureCircle(pos[i], 2, def::YELLOW);
+            context.FillTextureCircle(pos[i], 2, def::YELLOW);
 
         return true;
     }
@@ -86,7 +86,7 @@ public:
 private:
     bool OnUserCreate() override
     {
-        id = CreateLayer(new CustomLayer());
+        id = CreateLayer(new CustomLayer(this));
 
         tex = new def::Texture("blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
 
@@ -131,6 +131,8 @@ private:
             SetWrapMethod(def::Sprite::WrapMethod::CLAMP);
 
         DrawTexture({ 0.0f, 0.0f }, tex);
+
+        GradientTextureTriangle({ 100, 100 }, { 200, 200 }, { 100, 200 }, def::CYAN, def::MAGENTA, def::YELLOW);
 
         if (Input().GetKeyState(def::Key::TAB).released)
             Console().Show(!Console().IsShown());

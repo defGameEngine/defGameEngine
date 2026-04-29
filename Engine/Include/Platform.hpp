@@ -16,6 +16,7 @@ namespace def
 {
 	class InputHandler;
 	class Window;
+	class GameEngine;
 
 	// An abstract class that uses
 	// platform specific API for capturing input
@@ -23,7 +24,7 @@ namespace def
 	class Platform
 	{
 	public:
-		Platform();
+		Platform(GameEngine* engine);
 		virtual ~Platform() = default;
 
 		// Terminates the API
@@ -88,12 +89,16 @@ namespace def
 		// Sets input handler pointer for internal usage
 		void SetInputHandler(std::shared_ptr<InputHandler> input);
 
+		friend class InputHandler;
+
 	protected:
 		std::weak_ptr<Window> m_Window;
 		std::weak_ptr<InputHandler> m_Input;
 
 		Sprite::WrapMethod m_WrapMethod = Sprite::WrapMethod::NONE;
 		Sprite::SampleMethod m_SampleMethod = Sprite::SampleMethod::LINEAR;
+
+		GameEngine* m_Engine = nullptr;
 
 	};
 }

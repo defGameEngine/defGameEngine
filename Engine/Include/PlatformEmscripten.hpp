@@ -25,7 +25,7 @@ namespace def
 		friend class Window;
 
 		virtual void Destroy() const override;
-		virtual void SetTitle(const std::string& text) const override;
+		virtual void SetTitle(const std::string_view text) const override;
 
 		virtual bool IsWindowClose() const override;
 		virtual bool IsWindowFocused() const override;

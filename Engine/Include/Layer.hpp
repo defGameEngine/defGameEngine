@@ -20,12 +20,11 @@ namespace def
 
 	struct Layer
 	{
+		Layer(GameEngine* engine);
 		virtual ~Layer();
 
 		virtual bool OnCreate();
 		virtual bool OnUpdate(float deltaTime);
-
-		GameEngine& Context();
 
 		friend class GameEngine;
 		friend class Console;
@@ -67,6 +66,8 @@ namespace def
 		// Use your custom function so you can change colour of the pixel
 		// knowing its current value and its position on the screen
 		Pixel (*shader)(const Vector2i&, const Pixel&, const Pixel&) = nullptr;
+
+		GameEngine& context;
 	};
 }
 

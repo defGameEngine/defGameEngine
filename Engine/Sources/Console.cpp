@@ -9,7 +9,7 @@
 
 namespace def
 {
-    Console::Console() : m_BackgroundColour(0, 0, 255, 100), m_PickedHistoryCommand(0)
+    Console::Console(GameEngine* engine) : m_Engine(engine), m_BackgroundColour(0, 0, 255, 100), m_PickedHistoryCommand(0)
     {
     }
 
@@ -32,7 +32,7 @@ namespace def
         std::stringstream output;
         Pixel colour = WHITE;
 
-        if (GameEngine::s_Engine->OnConsoleCommand(command, output, colour))
+        if (m_Engine->OnConsoleCommand(command, output, colour))
         {
             if (!command.empty())
             {
@@ -49,7 +49,7 @@ namespace def
 
         bool moved = false;
 
-        if (GameEngine::s_Engine->m_Input->GetKeyState(Key::UP).pressed)
+        if (m_Engine->m_Input->GetKeyState(Key::UP).pressed)
         {
             do
             {
@@ -62,7 +62,7 @@ namespace def
             while (!moved && m_PickedHistoryCommand > 0);
         }
 
-        if (GameEngine::s_Engine->m_Input->GetKeyState(Key::DOWN).pressed)
+        if (m_Engine->m_Input->GetKeyState(Key::DOWN).pressed)
         {
             do
             {
@@ -79,8 +79,8 @@ namespace def
         {
             const std::string& command = m_History[m_PickedHistoryCommand].command;
             
-            GameEngine::s_Engine->m_Input->SetCapturedText(command);
-            GameEngine::s_Engine->m_Input->SetCapturedTextCursorPosition(command.length());
+            m_Engine->m_Input->SetCapturedText(command);
+            m_Engine->m_Input->SetCapturedTextCursorPosition(command.length());
         }
     }
 
@@ -89,15 +89,13 @@ namespace def
         if (!IsShown())
             return;
 
-        GameEngine* e = GameEngine::s_Engine;
+        int currentLayer = m_Engine->m_CurrentLayer;
+        m_Engine->SetLayer(0);
 
-        int currentLayer = e->m_CurrentLayer;
-        e->SetLayer(0);
-
-        e->FillTextureRectangle({ 0, 0 }, e->m_Window->GetScreenSize(), m_BackgroundColour);
+        m_Engine->FillTextureRectangle({ 0, 0 }, m_Engine->m_Window->GetScreenSize(), m_BackgroundColour);
 
         int lineHeight = 10;
-        int screenHeight = e->m_Window->GetScreenHeight();
+        int screenHeight = m_Engine->m_Window->GetScreenHeight();
 
         int inputY = screenHeight - lineHeight - 5;
         int historyBottomY = inputY - lineHeight;
@@ -121,7 +119,7 @@ namespace def
                 if (offset < 0)
                     break;
 
-                e->DrawTextureString({ 10, offset }, "> " + entry.command, WHITE);
+                m_Engine->DrawTextureString({ 10, offset }, "> " + entry.command, WHITE);
                 offset -= lineHeight;
             }
 
@@ -150,32 +148,32 @@ namespace def
                     );
                 }
 
-                e->DrawTextureString({ 10, offset }, text, entry.outputColour);
+                m_Engine->DrawTextureString({ 10, offset }, text, entry.outputColour);
                 offset -= lineHeight;
             }
         }
 
-        std::string input = e->m_Input->GetCapturedText();
+        std::string input = m_Engine->m_Input->GetCapturedText();
 
 		// Draw an input prompt
-        e->DrawTextureString({ 10, inputY }, "> " + input, YELLOW);
+        m_Engine->DrawTextureString({ 10, inputY }, "> " + input, YELLOW);
 
         int cursorX = 10 + 8 * (2 + (int)input.size());
 
         // Draw a cursor
-        e->DrawTextureLine({ cursorX, inputY }, { cursorX, inputY + 8 }, RED);
+        m_Engine->DrawTextureLine({ cursorX, inputY }, { cursorX, inputY + 8 }, RED);
 
-        e->SetLayer(currentLayer);
+        m_Engine->SetLayer(currentLayer);
     }
 
     void Console::Show(bool show)
     {
-        Layer& layer = *GameEngine::s_Engine->m_Layers[0];
+        Layer& layer = *m_Engine->m_Layers[0];
 
         layer.visible = show;
         layer.update = show;
 
-        GameEngine::s_Engine->m_Input->CaptureText(show);
+        m_Engine->m_Input->CaptureText(show);
     }
 
     void Console::SetBackgroundColour(const Pixel& colour)
@@ -185,6 +183,6 @@ namespace def
 
     bool Console::IsShown() const
     {
-        return GameEngine::s_Engine->m_Layers[0]->visible;
+        return m_Engine->m_Layers[0]->visible;
     }
 }

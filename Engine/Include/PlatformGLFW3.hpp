@@ -20,7 +20,7 @@ namespace def
 	class PlatformGLFW3 : public PlatformGL
 	{
 	public:
-		PlatformGLFW3();
+		PlatformGLFW3(GameEngine* engine);
 
 		friend class GameEngine;
 		friend class Window;

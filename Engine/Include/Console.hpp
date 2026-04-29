@@ -39,7 +39,7 @@ namespace def
             bool isCommand = false;
         };
 
-        Console();
+        Console(GameEngine* engine);
 
         // Clears the console and its history.
         void Clear();
@@ -70,6 +70,8 @@ namespace def
         // it's set to m_History.size() if the command hasn't been
         // selected yet.
 		size_t m_PickedHistoryCommand;
+
+        GameEngine* m_Engine = nullptr;
 
     };
 }

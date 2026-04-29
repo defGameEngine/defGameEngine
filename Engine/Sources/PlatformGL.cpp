@@ -47,7 +47,7 @@
 
 namespace def
 {
-	PlatformGL::PlatformGL()
+	PlatformGL::PlatformGL(GameEngine* engine) : Platform(engine)
 	{
 	}
 
@@ -82,6 +82,9 @@ namespace def
 	{
 		BindTexture(texInst.texture ? texInst.texture->id : 0);
 
+		if (!texInst.texture)
+			glDisable(GL_TEXTURE_2D);
+
 		switch (texInst.structure)
 		{
 		case Texture::Structure::DEFAULT:		 glBegin(GL_TRIANGLES);		 break;
@@ -95,58 +98,61 @@ namespace def
 		for (uint32_t i = 0; i < texInst.points; i++)
 		{
 			glColor4ub(texInst.tint[i].r, texInst.tint[i].g, texInst.tint[i].b, texInst.tint[i].a);
-			glTexCoord2f(texInst.uv[i].x, texInst.uv[i].y);
+
+			if (texInst.texture)
+				glTexCoord2f(texInst.uv[i].x, texInst.uv[i].y);
+
 			glVertex2f(texInst.vertices[i].x, texInst.vertices[i].y);
 		}
 
 		glEnd();
+
+		if (!texInst.texture)
+			glEnable(GL_TEXTURE_2D);
 	}
 
 	void PlatformGL::BindTexture(int id) const
 	{
 		glBindTexture(GL_TEXTURE_2D, id);
 
-		if (id != 0)
+		switch (m_WrapMethod)
 		{
-			switch (m_WrapMethod)
-			{
-			case Sprite::WrapMethod::NONE:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-			break;
+		case Sprite::WrapMethod::NONE:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		break;
 
-			case Sprite::WrapMethod::REPEAT:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			break;
+		case Sprite::WrapMethod::REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		break;
 
-			case Sprite::WrapMethod::MIRROR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-			break;
+		case Sprite::WrapMethod::MIRROR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		break;
 
-			case Sprite::WrapMethod::CLAMP:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			break;
+		case Sprite::WrapMethod::CLAMP:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		break;
 
-			}
+		}
 
-			switch (m_SampleMethod)
-			{
-			case Sprite::SampleMethod::LINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			break;
+		switch (m_SampleMethod)
+		{
+		case Sprite::SampleMethod::LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		break;
 
-			// TODO: Implement TRILINEAR (requires mipmaps), for now just fall to BILINEAR
-			case Sprite::SampleMethod::BILINEAR:
-			case Sprite::SampleMethod::TRILINEAR:
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			break;
+		// TODO: Implement TRILINEAR (requires mipmaps), for now just fall to BILINEAR
+		case Sprite::SampleMethod::BILINEAR:
+		case Sprite::SampleMethod::TRILINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		break;
 
-			}
 		}
 	}
 

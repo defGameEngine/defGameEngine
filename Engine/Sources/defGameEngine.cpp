@@ -9,43 +9,30 @@
 
 namespace def
 {
-
-#pragma region dge_static
-
-	GameEngine* GameEngine::s_Engine = nullptr;
-	std::vector<Vector2f> GameEngine::sm_UnitCircle;
-
-#pragma endregion
-
-#pragma region dge_init
+	std::vector<Vector2f> GameEngine::s_UnitCircle;
 
 	GameEngine::GameEngine()
 	{
 		m_TabSize = 0;
 
-		m_DeltaTime = 0.0f;
-		m_TickTimer = 0.0f;
-
-		s_Engine = this;
-
 		m_CurrentLayer = 0;
 		m_CurrentState = 0;
 
-		MakeUnitCircle(sm_UnitCircle, CIRCLE_VERTICES_COUNT);
+		MakeUnitCircle(s_UnitCircle, CIRCLE_VERTICES_COUNT);
 
 		m_OnlyTextures = false;
 
 	#if defined(DGE_PLATFORM_GLFW3)
-		m_Platform = std::make_shared<PlatformGLFW3>();
+		m_Platform = std::make_shared<PlatformGLFW3>(this);
 	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
-		m_Platform = std::make_shared<PlatformEmscripten>();
+		m_Platform = std::make_shared<PlatformEmscripten>(this);
 	#else
 		#error No platform has been selected
 	#endif
 
 		m_Input = std::make_shared<InputHandler>(m_Platform);
 		m_Window = std::make_shared<def::Window>(m_Platform);
-		m_Console = std::make_unique<def::Console>();
+		m_Console = std::make_unique<def::Console>(this);
 
 		m_Platform->SetInputHandler(m_Input);
 		m_Platform->SetWindow(m_Window);
@@ -56,10 +43,6 @@ namespace def
 		Destroy();
 	}
 
-#pragma endregion
-
-#pragma region dge_internal
-
 	void GameEngine::Destroy()
 	{
 		m_Platform->Destroy();
@@ -69,12 +52,7 @@ namespace def
 	{
 		if (m_IsAppRunning)
 		{
-			m_TimeEnd = std::chrono::system_clock::now();
-
-			m_DeltaTime = std::chrono::duration<float>(m_TimeEnd - m_TimeStart).count();
-			m_TimeStart = m_TimeEnd;
-
-			m_TickTimer += m_DeltaTime;
+			m_Timer->Update();
 
 			if (m_Platform->IsWindowClose())
 			{
@@ -85,17 +63,19 @@ namespace def
 			m_Input->FlushBuffers();
 			m_Input->GrabText();
 
-			if (!m_States.empty())
-				m_States[m_CurrentState]->OnUpdate(m_DeltaTime);
+			float deltaTime = m_Timer->GetDeltaTime();
 
-			if (!OnUserUpdate(m_DeltaTime))
+			if (!m_States.empty())
+				m_States[m_CurrentState]->OnUpdate(deltaTime);
+
+			if (!OnUserUpdate(deltaTime))
 				m_IsAppRunning = false;
 
 			size_t layer = m_CurrentLayer;
 			m_CurrentLayer = 1;
 
 			for (auto iter = m_Layers.begin() + 1; iter != m_Layers.end(); ++iter, ++m_CurrentLayer)
-				(*iter)->OnUpdate(m_DeltaTime);
+				(*iter)->OnUpdate(deltaTime);
 
 			m_CurrentLayer = layer;
 
@@ -125,6 +105,7 @@ namespace def
 						texInst.structure = Texture::Structure::TRIANGLE_FAN;
 						texInst.tint = { (*iter)->tint, (*iter)->tint, (*iter)->tint, (*iter)->tint };
 						texInst.vertices = { pos1, { pos1.x, pos2.y }, pos2, { pos2.x, pos1.y } };
+						texInst.uv = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.0f } };
 
 						m_Platform->DrawTexture(texInst);
 					}
@@ -154,11 +135,11 @@ namespace def
 		#ifndef DGE_PLATFORM_EMSCRIPTEN
 			m_FramesCount++;
 
-			if (m_TickTimer >= 1.0f)
+			if (m_Timer->GetTicks() >= 1.0f)
 			{
 				m_Window->UpdateCaption(m_FramesCount);
 
-				m_TickTimer = 0.0f;
+				m_Timer->ResetTicks();
 				m_FramesCount = 0;
 			}
 		#endif
@@ -178,10 +159,6 @@ namespace def
 			circle[i].y = sin(angle);
 		}
 	}
-
-#pragma endregion
-
-#pragma region dge_running
 
 	bool GameEngine::Construct(int screenWidth, int screenHeight, int pixelWidth, int pixelHeight, bool fullScreen, bool vsync, bool dirtyPixel)
 	{
@@ -255,8 +232,7 @@ namespace def
 
 		m_CurrentLayer = layer;
 
-		m_TimeStart = std::chrono::system_clock::now();
-		m_TimeEnd = m_TimeStart;
+		m_Timer = std::make_unique<def::Timer>();
 
 	#ifdef DGE_PLATFORM_EMSCRIPTEN
 		m_Window->UpdateCaption(-1);
@@ -270,10 +246,6 @@ namespace def
 			MainLoop();
 	#endif
 	}
-
-#pragma endregion
-
-#pragma region dge_user_callbacks
 
 	bool GameEngine::OnAfterDraw()
 	{
@@ -289,12 +261,6 @@ namespace def
 	{
 		return false;
 	}
-
-#pragma endregion
-
-#pragma region dge_drawing
-
-#pragma region dge_drawing_canvas
 
 	bool GameEngine::Draw(int x, int y, const Pixel& col)
 	{
@@ -1110,10 +1076,6 @@ namespace def
 		DrawString(pos.x, pos.y, text, col, scale.x, scale.y);
 	}
 
-#pragma endregion
-
-#pragma region dge_drawing_gpu
-
 	void GameEngine::DrawTexturePolygon(const std::vector<Vector2f>& verts, const std::vector<Pixel>& cols, Texture::Structure structure)
 	{
 		TextureInstance texInst;
@@ -1180,20 +1142,20 @@ namespace def
 
 	void GameEngine::DrawTextureCircle(const Vector2i& pos, int radius, const Pixel& col)
 	{
-		std::vector<Vector2f> verts(sm_UnitCircle.size());
+		std::vector<Vector2f> verts(s_UnitCircle.size());
 
 		for (size_t i = 0; i < verts.size(); i++)
-			verts[i] = sm_UnitCircle[i] * (float)radius + pos;
+			verts[i] = s_UnitCircle[i] * (float)radius + pos;
 
 		DrawTexturePolygon(verts, { col }, Texture::Structure::WIREFRAME);
 	}
 
 	void GameEngine::FillTextureCircle(const Vector2i& pos, int radius, const Pixel& col)
 	{
-		std::vector<Vector2f> verts(sm_UnitCircle.size());
+		std::vector<Vector2f> verts(s_UnitCircle.size());
 
 		for (size_t i = 0; i < verts.size(); i++)
-			verts[i] = sm_UnitCircle[i] * (float)radius + pos;
+			verts[i] = s_UnitCircle[i] * (float)radius + pos;
 
 		DrawTexturePolygon(verts, { col }, Texture::Structure::TRIANGLE_FAN);
 	}
@@ -1419,12 +1381,6 @@ namespace def
 		FillTextureRectangle({ 0, 0 }, layer->size, col);
 	}
 
-#pragma endregion
-
-#pragma endregion
-
-#pragma region dge_draw_targets
-
 	void GameEngine::SetDrawTarget(Graphic* target)
 	{
 		m_Layers[m_CurrentLayer]->target = target ? target : m_Layers[m_CurrentLayer]->pixels;
@@ -1436,10 +1392,6 @@ namespace def
 		return m_Layers[m_CurrentLayer]->target;
 	}
 
-#pragma endregion
-
-#pragma region dge_pixels
-
 	void GameEngine::SetPixelMode(Pixel::Mode pixelMode)
 	{
 		m_Layers[m_CurrentLayer]->pixelMode = pixelMode;
@@ -1449,10 +1401,6 @@ namespace def
 	{
 		return m_Layers[m_CurrentLayer]->pixelMode;
 	}
-
-#pragma endregion
-
-#pragma region dge_textures
 
 	void GameEngine::SetWrapMethod(Sprite::WrapMethod wrapMethod)
 	{
@@ -1479,10 +1427,6 @@ namespace def
 		m_OnlyTextures = enable;
 	}
 
-#pragma endregion
-
-#pragma region dge_shaders
-
 	void GameEngine::SetShader(Pixel(*func)(const Vector2i&, const Pixel&, const Pixel&))
 	{
 		auto& layer = m_Layers[m_CurrentLayer];
@@ -1496,27 +1440,9 @@ namespace def
 		m_Font.Load(fileName);
 	}
 
-#pragma endregion
-
-#pragma region dge_timings
-
-	float GameEngine::GetDeltaTime() const
-	{
-		return m_DeltaTime;
-	}
-
-	int GameEngine::GetFPS() const
-	{
-		return 1.0f / m_DeltaTime;
-	}
-
-#pragma endregion
-
-#pragma region dge_layers
-
 	size_t GameEngine::CreateLayer(const Vector2i& offset, const Vector2i& size, bool update, bool visible, const Pixel& tint)
 	{
-		Layer* layer = new Layer();
+		Layer* layer = new Layer(this);
 		layer->offset = offset;
 		layer->size = size;
 
@@ -1597,10 +1523,6 @@ namespace def
 		return m_States[m_CurrentState].get();
 	}
 
-#pragma endregion
-
-#pragma region dge_window_input_console
-
 	Window& GameEngine::Window()
 	{
 		return *m_Window.get();
@@ -1616,6 +1538,9 @@ namespace def
 		return *m_Console.get();
 	}
 
-#pragma endregion
+	Timer& GameEngine::Timer()
+	{
+		return *m_Timer.get();
+	}
 
 }

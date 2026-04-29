@@ -15,14 +15,16 @@
 namespace def
 {
 	class GameEngine;
-
+	
 	struct State
 	{
+		State(GameEngine* context);
+
 		virtual bool OnCreate() = 0;
 		virtual bool OnSet() = 0;
 		virtual bool OnUpdate(float deltaTime) = 0;
 
-		GameEngine& Context();
+		GameEngine& context;
 	};
 }
 

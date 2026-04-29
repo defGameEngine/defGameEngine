@@ -40,10 +40,10 @@ namespace def
 
 	void Sprite::Load(std::string_view fileName)
 	{
-		Assert(!stbi_is_hdr(fileName.data()), "[stb_image Error] can't load an HDR file");
+		Assert(!stbi_is_hdr(fileName.data()), "[Sprite.Load Error] You aren't able to load an HDR file");
 
 		uint8_t* data = stbi_load(fileName.data(), &size.x, &size.y, NULL, 4);
-		Assert(data, "[stb_image Error] ", SAFE_STBI_FAILURE_REASON);
+		Assert(data, "[Sprite.Load stb_image Error] ", SAFE_STBI_FAILURE_REASON);
 
 		pixels.clear();
 		pixels.resize(size.x * size.y);
@@ -81,7 +81,7 @@ namespace def
 
 		}
 
-		Assert(err == 1, "[stb_image_write Error] Code: ", std::to_string(err).c_str());
+		Assert(err == 1, "[Sprite.Save stb_image_write Error] Code: ", std::to_string(err).c_str());
 	}
 
 	bool Sprite::SetPixel(int x, int y, const Pixel& col)
@@ -102,7 +102,7 @@ namespace def
 
 	Pixel Sprite::GetPixel(int x, int y, const WrapMethod wrap) const
 	{
-		auto GetPixel = [&pixels = pixels, &size = size](int x, int y)
+		auto GetPixel = [&](int x, int y)
 			{
 				return pixels[y * size.x + x];
 			};
@@ -117,7 +117,7 @@ namespace def
 		break;
 
 		case WrapMethod::REPEAT:
-		return GetPixel(abs(x) % size.x, abs(y) % size.y);
+			return GetPixel(abs(x) % size.x, abs(y) % size.y);
 
 		case WrapMethod::MIRROR:
 		{
@@ -157,31 +157,39 @@ namespace def
 
 	Pixel Sprite::Sample(const Vector2f& pos, const SampleMethod sample, const WrapMethod wrap) const
 	{
+		// We want a position to be size invariant
+		// so lets use normalised coordinates
 		Vector2f denorm = pos * Vector2f(size);
 
 		switch (sample)
 		{
 		case SampleMethod::LINEAR:
-		return GetPixel(denorm, wrap);
+			return GetPixel(denorm, wrap);
 
 		case SampleMethod::BILINEAR:
 		{
-			Vector2f cell = denorm.Floor();
+			Vector2i cell = denorm.Floor();
 			Vector2f offset = denorm - cell;
 
-			Pixel tl = GetPixel(cell + Vector2f(0, 0), wrap);
-			Pixel tr = GetPixel(cell + Vector2f(1, 0), wrap);
-			Pixel bl = GetPixel(cell + Vector2f(0, 1), wrap);
-			Pixel br = GetPixel(cell + Vector2f(1, 1), wrap);
+			Pixel tl = GetPixel(cell + Vector2i(0, 0), wrap);
+			Pixel tr = GetPixel(cell + Vector2i(1, 0), wrap);
+			Pixel bl = GetPixel(cell + Vector2i(0, 1), wrap);
+			Pixel br = GetPixel(cell + Vector2i(1, 1), wrap);
 
+			// Firstly interpolate along top border
 			Pixel topCol = tr * offset.x + tl * (1.0f - offset.x);
+
+			// Now interpolate along bottom border
 			Pixel bottomCol = br * offset.x + bl * (1.0f - offset.x);
 
+			// Now interpolate between top and bottom borders
 			return bottomCol * offset.y + topCol * (1.0f - offset.y);
 		}
 
 		case SampleMethod::TRILINEAR:
 		{
+			// Using Catmull-Rom splines as the basis functions
+
 			Vector2i center = (denorm - Vector2f(0.5f, 0.5f)).Floor();
 			Vector2f offset = denorm - Vector2f(0.5f, 0.5f) - Vector2f(center);
 
