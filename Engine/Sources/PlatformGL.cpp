@@ -162,7 +162,7 @@ namespace def
 	bool PlatformGL::IsWindowClose() const { return false; }
 	bool PlatformGL::IsWindowFocused() const { return false; }
 	void PlatformGL::FlushScreen(bool vsync) const {}
-	void PlatformGL::PollEvents() const {}
+	void PlatformGL::PollEvents() {}
 
 	bool PlatformGL::ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel) { return false; }
 	void PlatformGL::SetIcon(Sprite& icon) const {}

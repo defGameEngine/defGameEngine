@@ -6,44 +6,41 @@
 
 #pragma once
 
-#ifndef DGE_PLATFORM_GLFW3_HPP
-#define DGE_PLATFORM_GLFW3_HPP
+#ifndef DGE_PLATFORM_SDL3_HPP
+#define DGE_PLATFORM_SDL3_HPP
 
 #include "Pch.hpp"
 #include "PlatformGL.hpp"
 
-#define GL_SILENCE_DEPRECATION
-#include "GLFW/glfw3.h"
+#include "SDL3/SDL.h"
+#include "SDL3/SDL_error.h"
+#include "SDL3/SDL_opengl.h"
 
 namespace def
 {
-	class PlatformGLFW3 : public PlatformGL
+	class PlatformSDL3 : public PlatformGL
 	{
 	public:
-		PlatformGLFW3(GameEngine* engine);
+		PlatformSDL3(GameEngine* engine);
 
 		friend class GameEngine;
 		friend class Window;
 
 	private:
-		GLFWmonitor* m_Monitor;
-		GLFWwindow* m_NativeWindow;
+		SDL_Window* m_NativeWindow;
+		SDL_GLContext m_ContextGL;
+
+		SDL_DisplayID m_DisplayID;
+		SDL_WindowID m_WindowID;
 
 		Vector2i m_FullscreenSize;
-		
+
 		Vector2i m_ViewPos;
 		Vector2i m_ViewSize;
 
-	public:
-		static void ErrorCallback(int errorCode, const char* description);
-		static void DropCallback(GLFWwindow* window, int pathCount, const char* paths[]);
-		static void ScrollCallback(GLFWwindow* window, double x, double y);
-		static void MousePosCallback(GLFWwindow* window, double x, double y);
-		static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
-		static void WindowPosCallback(GLFWwindow* window, int x, int y);
+		bool m_WindowShouldClose;
 
+	public:
 		void Destroy() const override;
 		void SetTitle(const std::string_view text) const override;
 

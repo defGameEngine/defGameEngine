@@ -7,3 +7,4 @@ Sandbox/*
 .vs
 Makefile
 .DS_Store
+Engine/Vendor/SDL

@@ -14,11 +14,11 @@
 
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__)
 #define DGE_PLATFORM_EMSCRIPTEN
+#undef 
 #else
 #define DGE_PLATFORM_GL
-#define DGE_PLATFORM_GLFW3
 #endif
 
 #ifdef _WIN32
@@ -26,6 +26,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #ifndef __MINGW32__
+
 #ifdef DGE_PLATFORM_GL
 #pragma comment(lib, "opengl32.lib")
 #endif
@@ -33,6 +34,11 @@
 #ifdef DGE_PLATFORM_GLFW3
 #pragma comment(lib, "glfw3.lib")
 #endif
+
+#ifdef DGE_PLATFORM_SDL3
+#pragma comment(lib, "SDL3-static.lib")
+#endif
+
 #endif
 
 #else
@@ -62,6 +68,10 @@
 #include "PlatformEmscripten.hpp"
 #endif
 
+#ifdef DGE_PLATFORM_SDL3
+#include "PlatformSDL3.hpp"
+#endif
+
 #include "State.hpp"
 #include "Layer.hpp"
 #include "Window.hpp"
@@ -85,13 +95,9 @@ namespace def
 		GameEngine();
 		~GameEngine();
 
-	#ifdef DGE_PLATFORM_GLFW3
 		friend class PlatformGLFW3;
-	#endif
-
-	#ifdef DGE_PLATFORM_EMSCRIPTEN
+		friend class PlatformSDL3;
 		friend class PlatformEmscripten;
-	#endif
 
 		friend class Console;
 		friend class InputHandler;

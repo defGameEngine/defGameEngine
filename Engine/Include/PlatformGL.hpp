@@ -36,7 +36,7 @@ namespace def
 		bool IsWindowFocused() const override;
 
 		void FlushScreen(bool vsync) const override;
-		void PollEvents() const override;
+		void PollEvents() override;
 
 		bool ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel) override;
 

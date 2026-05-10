@@ -2,7 +2,7 @@
 
 # Overview
 
-defGameEngine is a lightweight, cross-platform (Windows, Linux, macOS, Web) 2D game engine designed for simplicity and ease of use. It provides essential tools for rendering graphics and handling input. The engine supports both desktop (via GLFW) and web (via Emscripten) platforms.
+defGameEngine is a lightweight, cross-platform (Windows, Linux, macOS, Web) 2D game engine designed for simplicity and ease of use. It provides essential tools for rendering graphics and handling input. The engine supports both desktop (via GLFW or SDL) and web (via Emscripten) platforms.
 
 # Features
 
@@ -22,6 +22,11 @@ Follow the [install instructions](/README.md#installation), clone this repositor
 Important, clone recursivelly:
 ```bash
 git clone --recurse-submodules https://github.com/defGameEngine/defGameEngine.git
+```
+
+Choose platform using **--backend** flag (**glfw** by default, Emscripten version is built separatly using python scripts):
+```bash
+./Vendor/Bin/Premake5/premake5.exe vs2026 --backend=sdl
 ```
 
 ## Installation

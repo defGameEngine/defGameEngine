@@ -86,8 +86,8 @@ namespace def
 
 		if (auto input = platform->m_Input.lock())
 		{
-			uint8_t mappedKey = static_cast<uint8_t>(InputHandler::s_KeysTable[key]);
-			input->m_KeyNewState[mappedKey] = action == GLFW_PRESS || action == GLFW_REPEAT;
+			Key mappedKey = InputHandler::s_KeysTable[key];
+			input->m_KeyNewState[(int)mappedKey] = action == GLFW_PRESS || action == GLFW_REPEAT;
 		}
 	}
 
@@ -96,7 +96,10 @@ namespace def
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
 
 		if (auto input = platform->m_Input.lock())
-			input->m_MouseNewState[button] = action == GLFW_PRESS || action == GLFW_REPEAT;
+		{
+			Button mappedButton = InputHandler::s_ButtonsTable[button];
+			input->m_MouseNewState[(int)mappedButton] = action == GLFW_PRESS || action == GLFW_REPEAT;
+		}
 	}
 
 	void PlatformGLFW3::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -153,7 +156,7 @@ namespace def
 		glfwSwapBuffers(m_NativeWindow);
 	}
 
-	void PlatformGLFW3::PollEvents() const
+	void PlatformGLFW3::PollEvents()
 	{
 		glfwPollEvents();
 	}

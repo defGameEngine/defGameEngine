@@ -123,4 +123,9 @@ namespace def
 	{
 		m_Platform->EnableFullscreen(enable);
 	}
+
+    bool Window::IsWindowClosed() const
+    {
+        return m_Platform->IsWindowClose();
+    }
 }

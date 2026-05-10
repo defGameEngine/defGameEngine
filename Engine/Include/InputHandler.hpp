@@ -80,6 +80,7 @@ namespace def
 		friend class Platform;
 		friend class PlatformGL;
 		friend class PlatformGLFW3;
+		friend class PlatformSDL3;
 		friend class PlatformEmscripten;
 		friend class Console;
 		friend class GameEngine;
@@ -131,6 +132,7 @@ namespace def
 
 		// Maps the platform specific key constant to the value from the Key enum
 		static std::unordered_map<int, Key> s_KeysTable;
+		static std::unordered_map<int, Button> s_ButtonsTable;
 
 	protected:
 		// Sets the m_CapturedText field to text

@@ -1,3 +1,7 @@
 [submodule "Engine/Vendor/glfw"]
 	path = Engine/Vendor/glfw
 	url = https://github.com/defGameEngine/glfw
+
+[submodule "Engine/Vendor/SDL"]
+	path = Engine/Vendor/SDL
+	url = https://github.com/libsdl-org/SDL.git

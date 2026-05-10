@@ -26,6 +26,8 @@ namespace def
 		m_Platform = std::make_shared<PlatformGLFW3>(this);
 	#elif defined(DGE_PLATFORM_EMSCRIPTEN)
 		m_Platform = std::make_shared<PlatformEmscripten>(this);
+	#elif defined(DGE_PLATFORM_SDL3)
+		m_Platform = std::make_shared<PlatformSDL3>(this);
 	#else
 		#error No platform has been selected
 	#endif

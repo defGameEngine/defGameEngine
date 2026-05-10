@@ -90,7 +90,7 @@ private:
 
         tex = new def::Texture("blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
 
-        return true;
+        return true; 
     }
 
     bool OnConsoleCommand(const std::string& command, std::stringstream& output, def::Pixel& colour) override

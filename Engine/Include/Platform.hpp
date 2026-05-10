@@ -54,7 +54,7 @@ namespace def
 		virtual void FlushScreen(bool vsync) const = 0;
 
 		// Polls events from the event queue
-		virtual void PollEvents() const = 0;
+		virtual void PollEvents() = 0;
 
 		// Draws a quad:
 		// 1) polygon vertices: (-1, -1), (1, -1), (-1, 1), (1, 1)

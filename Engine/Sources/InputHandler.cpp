@@ -95,6 +95,15 @@ namespace def
         { GLFW_KEY_UNKNOWN, Key::NONE }
     };
 
+    std::unordered_map<int, Button> InputHandler::s_ButtonsTable =
+    {
+        { GLFW_MOUSE_BUTTON_1, Button::LEFT },
+        { GLFW_MOUSE_BUTTON_2, Button::RIGHT },
+        { GLFW_MOUSE_BUTTON_3, Button::WHEEL },
+        { GLFW_MOUSE_BUTTON_4, Button::MOUSE4 },
+        { GLFW_MOUSE_BUTTON_5, Button::MOUSE5 }
+    };
+
 #endif
 
 #ifdef DGE_PLATFORM_EMSCRIPTEN
@@ -145,6 +154,73 @@ namespace def
         { DOM_PK_ALT_RIGHT, Key::RIGHT_ALT }, { DOM_PK_OS_RIGHT, Key::RIGHT_SUPER }, { DOM_PK_CONTEXT_MENU, Key::MENU },
 
         { DOM_PK_UNKNOWN, Key::NONE }
+    };
+
+#endif
+
+#ifdef DGE_PLATFORM_SDL3
+
+    std::unordered_map<int, Key> InputHandler::s_KeysTable =
+    {
+        { SDLK_SPACE, Key::SPACE }, { SDLK_APOSTROPHE, Key::APOSTROPHE }, { SDLK_COMMA, Key::COMMA },
+        { SDLK_MINUS, Key::MINUS }, { SDLK_PERIOD, Key::PERIOD }, { SDLK_SLASH, Key::SLASH },
+
+        { SDLK_0, Key::K0 }, { SDLK_1, Key::K1 }, { SDLK_2, Key::K2 }, { SDLK_3, Key::K3 }, { SDLK_4, Key::K4 },
+        { SDLK_5, Key::K5 }, { SDLK_6, Key::K6 }, { SDLK_7, Key::K7 }, { SDLK_8, Key::K8 }, { SDLK_9, Key::K9 },
+
+        { SDLK_SEMICOLON, Key::SEMICOLON }, { SDLK_EQUALS, Key::EQUAL },
+
+        { SDLK_A, Key::A }, { SDLK_B, Key::B }, { SDLK_C, Key::C }, { SDLK_D, Key::D },
+        { SDLK_E, Key::E }, { SDLK_F, Key::F }, { SDLK_G, Key::G }, { SDLK_H, Key::H },
+        { SDLK_I, Key::I }, { SDLK_J, Key::J }, { SDLK_K, Key::K }, { SDLK_L, Key::L },
+        { SDLK_M, Key::M }, { SDLK_N, Key::N }, { SDLK_O, Key::O }, { SDLK_P, Key::P },
+        { SDLK_Q, Key::Q }, { SDLK_R, Key::R }, { SDLK_S, Key::S }, { SDLK_T, Key::T },
+        { SDLK_U, Key::U }, { SDLK_V, Key::V }, { SDLK_W, Key::W }, { SDLK_X, Key::X },
+        { SDLK_Y, Key::Y }, { SDLK_Z, Key::Z },
+
+        { SDLK_LEFTBRACKET, Key::LEFT_BRACKET }, { SDLK_BACKSLASH, Key::BACKSLASH }, { SDLK_RIGHTBRACKET, Key::RIGHT_BRACKET },
+
+        { SDLK_ESCAPE, Key::ESCAPE }, { SDLK_RETURN, Key::ENTER }, { SDLK_TAB, Key::TAB }, { SDLK_BACKSPACE, Key::BACKSPACE },
+        { SDLK_INSERT, Key::INSERT }, { SDLK_DELETE, Key::DEL }, { SDLK_RIGHT, Key::RIGHT }, { SDLK_LEFT, Key::LEFT },
+        { SDLK_DOWN, Key::DOWN }, { SDLK_UP, Key::UP }, { SDLK_PAGEUP, Key::PAGE_UP }, { SDLK_PAGEDOWN, Key::PAGE_DOWN },
+        { SDLK_HOME, Key::HOME }, { SDLK_END, Key::END },
+
+        { SDLK_CAPSLOCK, Key::CAPS_LOCK }, { SDLK_SCROLLLOCK, Key::SCROLL_LOCK }, { SDLK_NUMLOCKCLEAR, Key::NUM_LOCK },
+        { SDLK_PRINTSCREEN, Key::PRINT_SCREEN }, { SDLK_PAUSE, Key::PAUSE },
+
+        { SDLK_F1, Key::F1 }, { SDLK_F2, Key::F2 }, { SDLK_F3, Key::F3 }, { SDLK_F4, Key::F4 },
+        { SDLK_F5, Key::F5 }, { SDLK_F6, Key::F6 }, { SDLK_F7, Key::F7 }, { SDLK_F8, Key::F8 },
+        { SDLK_F9, Key::F9 }, { SDLK_F10, Key::F10 }, { SDLK_F11, Key::F11 }, { SDLK_F12, Key::F12 },
+
+        { SDLK_F13, Key::F13 }, { SDLK_F14, Key::F14 }, { SDLK_F15, Key::F15 },
+
+        { SDLK_KP_0, Key::NP_0 }, { SDLK_KP_1, Key::NP_1 }, { SDLK_KP_2, Key::NP_2 },
+        { SDLK_KP_3, Key::NP_3 }, { SDLK_KP_4, Key::NP_4 }, { SDLK_KP_5, Key::NP_5 },
+        { SDLK_KP_6, Key::NP_6 }, { SDLK_KP_7, Key::NP_7 }, { SDLK_KP_8, Key::NP_8 },
+        { SDLK_KP_9, Key::NP_9 }, { SDLK_KP_DECIMAL, Key::NP_DECIMAL },
+
+        { SDLK_KP_DIVIDE, Key::NP_DIVIDE }, { SDLK_KP_MULTIPLY, Key::NP_MULTIPLY },
+        { SDLK_KP_MINUS, Key::NP_SUBTRACT }, { SDLK_KP_PLUS, Key::NP_ADD },
+        { SDLK_KP_ENTER, Key::NP_ENTER }, { SDLK_KP_EQUALS, Key::NP_EQUAL },
+
+        { SDLK_LSHIFT, Key::LEFT_SHIFT }, { SDLK_LCTRL, Key::LEFT_CONTROL },
+        { SDLK_LALT, Key::LEFT_ALT }, { SDLK_LGUI, Key::LEFT_SUPER },
+
+        { SDLK_RSHIFT, Key::RIGHT_SHIFT }, { SDLK_RCTRL, Key::RIGHT_CONTROL },
+        { SDLK_RALT, Key::RIGHT_ALT }, { SDLK_RGUI, Key::RIGHT_SUPER },
+
+        { SDLK_APPLICATION, Key::MENU },
+
+        { SDLK_UNKNOWN, Key::NONE }
+    };
+
+    std::unordered_map<int, Button> InputHandler::s_ButtonsTable =
+    {
+        { SDL_BUTTON_LEFT, Button::LEFT },
+        { SDL_BUTTON_RIGHT, Button::RIGHT },
+        { SDL_BUTTON_MIDDLE, Button::WHEEL },
+        { SDL_BUTTON_X1, Button::MOUSE4 },
+        { SDL_BUTTON_X2, Button::MOUSE5 }
     };
 
 #endif

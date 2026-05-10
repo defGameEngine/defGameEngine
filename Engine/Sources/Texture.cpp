@@ -10,6 +10,8 @@
 
 #if defined(DGE_PLATFORM_GLFW3)
 #include "PlatformGL.hpp"
+#elif defined (DGE_PLATFORM_SDL3)
+#include "PlatformSDL3.hpp"
 #elif defined(DGE_PLATFORM_EMSCRIPTEN)
 #include "PlatformEmscripten.hpp"
 #else

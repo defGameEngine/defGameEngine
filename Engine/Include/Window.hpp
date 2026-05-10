@@ -28,6 +28,7 @@ namespace def
         friend class Platform;
         friend class PlatformGL;
         friend class PlatformGLFW3;
+        friend class PlatformSDL3;
         friend class PlatformEmscripten;
         friend class GameEngine;
 
@@ -86,6 +87,9 @@ namespace def
 
 		// Enables or disables fullscreen mode, this method does nothing on the Emscripten platform
 		void EnableFullscreen(bool enable);
+
+		// Checks if the window closing event has occured, this method does nothing on the Emscripten platform so it always returns false
+		bool IsWindowClosed() const;
 
 #if defined(DGE_PLATFORM_GLFW3)
 
