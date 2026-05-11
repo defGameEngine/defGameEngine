@@ -16,5 +16,4 @@ def run(target):
 
 
 if __name__ == '__main__':
-    assert len(sys.argv) > 1, 'Please provide target'
-    run(sys.argv[1])
+    run('Main')

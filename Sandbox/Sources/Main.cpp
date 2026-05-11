@@ -88,7 +88,8 @@ private:
     {
         id = CreateLayer(new CustomLayer(this));
 
-        tex = new def::Texture("blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
+        //tex = new def::Texture("../../Sandbox/Assets/blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
+        tex = new def::Texture("Assets/blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
 
         return true; 
     }

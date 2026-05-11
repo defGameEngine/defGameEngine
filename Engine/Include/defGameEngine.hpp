@@ -16,7 +16,6 @@
 
 #if defined(__EMSCRIPTEN__)
 #define DGE_PLATFORM_EMSCRIPTEN
-#undef 
 #else
 #define DGE_PLATFORM_GL
 #endif
@@ -103,9 +102,6 @@ namespace def
 		friend class InputHandler;
 
 	public:
-		// Is used internally
-		//static GameEngine* s_Engine;
-
 		// Is called before the main loop
 		virtual bool OnUserCreate() = 0;
 

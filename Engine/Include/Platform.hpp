@@ -80,7 +80,7 @@ namespace def
 		virtual void EnableFullscreen(bool enable) = 0;
 
 		// Applies globally wrapping and sampling methods
-		void SetWrapMethod(Sprite::WrapMethod wrapMethod);
+		virtual void SetWrapMethod(Sprite::WrapMethod wrapMethod);
 		void SetSampleMethod(Sprite::SampleMethod sampleMethod);
 
 		// Sets window pointer for internal usage

@@ -18,9 +18,13 @@
 
 namespace def
 {
+	class GameEngine;
+
 	class PlatformEmscripten : public Platform
 	{
 	public:
+		PlatformEmscripten(GameEngine* engine);
+
 		friend class GameEngine;
 		friend class Window;
 
@@ -36,7 +40,7 @@ namespace def
 		virtual void OnAfterDraw() override;
 
 		virtual void FlushScreen(bool vsync) const override;
-		virtual void PollEvents() const override;
+		virtual void PollEvents() override;
 
 		virtual void DrawQuad(const Pixel& tint) const override;
 		virtual void DrawTexture(const TextureInstance& texInst) const override;
@@ -47,7 +51,12 @@ namespace def
 
 		virtual void SetIcon(Sprite& icon) const override;
 
+		virtual void EnableVSync(bool enable) override;
+		virtual void EnableFullscreen(bool enable) override;
+
 		static void MainLoop();
+
+		virtual void SetWrapMethod(Sprite::WrapMethod wrapMethod) override;
 
 	private:
 		static EM_BOOL FocusCallback(int eventType, const EmscriptenFocusEvent* event, void* userData);
@@ -58,6 +67,7 @@ namespace def
 
 	public:
 		static bool s_IsWindowFocused;
+		static GameEngine* s_Engine;
 
 	private:
 		EGLDisplay m_Display;

@@ -25,7 +25,6 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glx.h>
 
 #else
 
@@ -123,6 +122,7 @@ namespace def
 		break;
 
 		case Sprite::WrapMethod::REPEAT:
+
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		break;

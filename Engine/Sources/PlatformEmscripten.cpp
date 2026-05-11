@@ -4,6 +4,13 @@
 namespace def
 {
 	bool PlatformEmscripten::s_IsWindowFocused = false;
+	GameEngine* PlatformEmscripten::s_Engine = nullptr;
+
+	PlatformEmscripten::PlatformEmscripten(GameEngine* engine)
+		: Platform(engine)
+	{
+		s_Engine = engine;
+	}
 
 	void PlatformEmscripten::Destroy() const
 	{
@@ -22,7 +29,7 @@ namespace def
 
 	bool PlatformEmscripten::IsWindowClose() const
 	{
-		return !m_Engine->m_IsAppRunning;
+		return !s_Engine->m_IsAppRunning;
 	}
 
 	bool PlatformEmscripten::IsWindowFocused() const
@@ -67,7 +74,7 @@ namespace def
 			glFlush();
 	}
 
-	void PlatformEmscripten::PollEvents() const
+	void PlatformEmscripten::PollEvents()
 	{
 
 	}
@@ -122,6 +129,47 @@ namespace def
 			glBindTexture(GL_TEXTURE_2D, id);
 		else
 			glBindTexture(GL_TEXTURE_2D, m_BlankQuad.texture->id);
+
+		switch (m_WrapMethod)
+		{
+		case Sprite::WrapMethod::NONE:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_EXT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER_EXT);
+		break;
+
+		case Sprite::WrapMethod::REPEAT:
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		break;
+
+		case Sprite::WrapMethod::MIRROR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		break;
+
+		case Sprite::WrapMethod::CLAMP:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		break;
+
+		}
+
+		switch (m_SampleMethod)
+		{
+		case Sprite::SampleMethod::LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		break;
+
+		// TODO: Implement TRILINEAR (requires mipmaps), for now just fall to BILINEAR
+		case Sprite::SampleMethod::BILINEAR:
+		case Sprite::SampleMethod::TRILINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		break;
+
+		}
 	}
 
 	bool PlatformEmscripten::ConstructWindow(Vector2i& screenSize, const Vector2i& pixelSize, Vector2i& windowSize, bool vsync, bool fullscreen, bool dirtypixel)
@@ -149,7 +197,8 @@ namespace def
 			"#version 300 es\n"
 			"precision mediump float;"
 			"out vec4 pixel;\n""in vec2 oTex;\n"
-			"in vec4 oCol;\n""uniform sampler2D sprTex;\n""void main(){pixel = texture(sprTex, oTex) * oCol;}";
+			"in vec4 oCol;\n""uniform sampler2D sprTex;\n""uniform int uWrapMode;\n""void main(){if (uWrapMode == 0 && (oTex.x < 0.0 || oTex.x > 1.0 ||\n"
+			"oTex.y < 0.0 || oTex.y > 1.0))\n""{\n""discard;\n""}\n""pixel = texture(sprTex, oTex) * oCol;}";
 
 		glShaderSource(m_FragmentShader, 1, &fragmentShader, NULL);
 		glCompileShader(m_FragmentShader);
@@ -224,7 +273,23 @@ namespace def
 
 	void PlatformEmscripten::MainLoop()
 	{
-		m_Engine->MainLoop();
+		s_Engine->MainLoop();
+	}
+
+	void PlatformEmscripten::SetWrapMethod(Sprite::WrapMethod wrapMethod)
+	{
+		glUniform1i(glGetUniformLocation(m_QuadShader, "uWrapMode"), (int)wrapMethod);
+		m_WrapMethod = wrapMethod;
+	}
+
+	void PlatformEmscripten::EnableVSync(bool enable)
+	{
+
+	}
+
+	void PlatformEmscripten::EnableFullscreen(bool enable)
+	{
+
 	}
 
 	EM_BOOL PlatformEmscripten::FocusCallback(int eventType, const EmscriptenFocusEvent* event, void* userData)
@@ -240,12 +305,12 @@ namespace def
 
 	EM_BOOL PlatformEmscripten::KeyboardCallback(int eventType, const EmscriptenKeyboardEvent* event, void* userData)
 	{
-		auto e = m_Engine->GetInput();
+		auto& i = s_Engine->Input();
 
 		switch (eventType)
 		{
-		case EMSCRIPTEN_EVENT_KEYDOWN: e->m_KeyNewState[size_t(InputHandler::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = true; break;
-		case EMSCRIPTEN_EVENT_KEYUP: e->m_KeyNewState[size_t(InputHandler::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = false; break;
+		case EMSCRIPTEN_EVENT_KEYDOWN: i.m_KeyNewState[size_t(InputHandler::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = true; break;
+		case EMSCRIPTEN_EVENT_KEYUP: i.m_KeyNewState[size_t(InputHandler::s_KeysTable[emscripten_compute_dom_pk_code(event->code)])] = false; break;
 		}
 
 		return EM_TRUE;
@@ -254,36 +319,36 @@ namespace def
 	EM_BOOL PlatformEmscripten::WheelCallback(int eventType, const EmscriptenWheelEvent* event, void* userData)
 	{
 		if (eventType == EMSCRIPTEN_EVENT_WHEEL)
-			m_Engine->GetInput()->m_ScrollDelta = -int(event->deltaY);
+			s_Engine->Input().m_ScrollDelta = -int(event->deltaY);
 
 		return EM_TRUE;
 	}
 
 	EM_BOOL PlatformEmscripten::TouchCallback(int eventType, const EmscriptenTouchEvent* event, void* userData)
 	{
-		auto i = m_Engine->GetInput();
-		auto w = m_Engine->GetWindow();
+		auto& i = s_Engine->Input();
+		auto& w = s_Engine->Window();
 
 		switch (eventType)
 		{
 		case EMSCRIPTEN_EVENT_TOUCHMOVE:
 		{
-			i->m_MousePos.x = event->touches->targetX / w->m_PixelSize.x;
-			i->m_MousePos.y = event->touches->targetY / w->m_PixelSize.y;
+			i.m_MousePos.x = event->touches->targetX / w.m_PixelSize.x;
+			i.m_MousePos.y = event->touches->targetY / w.m_PixelSize.y;
 		}
 		break;
 
 		case EMSCRIPTEN_EVENT_TOUCHSTART:
 		{
-			i->m_MousePos.x = event->touches->targetX;
-			i->m_MousePos.y = event->touches->targetY;
+			i.m_MousePos.x = event->touches->targetX / w.m_PixelSize.x;
+			i.m_MousePos.y = event->touches->targetY / w.m_PixelSize.y;
 
-			i->m_MouseNewState[0] = true;
+			i.m_MouseNewState[0] = true;
 		}
 		break;
 
 		case EMSCRIPTEN_EVENT_TOUCHEND:
-			i->m_MouseNewState[0] = false;
+			i.m_MouseNewState[0] = false;
 		break;
 
 		}
@@ -293,23 +358,25 @@ namespace def
 
 	EM_BOOL PlatformEmscripten::MouseCallback(int eventType, const EmscriptenMouseEvent* event, void* userData)
 	{
-		auto i = m_Engine->GetInput();
-		auto w = m_Engine->GetWindow();
+		auto& i = s_Engine->Input();
+		auto& w = s_Engine->Window();
 
 		if (eventType == EMSCRIPTEN_EVENT_MOUSEMOVE)
 		{
-			i->m_MousePos.x = event->targetX / w->m_PixelSize.x;
-			i->m_MousePos.y = event->targetY / w->m_PixelSize.y;
+			i.m_MousePos.x = event->targetX / w.m_PixelSize.x;
+			i.m_MousePos.y = event->targetY / w.m_PixelSize.y;
 		}
 
-		auto check = [&](int button, int index)
+		auto check = [&](int button)
 			{
 				if (event->button == button)
 				{
+					int idx = static_cast<int>(InputHandler::s_ButtonsTable[button]);
+
 					switch (eventType)
 					{
-					case EMSCRIPTEN_EVENT_MOUSEDOWN: i->m_MouseNewState[index] = true; break;
-					case EMSCRIPTEN_EVENT_MOUSEUP: i->m_MouseNewState[index] = false; break;
+					case EMSCRIPTEN_EVENT_MOUSEDOWN: i.m_MouseNewState[idx] = true; break;
+					case EMSCRIPTEN_EVENT_MOUSEUP: i.m_MouseNewState[idx] = false; break;
 					}
 
 					return true;
@@ -318,11 +385,11 @@ namespace def
 				return false;
 			};
 
-		check(0, 0);
-		check(2, 1);
-		check(3, 3);
-		check(4, 4);
+		check(0);
+		check(2);
+		check(3);
+		check(4);
 
-		return check(1, 2) ? EM_TRUE : EM_FALSE;
+		return check(1) ? EM_TRUE : EM_FALSE;
 	}
 }

@@ -7,7 +7,7 @@ from helpers import *
 
 
 EMSDK_PATH = 'C:/SDK/emsdk'
-ASSETS_FOLDER = None
+ASSETS_FOLDER = '../../Sandbox/Assets'
 
 
 def build(path, filename):
@@ -37,7 +37,7 @@ def build(path, filename):
     c.add_flag('I"../../Engine/Include"')
 
     for source in get_files('../../Engine/Sources'):
-        if source != 'PlatformGLFW3.cpp':
+        if source not in ('PlatformGLFW3.cpp', 'PlatformSDL3.cpp'):
             c.add_argument(f'../../Engine/Sources/{source}')
 
     c.add_argument(f'{path}{filename}.cpp')
@@ -56,5 +56,4 @@ def build(path, filename):
 
 
 if __name__ == '__main__':
-    assert len(sys.argv) > 2, 'Please provide a path (without the filename) and the filename'
-    build(sys.argv[1], sys.argv[2])
+    build('../../Sandbox/Sources/', 'Main')

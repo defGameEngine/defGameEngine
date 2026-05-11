@@ -156,6 +156,15 @@ namespace def
         { DOM_PK_UNKNOWN, Key::NONE }
     };
 
+    std::unordered_map<int, Button> InputHandler::s_ButtonsTable =
+    {
+        { 0, Button::LEFT },
+        { 2, Button::RIGHT },
+        { 1, Button::WHEEL },
+        { 3, Button::MOUSE4 },
+        { 4, Button::MOUSE5 }
+    };
+
 #endif
 
 #ifdef DGE_PLATFORM_SDL3
