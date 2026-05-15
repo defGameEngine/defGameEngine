@@ -29,6 +29,27 @@ namespace def
 		friend class GameEngine;
 		friend class Console;
 
+	public:
+		bool IsVisible() const { return visible; }
+		void SetVisible(bool v) { visible = v; }
+
+		bool IsUpdating() const { return update; }
+		void SetUpdating(bool v) { update = v; }
+
+		const Pixel& GetTint() const { return tint; }
+		void SetTint(const Pixel& p) { tint = p; }
+
+		const Vector2i& GetOffset() const { return offset; }
+		void SetOffset(const Vector2i& o) { offset = o; }
+
+		const Vector2i& GetSize() const { return size; }
+
+		Texture::Structure GetLayerTextureStructure() const { return textureStructure; }
+		void SetLayerTextureStructure(Texture::Structure s) { textureStructure = s; }
+
+		Pixel::Mode GetLayerPixelMode() const { return pixelMode; }
+		void SetLayerPixelMode(Pixel::Mode m) { pixelMode = m; }
+
 	protected:
 		// All textures on the current layer
 		std::vector<TextureInstance> textures;
