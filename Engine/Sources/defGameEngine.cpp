@@ -35,6 +35,8 @@ namespace def
 		m_Input = std::make_shared<InputHandler>(m_Platform);
 		m_Window = std::make_shared<def::Window>(m_Platform);
 		m_Console = std::make_unique<def::Console>(this);
+		m_Audio = std::make_unique<def::AudioHandler>();
+		m_Audio->Init();
 
 		m_Platform->SetInputHandler(m_Input);
 		m_Platform->SetWindow(m_Window);
@@ -47,6 +49,9 @@ namespace def
 
 	void GameEngine::Destroy()
 	{
+		if (m_Audio)
+			m_Audio->Destroy();
+
 		m_Platform->Destroy();
 	}
 
@@ -1543,6 +1548,11 @@ namespace def
 	Timer& GameEngine::Timer()
 	{
 		return *m_Timer.get();
+	}
+
+	AudioHandler& GameEngine::Audio()
+	{
+		return *m_Audio.get();
 	}
 
 }

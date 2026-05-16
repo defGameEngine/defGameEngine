@@ -76,6 +76,7 @@
 #include "Window.hpp"
 #include "InputHandler.hpp"
 #include "Console.hpp"
+#include "Audio.hpp"
 
 namespace def
 {
@@ -259,12 +260,13 @@ namespace def
 		size_t GetCurrentState() const;
 		State* GetState(size_t index);
 
-		// Window, input and console stuff
+		// Window, input, console and audio stuff
 
 		Window& Window();
 		InputHandler& Input();
 		Console& Console();
 		Timer& Timer();
+		AudioHandler& Audio();
 
 	private:
 		bool m_IsAppRunning;
@@ -292,6 +294,7 @@ namespace def
 		std::shared_ptr<def::Window> m_Window;
 		std::unique_ptr<def::Console> m_Console;
 		std::unique_ptr<def::Timer> m_Timer;
+		std::unique_ptr<def::AudioHandler> m_Audio;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
