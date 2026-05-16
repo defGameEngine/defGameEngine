@@ -33,9 +33,12 @@ namespace def
 		std::unordered_map<std::string, SoundPtr> sounds;
 	};
 
+	AudioHandler::AudioHandler() = default;
+	AudioHandler::~AudioHandler() = default;
+
 	void AudioHandler::Init()
 	{
-		m_Impl = std::make_unique<Impl>();
+		m_Impl = new Impl();
 
 		if (ma_engine_init(nullptr, &m_Impl->engine) != MA_SUCCESS)
 			std::cerr << "[Audio] Failed to initialise audio engine\n";
@@ -48,7 +51,8 @@ namespace def
 
 		m_Impl->sounds.clear();
 		ma_engine_uninit(&m_Impl->engine);
-		m_Impl.reset();
+		delete m_Impl;
+		m_Impl = nullptr;
 	}
 
 	bool AudioHandler::Load(std::string_view id, std::string_view path)

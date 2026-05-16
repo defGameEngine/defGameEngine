@@ -22,6 +22,9 @@ namespace def
 	public:
 		friend class GameEngine;
 
+		AudioHandler();
+		~AudioHandler();
+
 		// Load a sound file and associate it with id.
 		// Supported formats: WAV, MP3, FLAC, OGG.
 		// Returns false if the file could not be opened.
@@ -65,8 +68,9 @@ namespace def
 
 	private:
 		// Pimpl: keeps miniaudio types out of this header.
+		// Raw pointer so unique_ptr<Impl> is never instantiated with an incomplete type.
 		struct Impl;
-		std::unique_ptr<Impl> m_Impl;
+		Impl* m_Impl = nullptr;
 
 		float m_MasterVolume = 1.0f;
 	};

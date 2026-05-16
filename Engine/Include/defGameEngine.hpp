@@ -294,7 +294,7 @@ namespace def
 		std::shared_ptr<def::Window> m_Window;
 		std::unique_ptr<def::Console> m_Console;
 		std::unique_ptr<def::Timer> m_Timer;
-		std::unique_ptr<def::AudioHandler> m_Audio;
+		def::AudioHandler m_Audio;
 
 	#ifndef PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
