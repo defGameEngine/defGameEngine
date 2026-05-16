@@ -91,6 +91,9 @@ private:
         //tex = new def::Texture("../../Sandbox/Assets/blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
         tex = new def::Texture("Assets/blocks.png", { 30.0f, 50.0f }, { 300.0f, 200.0f });
 
+        Audio().SetMasterVolume(0.01f);
+        Audio().Play("Assets/ducktales.mp3");
+
         return true; 
     }
 

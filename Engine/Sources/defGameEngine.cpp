@@ -35,7 +35,6 @@ namespace def
 		m_Input = std::make_shared<InputHandler>(m_Platform);
 		m_Window = std::make_shared<def::Window>(m_Platform);
 		m_Console = std::make_unique<def::Console>(this);
-		m_Audio.Init();
 
 		m_Platform->SetInputHandler(m_Input);
 		m_Platform->SetWindow(m_Window);
@@ -43,13 +42,6 @@ namespace def
 
 	GameEngine::~GameEngine()
 	{
-		Destroy();
-	}
-
-	void GameEngine::Destroy()
-	{
-		m_Audio.Destroy();
-
 		m_Platform->Destroy();
 	}
 
@@ -1548,9 +1540,11 @@ namespace def
 		return *m_Timer.get();
 	}
 
+#ifdef DGE_NEED_AUDIO
 	AudioHandler& GameEngine::Audio()
 	{
 		return m_Audio;
 	}
+#endif
 
 }

@@ -76,7 +76,10 @@
 #include "Window.hpp"
 #include "InputHandler.hpp"
 #include "Console.hpp"
+
+#ifdef DGE_NEED_AUDIO
 #include "Audio.hpp"
+#endif
 
 namespace def
 {
@@ -126,9 +129,6 @@ namespace def
 		void Run();
 
 	private:
-		// Frees memory
-		void Destroy();
-
 		// The main loop of a program (handles input, draws to the screen)
 		void MainLoop();
 
@@ -266,7 +266,10 @@ namespace def
 		InputHandler& Input();
 		Console& Console();
 		Timer& Timer();
+
+	#ifdef DGE_NEED_AUDIO
 		AudioHandler& Audio();
+	#endif
 
 	private:
 		bool m_IsAppRunning;
@@ -294,9 +297,12 @@ namespace def
 		std::shared_ptr<def::Window> m_Window;
 		std::unique_ptr<def::Console> m_Console;
 		std::unique_ptr<def::Timer> m_Timer;
-		def::AudioHandler m_Audio;
 
-	#ifndef PLATFORM_EMSCRIPTEN
+	#ifdef DGE_NEED_AUDIO
+		AudioHandler m_Audio;
+	#endif
+
+	#ifndef DGE_PLATFORM_EMSCRIPTEN
 		uint32_t m_FramesCount;
 	#endif
 

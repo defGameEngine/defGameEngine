@@ -12,6 +12,12 @@ newoption
     }
 }
 
+newoption
+{
+    trigger = "need-audio",
+    description = "Provide audio part"
+}
+
 workspace "defGameEngine"
     startproject "Sandbox"
 
@@ -27,9 +33,12 @@ workspace "defGameEngine"
     filter "system:macosx"
         architecture "ARM64"
 
+    filter {}
+
 OUTPUT_DIR = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 local BACKEND = _OPTIONS["backend"] or "glfw"
+local NEED_AUDIO = _OPTIONS["need-audio"] or false
 
 local USE_GLFW3 = BACKEND == "glfw"
 local USE_SDL3 = BACKEND == "sdl"
@@ -41,6 +50,10 @@ elseif USE_SDL3 then
 else
     print("No platform selected")
     os.exit(1)
+end
+
+if NEED_AUDIO then
+    defines { "DGE_NEED_AUDIO" }
 end
 
 if USE_GLFW3 then
@@ -122,6 +135,14 @@ project "Engine"
         "%{prj.name}/Sources/*.cpp"
     }
 
+    if not NEED_AUDIO then
+        removefiles
+        {
+            "%{prj.name}/Include/Audio.hpp",
+            "%{prj.name}/Sources/Audio.cpp"
+        }
+    end
+
     removefiles { "%{prj.name}/Sources/Utils.cpp" }
 
     if USE_GLFW3 then
@@ -160,29 +181,32 @@ project "Engine"
 
     filter {}
 
-    local includedirs_list = {
+    local dirs = {
         "%{prj.name}/Vendor/stb",
         "%{prj.name}/Include",
         "%{prj.name}/Sources",
     }
     
     if USE_GLFW3 then
-        table.insert(includedirs_list, "%{prj.name}/Vendor/glfw/include")
+        table.insert(dirs, "%{prj.name}/Vendor/glfw/include")
     elseif USE_SDL3 then
-        table.insert(includedirs_list, "%{prj.name}/Vendor/SDL/include")
-        table.insert(includedirs_list, "%{prj.name}/Vendor/SDL/install/include/SDL3")
+        table.insert(dirs, "%{prj.name}/Vendor/SDL/include")
+        table.insert(dirs, "%{prj.name}/Vendor/SDL/install/include/SDL3")
+    end
+
+    if NEED_AUDIO then
+        table.insert(dirs, "%{prj.name}/Vendor/miniaudio")
     end
     
-    includedirs (includedirs_list)
+    includedirs (dirs)
 
     filter "system:windows"
-        links { 
+        links
+        { 
             "gdi32", "user32", "kernel32", "opengl32", "glu32",
             "winmm", "imm32", "version", "setupapi",
             "legacy_stdio_definitions.lib"
         }
-        
-        buildoptions { "/D _CRT_SECURE_NO_WARNINGS" }
 
     filter "system:linux"
         links
@@ -263,6 +287,10 @@ project "Sandbox"
         table.insert(sandbox_includedirs, "Engine/Vendor/SDL/include")
         table.insert(sandbox_includedirs, "Engine/Vendor/SDL/install/include/SDL3")
     end
+
+    if NEED_AUDIO then
+        table.insert(sandbox_includedirs, "Engine/Vendor/miniaudio")
+    end
     
     includedirs (sandbox_includedirs)
 
@@ -273,7 +301,7 @@ project "Sandbox"
     end
 
     filter "system:windows"
-        local windows_links = { 
+        local windows_links = {
             "gdi32", "user32", "kernel32", "opengl32", "glu32",
             "winmm", "imm32", "version", "setupapi",
             "legacy_stdio_definitions.lib"
