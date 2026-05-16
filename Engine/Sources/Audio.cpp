@@ -6,6 +6,14 @@
 
 #include "Pch.hpp"
 
+// Forward-declare stb_vorbis types so miniaudio can see them.
+// Full implementation is compiled separately in StbVorbis.c (as C).
+#define STB_VORBIS_HEADER_ONLY
+extern "C" {
+#include "extras/stb_vorbis.c"
+}
+#undef STB_VORBIS_HEADER_ONLY
+
 #define MINIAUDIO_IMPLEMENTATION
 #include "Audio.hpp"
 
