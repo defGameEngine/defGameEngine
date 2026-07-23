@@ -135,11 +135,14 @@ project "Engine"
         "%{prj.name}/Sources/*.cpp"
     }
 
-    if not NEED_AUDIO then
+    if NEED_AUDIO then
+        includedirs { "%{prj.name}/Vendor/miniaudio" }
+    else
         removefiles
         {
             "%{prj.name}/Include/Audio.hpp",
-            "%{prj.name}/Sources/Audio.cpp"
+            "%{prj.name}/Sources/Audio.cpp",
+            "%{prj.name}/Sources/StbVorbis.cpp"
         }
     end
 

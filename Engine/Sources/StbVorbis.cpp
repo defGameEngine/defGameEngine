@@ -4,5 +4,5 @@
  *  See LICENSE file in the project root for license information.
  *----------------------------------------------------------------*/
 
-/* stb_vorbis implementation — compiled as C so it does not clash with C++ */
-#include "../Vendor/miniaudio/extras/stb_vorbis.c"
+#include "Pch.hpp"
+#include "extras/stb_vorbis.c"
