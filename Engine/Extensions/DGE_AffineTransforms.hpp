@@ -15,10 +15,12 @@ namespace def
 	{
 	public:
 		AffineTransforms() = default;
-		AffineTransforms(const def::Vector2i& viewArea, const def::Vector2f& pixelScale);
+		AffineTransforms(GameEngine* engine, const Vector2i& viewArea, const Vector2f& pixelScale);
 		~AffineTransforms() = default;
 
 	public:
+		void SetEngine(GameEngine* engine);
+
 		Vector2f ScreenToWorld(const Vector2f& pos) const;
 		Vector2f WorldToScreen(const Vector2f& pos) const;
 
@@ -28,7 +30,7 @@ namespace def
 		Vector2f GetOrigin();
 		Vector2f GetEnd();
 
-		void SetViewArea(const def::Vector2i& viewArea);
+		void SetViewArea(const Vector2i& viewArea);
 		void SetPixelScale(const Vector2f& scale);
 		void SetScale(const Vector2f& scale);
 		void SetOffset(const Vector2f& offset);
@@ -107,7 +109,7 @@ namespace def
 		void GradientTextureTriangle(const Vector2f& pos1, const Vector2f& pos2, const Vector2f& pos3, const Pixel& col1 = WHITE, const Pixel& col2 = WHITE, const Pixel& col3 = WHITE);
 		void GradientTextureRectangle(const Vector2f& pos, const Vector2f& size, const Pixel& colTL = WHITE, const Pixel& colTR = WHITE, const Pixel& colBR = WHITE, const Pixel& colBL = WHITE);
 
-		void DrawTextureString(const Vector2f& pos, std::string_view text, const Pixel& col = def::WHITE, const Vector2f& scale = { 1.0f, 1.0f });
+		void DrawTextureString(const Vector2f& pos, std::string_view text, const Pixel& col = WHITE, const Vector2f& scale = { 1.0f, 1.0f });
 
 	protected:
 		Vector2f m_Offset;
@@ -116,7 +118,7 @@ namespace def
 		Vector2f m_ViewArea;
 		Vector2f m_PixelStep = { 1.0f, 1.0f };
 
-		GameEngine* m_Engine = GameEngine::s_Engine;
+		GameEngine* m_Engine = nullptr;
 
 	};
 
@@ -124,8 +126,10 @@ namespace def
 	{
 	public:
 		TileAffineTransforms() = default;
-		TileAffineTransforms(const def::Vector2i& viewArea, const def::Vector2f& tileSize);
+		TileAffineTransforms(GameEngine* engine, const Vector2i& viewArea, const Vector2f& tileSize);
 		~TileAffineTransforms() = default;
+
+		void SetEngine(GameEngine* engine);
 
 		Vector2i GetTileOffset() const;
 
@@ -136,10 +140,16 @@ namespace def
 #ifdef DGE_AFFINE_TRANSFORMS
 #undef DGE_AFFINE_TRANSFORMS
 
-	AffineTransforms::AffineTransforms(const def::Vector2i& viewArea, const def::Vector2f& pixelScale)
+	AffineTransforms::AffineTransforms(GameEngine* engine, const Vector2i& viewArea, const Vector2f& pixelScale)
 	{
+		m_Engine = engine;
 		m_ViewArea = viewArea;
 		SetPixelScale(pixelScale);
+	}
+
+	void AffineTransforms::SetEngine(GameEngine* engine)
+	{
+		m_Engine = engine;
 	}
 
 	Vector2f AffineTransforms::GetScale() const
@@ -162,7 +172,7 @@ namespace def
 		return ScreenToWorld(m_ViewArea);
 	}
 
-	void AffineTransforms::SetViewArea(const def::Vector2i& viewArea)
+	void AffineTransforms::SetViewArea(const Vector2i& viewArea)
 	{
 		m_ViewArea = viewArea;
 	}
@@ -506,9 +516,14 @@ namespace def
 		return (pos - m_Offset) * m_Scale;
 	}
 
-	TileAffineTransforms::TileAffineTransforms(const def::Vector2i& viewArea, const def::Vector2f& tileSize)
-		: AffineTransforms(viewArea, tileSize)
+	TileAffineTransforms::TileAffineTransforms(GameEngine* engine, const Vector2i& viewArea, const Vector2f& tileSize)
+		: AffineTransforms(engine, viewArea, tileSize)
 	{}
+
+	void TileAffineTransforms::SetEngine(GameEngine* engine)
+	{
+		m_Engine = engine;
+	}
 
 	Vector2i TileAffineTransforms::GetTileOffset() const
 	{
