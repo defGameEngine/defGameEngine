@@ -12,4 +12,9 @@ namespace def
     State::State(GameEngine* context) : context(*context)
     {
     }
+
+    State::~State()
+    {
+        
+    }
 }

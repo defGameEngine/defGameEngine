@@ -34,6 +34,10 @@ namespace def
 		Vector2i m_ViewPos;
 		Vector2i m_ViewSize;
 
+		#ifdef __MACH__
+		Vector2i m_CocoaViewSize;
+		#endif
+
 	public:
 		static void ErrorCallback(int errorCode, const char* description);
 		static void DropCallback(GLFWwindow* window, int pathCount, const char* paths[]);

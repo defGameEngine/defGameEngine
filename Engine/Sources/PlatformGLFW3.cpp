@@ -108,6 +108,10 @@ namespace def
 
 		auto win = platform->m_Window.lock();
 
+		#ifdef __MACH__
+		platform->m_CocoaViewSize = { width, height };
+		#endif
+
 		if (win)
 		{
 			platform->UpdateViewport(width, height);
@@ -128,6 +132,11 @@ namespace def
 		// because otherwise it won't
 
 		PlatformGLFW3* platform = static_cast<PlatformGLFW3*>(glfwGetWindowUserPointer(window));
+
+		#ifdef __MACH__
+		FramebufferSizeCallback(window, platform->m_CocoaViewSize.x, platform->m_CocoaViewSize.y);
+		#endif
+		
 		platform->m_Engine->MainLoop();
 	}
 
@@ -170,13 +179,6 @@ namespace def
 
 		// I guess it is enabled by default but let's be specific
 		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
-
-		if (glfwGetPlatform() == GLFW_PLATFORM_COCOA)
-		{
-			// Disabling retina displays framebuffer
-			// fixes all problems related to scaling
-			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-		}
 
 		const GLFWvidmode* videoMode = glfwGetVideoMode(m_Monitor);
 
@@ -293,33 +295,48 @@ namespace def
 		glfwPollEvents();
 	}
 
-	void PlatformGLFW3::UpdateViewport(int width, int height)
+	void PlatformGLFW3::UpdateViewport(int framebufferWidth, int framebufferHeight)
 	{
 		auto win = m_Window.lock();
 
 		if (!win)
 			return;
 
+		int windowWidth = 0;
+		int windowHeight = 0;
+		glfwGetWindowSize(m_NativeWindow, &windowWidth, &windowHeight);
+
+		if (windowWidth <= 0 || windowHeight <= 0)
+			return;
+
 		float screenAspect = (float)win->m_ScreenSize.x / (float)win->m_ScreenSize.y;
-		float windowAspect = (float)width / (float)height;
+		float windowAspect = (float)windowWidth / (float)windowHeight;
 
 		Vector2i viewSize;
 
 		if (windowAspect > screenAspect)
 		{
-			viewSize.y = height;
-			viewSize.x = (int)((float)height * screenAspect);
+			viewSize.y = windowHeight;
+			viewSize.x = (int)((float)windowHeight * screenAspect);
 		}
 		else
 		{
-			viewSize.x = width;
-			viewSize.y = (int)((float)width / screenAspect);
+			viewSize.x = windowWidth;
+			viewSize.y = (int)((float)windowWidth / screenAspect);
 		}
 
-		m_ViewPos = { (width - viewSize.x) / 2, (height - viewSize.y) / 2 };
+		m_ViewPos = { (windowWidth - viewSize.x) / 2, (windowHeight - viewSize.y) / 2 };
 		m_ViewSize = viewSize;
 
-		glViewport(m_ViewPos.x, m_ViewPos.y, m_ViewSize.x, m_ViewSize.y);
+		float scaleX = (float)framebufferWidth / (float)windowWidth;
+		float scaleY = (float)framebufferHeight / (float)windowHeight;
+
+		glViewport(
+			(int)(m_ViewPos.x * scaleX),
+			(int)(m_ViewPos.y * scaleY),
+			(int)(m_ViewSize.x * scaleX),
+			(int)(m_ViewSize.y * scaleY)
+		);
 	}
 }
 

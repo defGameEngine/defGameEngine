@@ -19,6 +19,7 @@ namespace def
 	struct State
 	{
 		State(GameEngine* context);
+		virtual ~State();
 
 		virtual bool OnCreate() = 0;
 		virtual bool OnSet() = 0;
